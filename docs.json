@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "NeuronSearchLab",
   "colors": {
-    "primary": "#673ab7",
-    "light": "#e0e0e0",
-    "dark": "#673ab7"
+    "primary": "#6366f1",
+    "light": "#6366f1",
+    "dark": "#6366f1"
   },
   "favicon": "/favicon.ico",
   "navigation": {
@@ -81,7 +81,7 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
+      "label": "Console",
       "href": "https://dashboard.mintlify.com"
     }
   },
