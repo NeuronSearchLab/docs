@@ -1,0 +1,51 @@
+---
+title: "GET /recommendations"
+description: "Retrieve personalized recommendations."
+openapi: "GET /recommendations"
+---
+
+## Description
+
+This endpoint returns a list of recommended items for a given user, optionally using context-based logic to tailor results.
+
+## Request
+
+**Endpoint:**
+```http
+GET /recommendations?user_id=user-456&context_id=sports-homepage&quantity=5
+```
+
+**Headers:**
+```http
+Authorization: Bearer <token>
+```
+
+## Query Parameters
+
+| Name         | Type   | Required | Description |
+|--------------|--------|----------|-------------|
+| user_id      | string | yes      | Unique identifier for the user |
+| context_id   | string | no       | Optional context logic for tailoring results |
+| quantity     | int    | no       | Number of results to return (default: 5) |
+
+## Response
+
+**200 OK**
+```json
+{
+  "recommendations": [
+    {
+      "entity_id": "item-123",
+      "score": 0.983,
+      "metadata": {
+        "name": "Nike Running Shoes",
+        "brand": "Nike"
+      }
+    }
+  ]
+}
+```
+
+## Notes
+- Recommendations are ordered by descending score.
+- Additional metadata is returned per item to aid in UI rendering.

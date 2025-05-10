@@ -1,29 +1,96 @@
 ---
-title: "Introduction - Jared's changes"
-description: "Example section for showcasing API endpoints"
+title: "Introduction"
+description: "Understand how to integrate and use the NeuronSearchLab recommendation engine API."
 ---
 
 <Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
+All endpoints are protected by Bearer token authentication using AWS Cognito. Make sure you obtain a valid access token via the `/auth/token` endpoint before making requests.
 </Note>
 
-## Welcome
+## Base URL
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+```bash
+https://api.neuronsearchlab.com
+```
 
-<Card title="Plant Store Endpoints" icon="leaf" href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json">
-  View the OpenAPI specification file
-</Card>
+---
+
+## Endpoints Overview
+
+Below is a summary of available endpoints in the NeuronSearchLab API:
+
+### 🔐 Authentication
+
+#### `POST /auth/token`
+
+Obtain a bearer token for authenticating future requests. Pass `Content-Type: application/json` in the header and required credentials in the body (details will depend on your Cognito setup).
+
+---
+
+### 📦 Items
+
+#### `POST /items`
+
+Submit or update items to be used in recommendations. Each item can contain metadata, embeddings, and identifiers.
+
+Authentication Scope: `neuronsearchlab-api/write`
+
+---
+
+### 📊 Events
+
+#### `POST /events`
+
+Submit user events (e.g. clicks, views, likes). Events are stored and used for personalization.
+
+Authentication Scope: `neuronsearchlab-api/write`
+
+---
+
+### 🎯 Recommendations
+
+#### `GET /recommendations`
+
+Fetch personalized or context-aware recommendations for a user. You can pass `context_id`, user identifiers, or other parameters to tailor the output.
+
+Authentication Scope: `neuronsearchlab-api/read`
+
+---
+
+## CORS Support
+
+Each endpoint supports `OPTIONS` requests for CORS preflight. These include headers:
+
+- `Access-Control-Allow-Origin`
+- `Access-Control-Allow-Methods`
+- `Access-Control-Allow-Headers`
+
+---
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All protected endpoints require a valid **Bearer token** in the `Authorization` header:
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+```http
+Authorization: Bearer <your_access_token>
 ```
+
+Tokens are issued via Cognito. Scopes used:
+
+- `neuronsearchlab-api/read`
+- `neuronsearchlab-api/write`
+
+---
+
+## SDKs and Console
+
+To simplify integration, you can use our official SDK or web console:
+
+- [Node.js SDK on npm](https://www.npmjs.com/package/@neuronsearchlab/sdk)
+- [NeuronSearchLab Console](https://console.neuronsearchlab.com/login)
+
+---
+
+<Alert type="info">
+Need help or have a question? Contact us at <a href="mailto:contact@neuronsearchlab.com">contact@neuronsearchlab.com</a>
+</Alert>

@@ -1,0 +1,49 @@
+---
+title: "POST /items"
+description: "Submit or update items for recommendations."
+openapi: "POST /items"
+---
+
+## Description
+
+Allows you to upsert items into the system, each with metadata and optional embedding data for use in the recommendation engine.
+
+## Request
+
+**Endpoint:**
+```http
+POST /items
+```
+
+**Headers:**
+```http
+Authorization: Bearer <token>
+Content-Type: application/json
+```
+
+**Body Example:**
+```json
+{
+  "entity_id": "item-123",
+  "name": "Nike Running Shoes",
+  "description": "High-performance running shoes.",
+  "metadata": {
+    "category": "Footwear",
+    "brand": "Nike",
+    "price": 109.99
+  }
+}
+```
+
+## Response
+
+**200 OK**
+```json
+{
+  "message": "Item upserted successfully"
+}
+```
+
+## Notes
+- Ensure unique `entity_id` per item.
+- Metadata can include any JSON-serializable fields.
