@@ -3,79 +3,78 @@ title: 'Quickstart'
 description: 'Start building with NeuronSearchLab in just a few minutes'
 ---
 
-## Set up your development environment
+## Set up your access
 
-Get started quickly by setting up your local environment and deploying your documentation or API integration.
+NeuronSearchLab is a hosted API service that provides real-time personalized recommendations through an API, SDK, and a web console. You don’t need to deploy or install anything — just sign up and generate your API credentials.
 
-### Edit and preview locally
+### 1. Register or Log In
 
-<AccordionGroup>
-  <Accordion icon="github" title="Clone your docs or project repo">
-    Your project repository contains everything you need to get started with NeuronSearchLab. Clone it locally using Git:
+Go to [console.neuronsearchlab.com/register](https://console.neuronsearchlab.com/register) or [login](https://console.neuronsearchlab.com/login) to create an account.
 
-    ```bash
-    git clone https://github.com/your-org/your-repo.git
-    ```
+### 2. Generate Client Credentials
 
-    Make sure you have the required dependencies installed, and navigate into your project directory to begin editing.
-  </Accordion>
+Once logged in, navigate to the **Security** section and generate a new **Client ID** and **Client Secret**. These are required to authenticate your backend services.
 
-  <Accordion icon="rectangle-terminal" title="Preview changes locally">
-    Use your preferred development server to preview documentation or test API changes in real time. If using a framework like Next.js or Vite, you can run:
+<Warning>
+  **Do not expose your Client Secret on the frontend.**
+</Warning>
 
-    ```bash
-    npm install
-    npm run dev
-    ```
 
-    You should now see your site running locally on `http://localhost:3000`.
-  </Accordion>
-</AccordionGroup>
 
-### Deploy your changes
+---
 
-<AccordionGroup>
+## Authenticate securely
 
-  <Accordion icon="message-bot" title="Set up continuous deployment">
-    We recommend using GitHub Actions, Vercel, or Netlify for deploying your docs or frontend. Once configured, pushing changes to your main branch will automatically trigger a deployment.
-    
-    For backend components (e.g. Lambda functions), you can use the AWS CDK or SAM CLI to deploy changes to your infrastructure.
-  </Accordion>
+Set up a backend endpoint in your server to authenticate with the NeuronSearchLab API:
 
-  <Accordion icon="rocket" title="Push your changes to deploy">
-    After committing your changes, push them to your remote repository:
+1. Call the `/auth/token` endpoint using the Client ID and Client Secret from your server.
+2. Pass the resulting access token to your frontend application (e.g. via HTTP-only cookies or headers).
+3. Use this token to access NeuronSearchLab endpoints such as `/recommendations`, `/items`, and `/events`.
 
-    ```bash
-    git add .
-    git commit -m "Update docs"
-    git push origin main
-    ```
+```bash
+POST /auth/token
+Authorization: Basic <base64(client_id:client_secret)>
+```
 
-    Your deployment pipeline should automatically pick up the latest changes and update your documentation or services.
-  </Accordion>
+---
 
-</AccordionGroup>
+## Make your first API call
 
-## Update your docs and API references
+Once you have an access token, you can start making calls to the API:
 
-NeuronSearchLab uses MDX for documentation and supports React components to build rich, interactive content. You can extend your docs as needed to fit your product and technical workflows.
+```bash
+GET /recommendations?user_id=user-123&context_id=homepage
+Authorization: Bearer <your_access_token>
+```
+
+Use the [SDK](https://www.npmjs.com/package/@neuronsearchlab/sdk) for easier integration with JavaScript apps, or call the API directly from your backend.
+
+---
+
+## Explore the Console
+
+In addition to the API and SDK, you can manage your data and monitor performance through the [NeuronSearchLab Console](https://console.neuronsearchlab.com). This includes:
+
+- Creating recommendation contexts
+- Reviewing event logs
+- Managing item catalogs
+
+---
+
+## Extend your integration
+
+NeuronSearchLab supports rich documentation and examples to help you integrate quickly and effectively.
 
 <CardGroup>
-
-  <Card title="Add Content With MDX" icon="file" href="/essentials/markdown">
-    Add product guides, setup instructions, and technical references using MDX.
+  <Card title="Track Events" icon="timeline" href="/api-reference/endpoint/submit-events">
+    Log views, clicks, and conversions to power real-time recommendations.
   </Card>
 
-  <Card title="Add Code Blocks" icon="square-code" href="/essentials/code">
-    Show API usage, integration steps, or examples with syntax-highlighted code.
+  <Card title="Submit Items" icon="database" href="/api-reference/endpoint/submit-items">
+    Send product or content metadata to build your recommendation catalog.
   </Card>
 
-  <Card title="Add Images" icon="image" href="/essentials/images">
-    Embed visuals, diagrams, or architecture graphics to help users understand concepts.
+  <Card title="Get Recommendations" icon="sparkles" href="/api-reference/endpoint/get-recommendations">
+    Retrieve personalized results tailored to your users.
   </Card>
-
-  <Card title="Add Custom Components" icon="puzzle-piece" href="/essentials/reusable-snippets">
-    Use React components or reusable snippets to make your docs modular and dynamic.
-  </Card>
-
 </CardGroup>

@@ -9,46 +9,61 @@
   },
   "favicon": "/favicon.ico",
   "navigation": {
-    "tabs": [
+"tabs": [
+  {
+    "tab": "Guides",
+    "groups": [
       {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Get Started",
-            "pages": ["introduction", "quickstart", "development"]
-          },
-          {
-            "group": "Essentials",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
-            ]
-          }
-        ]
+        "group": "Get Started",
+        "pages": ["introduction", "quickstart"]
       },
-    {
-      "tab": "API Reference",
-      "groups": [
-        {
-          "group": "API Documentation",
-          "pages": ["api-reference/introduction"]
-        },
-        {
-          "group": "Endpoint Examples",
-          "pages": [
-            "api-reference/endpoint/authenticate",
-            "api-reference/endpoint/get-recommendations",
-            "api-reference/endpoint/submit-events",
-            "api-reference/endpoint/submit-items"
-          ]
-        }
-      ]
-    }
-    ],
+      {
+        "group": "Use Cases",
+        "pages": ["use-cases/ecommerce", "use-cases/streaming", "use-cases/news"]
+      },
+      {
+        "group": "Advanced Usage",
+        "pages": ["customisation/events", "customisation/contexts", "customisation/ranking-strategies"]
+      }
+    ]
+  },
+  {
+    "tab": "API Reference",
+    "groups": [
+      {
+        "group": "API Documentation",
+        "pages": ["api-reference/introduction"]
+      },
+      {
+        "group": "Endpoint Examples",
+        "pages": [
+          "api-reference/endpoint/authenticate",
+          "api-reference/endpoint/get-recommendations",
+          "api-reference/endpoint/submit-events",
+          "api-reference/endpoint/submit-items"
+        ]
+      }
+    ]
+  },
+  {
+    "tab": "SDK",
+    "groups": [
+      {
+        "group": "Integrate with SDK",
+        "pages": ["sdk/installation", "sdk/react", "sdk/nextjs", "sdk/tracking-events"]
+      }
+    ]
+  },
+  {
+    "tab": "Analytics",
+    "groups": [
+      {
+        "group": "Analytics & Monitoring",
+        "pages": ["analytics/overview", "analytics/event-logging", "analytics/ctr"]
+      }
+    ]
+  }
+],
     "global": {
       "anchors": [
         {
