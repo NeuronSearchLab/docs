@@ -1,0 +1,46 @@
+---
+title: "POST /auth/token"
+description: "Obtain a bearer token for authenticating requests."
+openapi: "POST /auth/token"
+---
+
+## Description
+
+This endpoint returns a bearer token that can be used to authorize requests to protected endpoints.
+
+## Request
+
+**Endpoint:**
+```http
+POST /auth/token
+```
+
+**Headers:**
+```http
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "username": "your_username",
+  "password": "your_password"
+}
+```
+
+> The actual required body depends on your Cognito client setup.
+
+## Response
+
+**200 OK**
+```json
+{
+  "access_token": "<token>",
+  "expires_in": 3600,
+  "token_type": "Bearer"
+}
+```
+
+## Notes
+
+Use the `access_token` from the response as the `Authorization` header value in future requests.

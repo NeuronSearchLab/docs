@@ -1,0 +1,46 @@
+---
+title: "POST /events"
+description: "Submit user interaction events."
+openapi: "POST /events"
+---
+
+## Description
+
+This endpoint records user interaction events, such as views, clicks, or other custom activity signals used to train recommendation models.
+
+## Request
+
+**Endpoint:**
+```http
+POST /events
+```
+
+**Headers:**
+```http
+Authorization: Bearer <token>
+Content-Type: application/json
+```
+
+**Body Example:**
+```json
+{
+  "user_id": "user-456",
+  "event_type": "click",
+  "entity_id": "item-123",
+  "timestamp": "2025-05-10T14:00:00Z",
+  "weight": 1.0
+}
+```
+
+## Response
+
+**200 OK**
+```json
+{
+  "message": "Event recorded successfully"
+}
+```
+
+## Notes
+- `event_type` can be any string you've defined (e.g., `view`, `like`, `purchase`).
+- `weight` is optional and can be used to influence model training.

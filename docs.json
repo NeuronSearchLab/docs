@@ -30,40 +30,31 @@
           }
         ]
       },
-      {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "API Documentation",
-            "pages": ["api-reference/introduction"]
-          },
-          {
-            "group": "Endpoint Examples",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete"
-            ]
-          }
-        ]
-      }
+    {
+      "tab": "API Reference",
+      "groups": [
+        {
+          "group": "API Documentation",
+          "pages": ["api-reference/introduction"]
+        },
+        {
+          "group": "Endpoint Examples",
+          "pages": [
+            "api-reference/endpoint/authenticate",
+            "api-reference/endpoint/get-recommendations",
+            "api-reference/endpoint/submit-events",
+            "api-reference/endpoint/submit-items"
+          ]
+        }
+      ]
+    }
     ],
     "global": {
       "anchors": [
         {
           "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
+          "href": "https://docs.neuronsearchlab.com",
           "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
         }
       ]
     }
@@ -76,20 +67,19 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:contact@neuronsearchlab.com"
       }
     ],
     "primary": {
       "type": "button",
       "label": "Console",
-      "href": "https://dashboard.mintlify.com"
+      "href": "https://console.neuronsearchlab.com/login"
     }
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "github": "https://github.com/neuronsearchlab",
+      "linkedin": "https://linkedin.com/company/neuronsearchlab"
     }
   }
 }
