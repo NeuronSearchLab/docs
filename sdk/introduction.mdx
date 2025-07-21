@@ -1,0 +1,96 @@
+---
+title: "Introduction"
+description: "Understand how to integrate and use the NeuronSearchLab recommendation engine API."
+---
+
+<Note>
+All endpoints are protected by Bearer token authentication using AWS Cognito. Make sure you obtain a valid access token via the `/auth/token` endpoint before making requests.
+</Note>
+
+## Base URL
+
+```bash
+https://api.neuronsearchlab.com
+```
+
+---
+
+## Endpoints Overview
+
+Below is a summary of available endpoints in the NeuronSearchLab API:
+
+### 🔐 Authentication
+
+#### `POST /auth/token`
+
+Obtain a bearer token for authenticating future requests. Pass `Content-Type: application/json` in the header and required credentials in the body (details will depend on your Cognito setup).
+
+---
+
+### 📦 Items
+
+#### `POST /items`
+
+Submit or update items to be used in recommendations. Each item can contain metadata, embeddings, and identifiers.
+
+Authentication Scope: `neuronsearchlab-api/write`
+
+---
+
+### 📊 Events
+
+#### `POST /events`
+
+Submit user events (e.g. clicks, views, likes). Events are stored and used for personalization.
+
+Authentication Scope: `neuronsearchlab-api/write`
+
+---
+
+### 🎯 Recommendations
+
+#### `GET /recommendations`
+
+Fetch personalized or context-aware recommendations for a user. You can pass `context_id`, user identifiers, or other parameters to tailor the output.
+
+Authentication Scope: `neuronsearchlab-api/read`
+
+---
+
+## CORS Support
+
+Each endpoint supports `OPTIONS` requests for CORS preflight. These include headers:
+
+- `Access-Control-Allow-Origin`
+- `Access-Control-Allow-Methods`
+- `Access-Control-Allow-Headers`
+
+---
+
+## Authentication
+
+All protected endpoints require a valid **Bearer token** in the `Authorization` header:
+
+```http
+Authorization: Bearer <your_access_token>
+```
+
+Tokens are issued via Cognito. Scopes used:
+
+- `neuronsearchlab-api/read`
+- `neuronsearchlab-api/write`
+
+---
+
+## SDKs and Console
+
+To simplify integration, you can use our official SDK or web console:
+
+- [Node.js SDK on npm](https://www.npmjs.com/package/@neuronsearchlab/sdk)
+- [NeuronSearchLab Console](https://console.neuronsearchlab.com/login)
+
+---
+
+<Alert type="info">
+Need help or have a question? Contact us at <a href="mailto:contact@neuronsearchlab.com">contact@neuronsearchlab.com</a>
+</Alert>
