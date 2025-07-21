@@ -16,14 +16,6 @@
       {
         "group": "Get Started",
         "pages": ["introduction", "quickstart"]
-      },
-      {
-        "group": "Use Cases",
-        "pages": ["use-cases/ecommerce", "use-cases/streaming", "use-cases/news"]
-      },
-      {
-        "group": "Advanced Usage",
-        "pages": ["customisation/events", "customisation/contexts", "customisation/ranking-strategies"]
       }
     ]
   },
@@ -50,16 +42,7 @@
     "groups": [
       {
         "group": "Integrate with SDK",
-        "pages": ["sdk/installation", "sdk/react", "sdk/nextjs", "sdk/tracking-events"]
-      }
-    ]
-  },
-  {
-    "tab": "Analytics",
-    "groups": [
-      {
-        "group": "Analytics & Monitoring",
-        "pages": ["analytics/overview", "analytics/event-logging", "analytics/ctr"]
+        "pages": ["sdk/introduction"]
       }
     ]
   }
@@ -70,7 +53,12 @@
           "anchor": "Documentation",
           "href": "https://docs.neuronsearchlab.com",
           "icon": "book-open-cover"
-        }
+        },
+                {
+                  "anchor": "Console",
+                  "href": "https://console.neuronsearchlab.com/login",
+                  "icon": "move-up-right"
+                }
       ]
     }
   },
