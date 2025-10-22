@@ -11,7 +11,6 @@
   "navigation": {
     "tabs": [
       {
-<<<<<<< HEAD
         "tab": "Guides",
         "groups": [
           {
@@ -19,51 +18,34 @@
             "pages": ["introduction", "quickstart"]
           }
         ]
-=======
-        "group": "Get Started",
-        "pages": ["introduction", "quickstart"]
       },
       {
-        "group": "Use Cases",
-        "pages": ["use-cases/ecommerce", "use-cases/streaming", "use-cases/news"]
-      },
-      {
-        "group": "Advanced Usage",
-        "pages": ["customisation/events", "customisation/contexts", "customisation/ranking-strategies"]
-      }
-    ]
-  },
-  {
-    "tab": "API Reference",
-    "groups": [
-      {
-        "group": "API Documentation",
-        "pages": ["api-reference/introduction"]
->>>>>>> 51ba42c (Revert "Update documentation: remove outdated sections and add comprehensive API integration guide")
-      },
-      {
-        "tab": "Reference",
+        "tab": "API Reference",
         "groups": [
           {
-            "group": "API",
+            "group": "API Documentation",
             "pages": ["api-reference/introduction"]
           },
           {
-            "group": "Endpoints",
+            "group": "Endpoint Examples",
             "pages": [
               "api-reference/endpoint/authenticate",
               "api-reference/endpoint/get-recommendations",
               "api-reference/endpoint/submit-events",
               "api-reference/endpoint/submit-items"
             ]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "SDK",
+        "groups": [
           {
-            "group": "SDKs",
+            "group": "Integrate with SDK",
             "pages": ["sdk/introduction"]
           }
         ]
       }
-<<<<<<< HEAD
     ],
     "global": {
       "anchors": [
@@ -81,35 +63,6 @@
           "anchor": "Support",
           "href": "mailto:contact@neuronsearchlab.com",
           "icon": "life-buoy"
-=======
-    ]
-  },
-  {
-    "tab": "SDK",
-    "groups": [
-      {
-        "group": "Integrate with SDK",
-        "pages": ["sdk/installation", "sdk/react", "sdk/nextjs", "sdk/tracking-events"]
-      }
-    ]
-  },
-  {
-    "tab": "Analytics",
-    "groups": [
-      {
-        "group": "Analytics & Monitoring",
-        "pages": ["analytics/overview", "analytics/event-logging", "analytics/ctr"]
-      }
-    ]
-  }
-],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://docs.neuronsearchlab.com",
-          "icon": "book-open-cover"
->>>>>>> 51ba42c (Revert "Update documentation: remove outdated sections and add comprehensive API integration guide")
         }
       ]
     }
