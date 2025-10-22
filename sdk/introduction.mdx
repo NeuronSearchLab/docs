@@ -1,96 +1,148 @@
 ---
-title: "Introduction"
-description: "Understand how to integrate and use the NeuronSearchLab recommendation engine API."
+title: "Integrate with the SDK"
+description: "Install, configure, and use the official NeuronSearchLab SDK in your applications."
 ---
 
 <Note>
-All endpoints are protected by Bearer token authentication using AWS Cognito. Make sure you obtain a valid access token via the `/auth/token` endpoint before making requests.
+The SDK is a lightweight wrapper over the public API. Everything you can do in the REST interface is available here with first-class TypeScript types.
 </Note>
 
-## Base URL
+## Installation
+
+Install the package from npm and add it to your project dependencies:
 
 ```bash
-https://api.neuronsearchlab.com
+npm install @neuronsearchlab/sdk
+# or
+yarn add @neuronsearchlab/sdk
 ```
 
----
-
-## Endpoints Overview
-
-Below is a summary of available endpoints in the NeuronSearchLab API:
-
-### 🔐 Authentication
-
-#### `POST /auth/token`
-
-Obtain a bearer token for authenticating future requests. Pass `Content-Type: application/json` in the header and required credentials in the body (details will depend on your Cognito setup).
+If you are using TypeScript, no additional type definitions are required—the SDK ships with them.
 
 ---
 
-### 📦 Items
+## Authenticate the client
 
-#### `POST /items`
+The client uses Cognito-issued bearer tokens. Fetch an access token using your existing authentication flow, then configure the SDK once at startup:
 
-Submit or update items to be used in recommendations. Each item can contain metadata, embeddings, and identifiers.
+```ts
+import { NeuronSearchLabClient } from "@neuronsearchlab/sdk";
 
-Authentication Scope: `neuronsearchlab-api/write`
+const client = new NeuronSearchLabClient({
+  baseUrl: "https://api.neuronsearchlab.com",
+  getAccessToken: async () => {
+    const response = await fetch("https://api.neuronsearchlab.com/auth/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        clientId: process.env.NEURONSEARCHLAB_CLIENT_ID!,
+        clientSecret: process.env.NEURONSEARCHLAB_CLIENT_SECRET!,
+        grantType: "client_credentials",
+      }),
+    });
 
----
+    if (!response.ok) {
+      throw new Error("Unable to obtain access token");
+    }
 
-### 📊 Events
-
-#### `POST /events`
-
-Submit user events (e.g. clicks, views, likes). Events are stored and used for personalization.
-
-Authentication Scope: `neuronsearchlab-api/write`
-
----
-
-### 🎯 Recommendations
-
-#### `GET /recommendations`
-
-Fetch personalized or context-aware recommendations for a user. You can pass `context_id`, user identifiers, or other parameters to tailor the output.
-
-Authentication Scope: `neuronsearchlab-api/read`
-
----
-
-## CORS Support
-
-Each endpoint supports `OPTIONS` requests for CORS preflight. These include headers:
-
-- `Access-Control-Allow-Origin`
-- `Access-Control-Allow-Methods`
-- `Access-Control-Allow-Headers`
-
----
-
-## Authentication
-
-All protected endpoints require a valid **Bearer token** in the `Authorization` header:
-
-```http
-Authorization: Bearer <your_access_token>
+    const { access_token } = await response.json();
+    return access_token as string;
+  },
+});
 ```
 
-Tokens are issued via Cognito. Scopes used:
-
-- `neuronsearchlab-api/read`
-- `neuronsearchlab-api/write`
+The `getAccessToken` callback is called automatically before each request and should resolve to a string. The example above demonstrates the client credentials grant, but you can plug in any logic—such as refreshing a cached token or forwarding a user's session.
 
 ---
 
-## SDKs and Console
+## Upsert catalog items
 
-To simplify integration, you can use our official SDK or web console:
+Use `client.items.upsert` to add or update catalog entries. Each item supports metadata, custom attributes, and optional embeddings.
 
-- [Node.js SDK on npm](https://www.npmjs.com/package/@neuronsearchlab/sdk)
-- [NeuronSearchLab Console](https://console.neuronsearchlab.com/login)
+```ts
+await client.items.upsert([
+  {
+    id: "article-123",
+    title: "Building contextual recommendations",
+    tags: ["personalization", "vector-search"],
+    url: "https://example.com/articles/123",
+    metadata: {
+      vertical: "news",
+      language: "en",
+    },
+  },
+]);
+```
+
+You can batch multiple items in a single call. The SDK handles retryable errors with exponential backoff.
 
 ---
 
-<Alert type="info">
-Need help or have a question? Contact us at <a href="mailto:contact@neuronsearchlab.com">contact@neuronsearchlab.com</a>
-</Alert>
+## Record user events
+
+Events provide the feedback loop that powers personalization. Send them as they happen from your frontend or backend:
+
+```ts
+await client.events.publish([
+  {
+    id: "event-1",
+    type: "click",
+    userId: "user-456",
+    itemId: "article-123",
+    timestamp: new Date().toISOString(),
+    contextId: "homepage",
+    metadata: {
+      position: 2,
+    },
+  },
+]);
+```
+
+The SDK automatically stamps the correct `Authorization` header and ensures your payload matches the API schema.
+
+---
+
+## Request recommendations
+
+When you need personalized content, call `client.recommendations.get` with the relevant identifiers and filters:
+
+```ts
+const { results } = await client.recommendations.get({
+  userId: "user-456",
+  contextId: "homepage",
+  limit: 5,
+  filters: {
+    tags: { include: ["vector-search"] },
+  },
+});
+
+console.log(results);
+```
+
+Each result includes the item payload you previously upserted, along with relevance scores. Adjust the `filters`, `boosts`, or `fallback` options to tune the experience.
+
+---
+
+## Error handling and retries
+
+Network issues and rate limits can happen. The client exposes interceptors so you can adjust retry logic or instrument metrics:
+
+```ts
+client.interceptors.onError((error) => {
+  if (error.response?.status === 429) {
+    console.warn("Back off—too many requests", error.response.headers["retry-after"]);
+  }
+
+  throw error;
+});
+```
+
+You can also wrap individual calls in your own retry helper if you need custom behavior.
+
+---
+
+## Next steps
+
+- Explore the [complete SDK reference](https://www.npmjs.com/package/@neuronsearchlab/sdk) for every method and option.
+- Visit the [API documentation](/docs/api-reference/introduction) to understand the underlying REST endpoints.
+- Reach out to <a href="mailto:contact@neuronsearchlab.com">contact@neuronsearchlab.com</a> if you need help modeling data or planning rollouts.
