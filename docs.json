@@ -11,6 +11,7 @@
   "navigation": {
     "tabs": [
       {
+<<<<<<< HEAD
         "tab": "Guides",
         "groups": [
           {
@@ -18,6 +19,27 @@
             "pages": ["introduction", "quickstart"]
           }
         ]
+=======
+        "group": "Get Started",
+        "pages": ["introduction", "quickstart"]
+      },
+      {
+        "group": "Use Cases",
+        "pages": ["use-cases/ecommerce", "use-cases/streaming", "use-cases/news"]
+      },
+      {
+        "group": "Advanced Usage",
+        "pages": ["customisation/events", "customisation/contexts", "customisation/ranking-strategies"]
+      }
+    ]
+  },
+  {
+    "tab": "API Reference",
+    "groups": [
+      {
+        "group": "API Documentation",
+        "pages": ["api-reference/introduction"]
+>>>>>>> 51ba42c (Revert "Update documentation: remove outdated sections and add comprehensive API integration guide")
       },
       {
         "tab": "Reference",
@@ -41,6 +63,7 @@
           }
         ]
       }
+<<<<<<< HEAD
     ],
     "global": {
       "anchors": [
@@ -58,6 +81,35 @@
           "anchor": "Support",
           "href": "mailto:contact@neuronsearchlab.com",
           "icon": "life-buoy"
+=======
+    ]
+  },
+  {
+    "tab": "SDK",
+    "groups": [
+      {
+        "group": "Integrate with SDK",
+        "pages": ["sdk/installation", "sdk/react", "sdk/nextjs", "sdk/tracking-events"]
+      }
+    ]
+  },
+  {
+    "tab": "Analytics",
+    "groups": [
+      {
+        "group": "Analytics & Monitoring",
+        "pages": ["analytics/overview", "analytics/event-logging", "analytics/ctr"]
+      }
+    ]
+  }
+],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Documentation",
+          "href": "https://docs.neuronsearchlab.com",
+          "icon": "book-open-cover"
+>>>>>>> 51ba42c (Revert "Update documentation: remove outdated sections and add comprehensive API integration guide")
         }
       ]
     }
