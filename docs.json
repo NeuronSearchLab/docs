@@ -9,56 +9,56 @@
   },
   "favicon": "/favicon.ico",
   "navigation": {
-"tabs": [
-  {
-    "tab": "Guides",
-    "groups": [
+    "tabs": [
       {
-        "group": "Get Started",
-        "pages": ["introduction", "quickstart"]
-      }
-    ]
-  },
-  {
-    "tab": "API Reference",
-    "groups": [
-      {
-        "group": "API Documentation",
-        "pages": ["api-reference/introduction"]
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["introduction", "quickstart"]
+          }
+        ]
       },
       {
-        "group": "Endpoint Examples",
-        "pages": [
-          "api-reference/endpoint/authenticate",
-          "api-reference/endpoint/get-recommendations",
-          "api-reference/endpoint/submit-events",
-          "api-reference/endpoint/submit-items"
+        "tab": "Reference",
+        "groups": [
+          {
+            "group": "API",
+            "pages": ["api-reference/introduction"]
+          },
+          {
+            "group": "Endpoints",
+            "pages": [
+              "api-reference/endpoint/authenticate",
+              "api-reference/endpoint/get-recommendations",
+              "api-reference/endpoint/submit-events",
+              "api-reference/endpoint/submit-items"
+            ]
+          },
+          {
+            "group": "SDKs",
+            "pages": ["sdk/introduction"]
+          }
         ]
       }
-    ]
-  },
-  {
-    "tab": "SDK",
-    "groups": [
-      {
-        "group": "Integrate with SDK",
-        "pages": ["sdk/introduction"]
-      }
-    ]
-  }
-],
+    ],
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://docs.neuronsearchlab.com",
-          "icon": "book-open"
+          "anchor": "Console",
+          "href": "https://console.neuronsearchlab.com/login",
+          "icon": "arrow-up-right"
         },
-                {
-                  "anchor": "Console",
-                  "href": "https://console.neuronsearchlab.com/login",
-                  "icon": "arrow-up-right"
-                }
+        {
+          "anchor": "GitHub",
+          "href": "https://github.com/neuronsearchlab",
+          "icon": "github"
+        },
+        {
+          "anchor": "Support",
+          "href": "mailto:contact@neuronsearchlab.com",
+          "icon": "life-buoy"
+        }
       ]
     }
   },
