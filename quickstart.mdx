@@ -5,59 +5,70 @@ description: 'Start building with NeuronSearchLab in just a few minutes'
 
 ## Set up your access
 
-NeuronSearchLab is a hosted API service that provides real-time personalized recommendations through an API, SDK, and a web console. You don’t need to deploy or install anything — just sign up and generate your API credentials.
+NeuronSearchLab is a hosted API service that provides real-time personalized recommendations through an API, SDK, and a web console. You do not need to deploy or install anything - just sign up and generate your API credentials.
 
-### 1. Register or Log In
+### 1. Register or log in
 
-Go to [console.neuronsearchlab.com/register](https://console.neuronsearchlab.com/register) or [login](https://console.neuronsearchlab.com/login) to create an account.
+Go to [console.neuronsearchlab.com/register](https://console.neuronsearchlab.com/register) or [login](https://console.neuronsearchlab.com/login) to create an account. You can invite teammates later from the **Organization** settings page.
 
-### 2. Generate Client Credentials
+### 2. Generate client credentials
 
-Once logged in, navigate to the **Security** section and generate a new **Client ID** and **Client Secret**. These are required to authenticate your backend services.
+Once logged in, open **Security** → **API Clients** and create a new client. Copy the **Client ID** and **Client Secret**. They are required to authenticate your backend services.
 
 <Warning>
-  **Do not expose your Client Secret on the frontend.**
+  **Never expose the Client Secret in browser code or mobile apps.** Store it in your server-side environment variables or a secrets manager.
 </Warning>
 
+### 3. Add your first dataset
 
+Navigate to **Catalog** → **Items** and use the upload flow to add a handful of representative items. Include metadata such as category, price, tags, and thumbnails to improve downstream recommendations.
 
 ---
 
 ## Authenticate securely
 
-Set up a backend endpoint in your server to authenticate with the NeuronSearchLab API:
-
-1. Call the `/auth/token` endpoint using the Client ID and Client Secret from your server.
-2. Pass the resulting access token to your frontend application (e.g. via HTTP-only cookies or headers).
-3. Use this token to access NeuronSearchLab endpoints such as `/recommendations`, `/items`, and `/events`.
+Create a backend route that exchanges your client credentials for an access token. The token scopes enforce what each service can do.
 
 ```bash
-POST /auth/token
-Authorization: Basic <base64(client_id:client_secret)>
+curl -X POST https://api.neuronsearchlab.com/auth/token \
+  -H "Authorization: Basic <base64(client_id:client_secret)>" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=client_credentials"
 ```
+
+1. Call the `/auth/token` endpoint from a trusted server environment.
+2. Cache the resulting access token until it expires (tokens default to 60 minutes).
+3. Forward the token to your frontend or edge workers via secure headers.
+
+<Tip>
+  Rotate credentials regularly and prefer one client per application so you can revoke access without downtime.
+</Tip>
 
 ---
 
 ## Make your first API call
 
-Once you have an access token, you can start making calls to the API:
+With an access token you can request recommendations immediately. The following example retrieves homepage content for a known user:
 
 ```bash
-GET /recommendations?user_id=user-123&context_id=homepage
-Authorization: Bearer <your_access_token>
+curl -X GET "https://api.neuronsearchlab.com/recommendations?user_id=user-123&context_id=homepage" \
+  -H "Authorization: Bearer <your_access_token>"
 ```
 
-Use the [SDK](https://www.npmjs.com/package/@neuronsearchlab/sdk) for easier integration with JavaScript apps, or call the API directly from your backend.
+Send optional query parameters such as `limit`, `filters`, or `boosts` to tailor the response. Responses include ranked items with associated metadata so you can render UI components quickly.
+
+If you prefer higher level abstractions, install the [official SDK](https://www.npmjs.com/package/@neuronsearchlab/sdk) and call `client.recommendations.list()` from your server.
 
 ---
 
-## Explore the Console
+## Explore the console
 
-In addition to the API and SDK, you can manage your data and monitor performance through the [NeuronSearchLab Console](https://console.neuronsearchlab.com). This includes:
+In addition to the API and SDK, you can manage your data and monitor performance through the [NeuronSearchLab Console](https://console.neuronsearchlab.com). Key areas include:
 
-- Creating recommendation contexts
-- Reviewing event logs
-- Managing item catalogs
+- **Contexts** - Define business rules, default filters, and ranking objectives.
+- **Events** - Inspect incoming engagement signals and replay payloads for debugging.
+- **Catalog** - Search and edit item metadata to keep recommendations fresh.
+- **Insights** - Track conversion metrics, latency, and popular queries over time.
 
 ---
 
@@ -66,15 +77,15 @@ In addition to the API and SDK, you can manage your data and monitor performance
 NeuronSearchLab supports rich documentation and examples to help you integrate quickly and effectively.
 
 <CardGroup>
-  <Card title="Track Events" icon="timeline" href="/api-reference/endpoint/submit-events">
-    Log views, clicks, and conversions to power real-time recommendations.
+  <Card title="Track Events" icon="activity" href="/api-reference/endpoint/submit-events">
+    Log impressions, clicks, and conversions to power near real-time learning.
   </Card>
 
   <Card title="Submit Items" icon="database" href="/api-reference/endpoint/submit-items">
-    Send product or content metadata to build your recommendation catalog.
+    Send product or content metadata to build and refresh your catalog.
   </Card>
 
   <Card title="Get Recommendations" icon="sparkles" href="/api-reference/endpoint/get-recommendations">
-    Retrieve personalized results tailored to your users.
+    Retrieve personalized results that respect context, filters, and boosts.
   </Card>
 </CardGroup>

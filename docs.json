@@ -52,12 +52,12 @@
         {
           "anchor": "Documentation",
           "href": "https://docs.neuronsearchlab.com",
-          "icon": "book-open-cover"
+          "icon": "book-open"
         },
                 {
                   "anchor": "Console",
                   "href": "https://console.neuronsearchlab.com/login",
-                  "icon": "move-up-right"
+                  "icon": "arrow-up-right"
                 }
       ]
     }
