@@ -1,0 +1,48 @@
+---
+title: 'Authentication'
+description: 'Secure access to NeuronSearchLab APIs and SDKs.'
+---
+
+NeuronSearchLab uses OAuth 2.0 client credentials to authenticate server-to-server requests. Follow these practices to protect your integration.
+
+## Create API clients
+
+1. Visit [Console → Security → API Clients](https://console.neuronsearchlab.com/security/clients).
+2. Click **New client** and provide a descriptive name per application or environment.
+3. Download the generated **Client ID** and **Client Secret**. Store the secret in a secure vault—never ship it to browsers or mobile apps.
+
+## Exchange credentials for an access token
+
+Use the client credentials to request a short-lived access token.
+
+```bash
+curl -X POST https://api.neuronsearchlab.com/auth/token \
+  -H "Authorization: Basic <base64(client_id:client_secret)>" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=client_credentials"
+```
+
+Tokens default to a 60-minute lifetime. Cache them server-side and refresh proactively to avoid downtime.
+
+## Authenticate SDK requests
+
+The official SDK handles token exchange automatically. Provide credentials once during initialization:
+
+```ts
+import { NeuronSearchLab } from '@neuronsearchlab/sdk';
+
+const client = new NeuronSearchLab({
+  clientId: process.env.NEURON_CLIENT_ID!,
+  clientSecret: process.env.NEURON_CLIENT_SECRET!,
+});
+```
+
+The SDK refreshes tokens in the background and retries transient errors with exponential backoff.
+
+## Protect secrets in production
+
+- Scope clients per environment (staging, production) to limit blast radius.
+- Rotate credentials regularly using your secrets manager.
+- Audit token usage through the console activity logs.
+
+For endpoint-specific authentication details, refer to the [API Reference introduction](/api-reference/introduction).
