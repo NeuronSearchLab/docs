@@ -21,7 +21,6 @@
               "connect-your-data",
               "generate-recommendations",
               "contexts",
-              "embeddings",
               "authentication"
             ]
           }
