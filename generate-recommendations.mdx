@@ -1,0 +1,58 @@
+---
+title: 'Generate Recommendations'
+description: 'Request personalized results from the API or official SDKs.'
+---
+
+Once your catalog and events are flowing, you can begin requesting recommendations. This guide shows how to call the API directly and how to rely on the JavaScript SDK for convenience.
+
+## Choose a context and audience
+
+Every request should specify the surface and user the results are meant for.
+
+- **context_id** ties the request to a configuration defined in the console (for example `homepage` or `product_detail`).
+- **user_id** represents the end user who will see the results. Anonymous traffic can use a temporary UUID.
+- Optional filters and boosts allow you to respect inventory rules or promote specific items.
+
+If you need help modeling contexts, review the [Contexts guide](/contexts).
+
+## Call the REST API
+
+```bash
+curl -X GET "https://api.neuronsearchlab.com/recommendations" \
+  -H "Authorization: Bearer <access_token>" \
+  -G \
+  --data-urlencode "user_id=user-123" \
+  --data-urlencode "context_id=homepage" \
+  --data-urlencode "limit=10"
+```
+
+Responses contain ordered items with relevance scores, metadata, and optional debug hints. See the [endpoint reference](/api-reference/endpoint/get-recommendations) for the full schema.
+
+## Use the JavaScript SDK
+
+Install the SDK and authenticate it with your client credentials:
+
+```bash
+npm install @neuronsearchlab/sdk
+```
+
+```ts
+import { NeuronSearchLab } from '@neuronsearchlab/sdk';
+
+const client = new NeuronSearchLab({
+  clientId: process.env.NEURON_CLIENT_ID!,
+  clientSecret: process.env.NEURON_CLIENT_SECRET!,
+});
+
+const { data } = await client.recommendations.list({
+  userId: 'user-123',
+  contextId: 'homepage',
+  limit: 10,
+});
+```
+
+The SDK automatically exchanges credentials for an access token and retries transient failures. Explore more SDK capabilities in the [SDK introduction](/sdk/introduction).
+
+## Render and measure
+
+Use the item metadata provided in each response to render cards, collections, or hero modules in your UI. Track downstream engagement with the [`POST /events` endpoint](/api-reference/endpoint/submit-events) to continually improve relevance.

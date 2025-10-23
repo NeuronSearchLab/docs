@@ -1,0 +1,44 @@
+---
+title: 'Contexts'
+description: 'Model the experiences where recommendations appear.'
+---
+
+Contexts describe the placement, audience, and intent behind a recommendation request. Properly configuring them keeps results relevant across your product surfaces.
+
+## When to create a new context
+
+Create a dedicated context whenever:
+
+- The UI surface has unique layout or business goals (homepage vs. detail page).
+- You need a different blend of filters, boosts, or fallback logic.
+- You want to measure performance separately from other experiences.
+
+Start with a handful of high-impact contexts, then expand as you identify more nuanced placements.
+
+## Configure contexts in the console
+
+1. Navigate to [Console → Contexts](https://console.neuronsearchlab.com/contexts).
+2. Click **New context** and provide an ID such as `homepage` or `checkout_cross_sell`.
+3. Set optional defaults:
+   - **Filters** to enforce inventory rules.
+   - **Boosts** to promote seasonal items or campaigns.
+   - **Diversity controls** to avoid repetitive recommendations.
+4. Save the configuration and share the context ID with your engineering team.
+
+## Reference contexts in API calls
+
+Attach the context ID to every recommendation request so NeuronSearchLab can apply the proper logic.
+
+```bash
+curl -X GET "https://api.neuronsearchlab.com/recommendations" \
+  -H "Authorization: Bearer <access_token>" \
+  -G \
+  --data-urlencode "user_id=user-123" \
+  --data-urlencode "context_id=homepage"
+```
+
+The context you choose also appears in analytics, allowing you to compare conversion rates and engagement across placements.
+
+## Iterate continuously
+
+Monitor performance metrics and adjust context settings as business goals evolve. Combine live experimentation with [event tracking](/api-reference/endpoint/submit-events) to ensure the learning loop stays tight.
