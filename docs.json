@@ -70,12 +70,7 @@
         {
           "anchor": "Support",
           "href": "mailto:contact@neuronsearchlab.com",
-          "icon": "lifebuoy"
-        },
-        {
-          "anchor": "SDK",
-          "href": "https://www.npmjs.com/package/@neuronsearchlab/sdk",
-          "icon": "package"
+          "icon": "headset"
         }
       ]
     }
