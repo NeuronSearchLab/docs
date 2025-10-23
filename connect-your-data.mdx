@@ -1,0 +1,38 @@
+---
+title: 'Connect Your Data'
+description: 'Prepare your catalog, contexts, and events for NeuronSearchLab.'
+---
+
+NeuronSearchLab works best when it understands the structure and behavior of your content. Use this guide to connect the three core data feeds that power recommendations.
+
+## Prepare your catalog
+
+Your catalog describes every item that may be recommended. Each record should include a stable identifier and useful metadata so the platform can learn how to rank items.
+
+1. Gather key attributes such as title, description, price, category, tags, and thumbnail URLs.
+2. Map your data fields to the attributes accepted by the [`POST /items` endpoint](/api-reference/endpoint/submit-items).
+3. Use the [console catalog uploader](https://console.neuronsearchlab.com/catalog/items) for small batches or the API for automated pipelines.
+
+<Info>
+  The more descriptive your metadata, the easier it is to tune filters, boosts, and personalization rules later.
+</Info>
+
+## Define contexts
+
+Contexts capture where recommendations appear in your product experience—home feed, detail page, email digest, and more. Provide enough information to personalize each surface.
+
+1. Create a context ID for each surface and document the desired business logic.
+2. Configure default filters, ranking modifiers, and fallbacks inside the console under **Contexts**.
+3. Reference the context ID in every recommendation request to ensure consistent behavior.
+
+Learn more about advanced configuration in the [Contexts guide](/contexts).
+
+## Stream real-time events
+
+Engagement events help the service understand what resonates with your users.
+
+1. Send impressions, clicks, conversions, and other behavioral events using the [`POST /events` endpoint](/api-reference/endpoint/submit-events).
+2. Include user identifiers, item identifiers, context IDs, and timestamps in each payload.
+3. Validate event delivery with the live stream viewer in the console.
+
+When your catalog, contexts, and events stay in sync, NeuronSearchLab can adapt to changing inventory and user behavior almost immediately.

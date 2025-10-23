@@ -15,7 +15,15 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": ["introduction", "quickstart"]
+            "pages": [
+              "introduction",
+              "quickstart",
+              "connect-your-data",
+              "generate-recommendations",
+              "contexts",
+              "embeddings",
+              "authentication"
+            ]
           }
         ]
       },
