@@ -3,7 +3,7 @@ title: 'Generate Recommendations'
 description: 'Request personalized results from the API or official SDKs.'
 ---
 
-Once your catalog and events are flowing, you can begin requesting recommendations. This guide shows how to call the API directly and how to rely on the JavaScript SDK for convenience.
+Once your catalog and events are flowing, you can begin requesting recommendations. This guide shows how to call the API directly and how to rely on the JavaScript SDK for convenience. The `/recommendations` endpoint requires an access token that includes the `neuronsearchlab-api/read` scope.
 
 ## Choose a context and audience
 
@@ -23,10 +23,19 @@ curl -X GET "https://api.neuronsearchlab.com/recommendations" \
   -G \
   --data-urlencode "user_id=user-123" \
   --data-urlencode "context_id=homepage" \
-  --data-urlencode "limit=10"
+  --data-urlencode "quantity=10"
 ```
 
-Responses contain ordered items with relevance scores, metadata, and optional debug hints. See the [endpoint reference](/api-reference/endpoint/get-recommendations) for the full schema.
+Requests may also provide the same fields in a JSON body instead of the query string. The service merges both sources before validation with the following schema:
+
+- `user_id` (required): identifier for the end user. If omitted, the `sub` claim from the access token is used.
+- `context_id` (optional): reference to a stored context configuration that can introduce conditional filtering or grouping.
+- `quantity` (optional): number of results to return. Defaults to the configured context quantity when not supplied.
+- `entity_type`, `name`, `description` (optional): override attributes saved with the user embedding. `entity_type` must be either `User` or `Item`.
+
+Each call resolves the tenant from the access token claims, fetches recent user activity, generates or reuses an embedding, and performs a vector similarity search with any context conditions applied. The response includes the persisted embedding record, recommended items or grouped aggregates, the total count, and the time spent processing the request. Errors return JSON messages with an appropriate status code and never leave transactions open.
+
+See the [endpoint reference](/api-reference/endpoint/get-recommendations) for the detailed contract.
 
 ## Use the JavaScript SDK
 
@@ -55,4 +64,4 @@ The SDK automatically exchanges credentials for an access token and retries tran
 
 ## Render and measure
 
-Use the item metadata provided in each response to render cards, collections, or hero modules in your UI. Track downstream engagement with the [`POST /events` endpoint](/api-reference/endpoint/submit-events) to continually improve relevance.
+Use the item metadata provided in each response to render cards, collections, or hero modules in your UI. Track downstream engagement with the [`POST /events` endpoint](/api-reference/endpoint/submit-events) and keep your catalog fresh with [`POST /items`](/api-reference/endpoint/submit-items); both feed the signals that the recommendation service uses.
