@@ -6,46 +6,71 @@ openapi: "GET /recommendations"
 
 ## Description
 
-This endpoint returns a list of recommended items for a given user, optionally using context-based logic to tailor results.
+This endpoint returns a list of recommended items for a given user, optionally using context-based logic to tailor results. It requires an access token that includes the `neuronsearchlab-api/read` scope.
 
 ## Request
 
 **Endpoint:**
 ```http
-GET /recommendations?user_id=user-456&context_id=sports-homepage&quantity=5
+GET /recommendations
 ```
 
 **Headers:**
 ```http
-Authorization: Bearer <token>
+Authorization: Bearer <access_token>
+Content-Type: application/json (when sending a body)
 ```
 
-## Query Parameters
+## Request Parameters
+
+Parameters may be supplied either as query parameters or in the JSON body. When both are present, they are merged with body values taking precedence.
 
 | Name         | Type   | Required | Description |
 |--------------|--------|----------|-------------|
-| user_id      | string | yes      | Unique identifier for the user |
-| context_id   | string | no       | Optional context logic for tailoring results |
-| quantity     | int    | no       | Number of results to return (default: 5) |
+| user_id      | string | yes      | Identifier for the end user to personalize for. Falls back to the `sub` claim from the access token when omitted. |
+| context_id   | string | no       | Identifier for an optional stored context that provides filters, groupings, and default limits. |
+| quantity     | int    | no       | Number of recommendations to return. Defaults to the context configuration when not specified. |
+| entity_type  | string | no       | Overrides the embedding type saved for the entity. Must be `User` or `Item`. |
+| name         | string | no       | Overrides the name stored with the embedding. |
+| description  | string | no       | Overrides the description stored with the embedding. |
+
+The handler resolves the tenant from the access token claims (`client_id`/`sub`) and rejects the request if the tenant lookup fails.
 
 ## Response
 
 **200 OK**
 ```json
 {
+  "embedding": {
+    "entity_id": "user-456",
+    "entity_type": "User",
+    "name": "Avery",
+    "description": "VIP shopper",
+    "metadata": {
+      "team_id": "team_123"
+    }
+  },
   "recommendations": [
     {
       "entity_id": "item-123",
-      "score": 0.983,
+      "score": 0.94,
+      "embedding": [0.02, 0.31, -0.11],
       "metadata": {
         "name": "Nike Running Shoes",
         "brand": "Nike"
-      }
+      },
+      "group": null
     }
-  ]
+  ],
+  "count": 1,
+  "processing_time_ms": 182
 }
 ```
 
-## Notes
-- Recommendations are ordered by descending score.
-- Additional metadata is returned per item to aid in UI rendering.
+When a `context_id` includes grouping configuration, the `recommendations` array contains grouped aggregates with representative metadata and scores. Scores are normalized to the range `0–1` (where higher is better).
+
+### Error responses
+
+- `400 Bad Request` – Validation failed (for example, missing `user_id` or invalid `entity_type`).
+- `401 Unauthorized` – Missing/invalid access token or tenant resolution failed.
+- `500 Internal Server Error` – Unexpected errors. Transactions are rolled back and connections are closed safely in all cases.
