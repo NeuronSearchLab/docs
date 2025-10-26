@@ -23,7 +23,7 @@ If you are using TypeScript, no additional type definitions are required—the S
 
 ## Authenticate the client
 
-The client uses Cognito-issued bearer tokens. Fetch an access token using your existing authentication flow, then configure the SDK once at startup:
+The client uses bearer tokens issued by the NeuronSearchLab identity service. Fetch an access token using your existing authentication flow, then configure the SDK once at startup:
 
 ```ts
 import { NeuronSearchLabClient } from "@neuronsearchlab/sdk";
