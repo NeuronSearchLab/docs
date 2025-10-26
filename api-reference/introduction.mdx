@@ -4,7 +4,7 @@ description: "Understand how to integrate and use the NeuronSearchLab recommenda
 ---
 
 <Note>
-All endpoints are protected by Bearer token authentication using AWS Cognito. Make sure you obtain a valid access token via the `/auth/token` endpoint before making requests.
+All endpoints are protected by Bearer token authentication managed by NeuronSearchLab. Make sure you obtain a valid access token via the `/auth/token` endpoint before making requests.
 </Note>
 
 ## Base URL
@@ -23,7 +23,7 @@ Below is a summary of available endpoints in the NeuronSearchLab API:
 
 #### `POST /auth/token`
 
-Obtain a bearer token for authenticating future requests. Pass `Content-Type: application/json` in the header and required credentials in the body (details will depend on your Cognito setup).
+Obtain a bearer token for authenticating future requests. Pass `Content-Type: application/json` in the header and required credentials in the body (details will depend on how your NeuronSearchLab account is configured).
 
 ---
 
@@ -75,7 +75,7 @@ All protected endpoints require a valid **Bearer token** in the `Authorization` 
 Authorization: Bearer <your_access_token>
 ```
 
-Tokens are issued via Cognito. Scopes used:
+Tokens are issued by the NeuronSearchLab identity service. Scopes used:
 
 - `neuronsearchlab-api/read`
 - `neuronsearchlab-api/write`
