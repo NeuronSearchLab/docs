@@ -48,10 +48,10 @@ curl -X POST https://api.neuronsearchlab.com/auth/token \
 
 ## Make your first API call
 
-With an access token you can request recommendations immediately. The following example retrieves homepage content for a known user:
+With an access token you can request recommendations immediately. The following example retrieves homepage content for a known user using context ID `101`:
 
 ```bash
-curl -X GET "https://api.neuronsearchlab.com/recommendations?user_id=user-123&context_id=homepage" \
+curl -X GET "https://api.neuronsearchlab.com/recommendations?user_id=user-123&context_id=101" \
   -H "Authorization: Bearer <your_access_token>"
 ```
 

@@ -9,7 +9,7 @@ Once your catalog and events are flowing, you can begin requesting recommendatio
 
 Every request should specify the surface and user the results are meant for.
 
-- **context_id** ties the request to a configuration defined in the console (for example `homepage` or `product_detail`).
+- **context_id** ties the request to a configuration defined in the console (for example `101` for Homepage Recommendations).
 - **user_id** represents the end user who will see the results. Anonymous traffic can use a temporary UUID.
 - Optional filters and boosts allow you to respect inventory rules or promote specific items.
 
@@ -22,14 +22,14 @@ curl -X GET "https://api.neuronsearchlab.com/recommendations" \
   -H "Authorization: Bearer <access_token>" \
   -G \
   --data-urlencode "user_id=user-123" \
-  --data-urlencode "context_id=homepage" \
+  --data-urlencode "context_id=101" \
   --data-urlencode "quantity=10"
 ```
 
 Requests may also provide the same fields in a JSON body instead of the query string. The service merges both sources before validation with the following schema:
 
 - `user_id` (required): identifier for the end user. If omitted, the `sub` claim from the access token is used.
-- `context_id` (optional): reference to a stored context configuration that can introduce conditional filtering or grouping.
+- `context_id` (optional): numeric reference to a stored context configuration that can introduce conditional filtering or grouping.
 - `quantity` (optional): number of results to return. Defaults to the configured context quantity when not supplied.
 - `entity_type`, `name`, `description` (optional): override attributes saved with the user embedding. `entity_type` must be either `User` or `Item`.
 
@@ -55,7 +55,7 @@ const client = new NeuronSearchLab({
 
 const { data } = await client.recommendations.list({
   userId: 'user-123',
-  contextId: 'homepage',
+  contextId: 101,
   limit: 10,
 });
 ```
