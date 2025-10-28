@@ -18,12 +18,17 @@ Start with a handful of high-impact contexts, then expand as you identify more n
 ## Configure contexts in the console
 
 1. Navigate to [Console → Contexts](https://console.neuronsearchlab.com/contexts).
-2. Click **New context** and provide an ID such as `homepage` or `checkout_cross_sell`.
-3. Set optional defaults:
-   - **Filters** to enforce inventory rules.
-   - **Boosts** to promote seasonal items or campaigns.
-   - **Diversity controls** to avoid repetitive recommendations.
-4. Save the configuration and share the context ID with your engineering team.
+2. Click **New context** and enter a numeric **Context ID** (for example `101`). The ID is stored as a number and is the value your engineering team will send in API calls.
+3. Fill in the modal to define how the context should behave:
+   - **Context Name** and **Description** document the placement.
+   - Select an **Associated Model** and **Recommendation Type** once the underlying model exists.
+   - Configure **Filters** and optional combinations (AND/OR) to enforce inventory rules.
+   - Add **Group By Fields** to aggregate items by shared metadata.
+   - Configure one or more **Boosters** (e.g., popularity +25%) to highlight seasonal campaigns.
+   - Specify **Influence Rules** when certain metadata should dominate the ranking.
+   - Toggle **Additional Options** such as including random content in recommendations.
+   - Use **Preview Recommendations** to validate the setup for a specific user or a random user before saving.
+4. Save the configuration and share the numeric context ID with your engineering team.
 
 ## Reference contexts in API calls
 
@@ -34,7 +39,7 @@ curl -X GET "https://api.neuronsearchlab.com/recommendations" \
   -H "Authorization: Bearer <access_token>" \
   -G \
   --data-urlencode "user_id=user-123" \
-  --data-urlencode "context_id=homepage"
+  --data-urlencode "context_id=101"
 ```
 
 The context you choose also appears in analytics, allowing you to compare conversion rates and engagement across placements.
