@@ -28,7 +28,7 @@ Parameters may be supplied either as query parameters or in the JSON body. When 
 | Name         | Type   | Required | Description |
 |--------------|--------|----------|-------------|
 | user_id      | string | yes      | Identifier for the end user to personalize for. Falls back to the `sub` claim from the access token when omitted. |
-| context_id   | string | no       | Identifier for an optional stored context that provides filters, groupings, and default limits. |
+| context_id   | integer | no       | Identifier for an optional stored context that provides filters, groupings, and default limits. |
 | quantity     | int    | no       | Number of recommendations to return. Defaults to the context configuration when not specified. |
 | entity_type  | string | no       | Overrides the embedding type saved for the entity. Must be `User` or `Item`. |
 | name         | string | no       | Overrides the name stored with the embedding. |

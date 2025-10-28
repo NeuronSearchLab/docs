@@ -90,7 +90,7 @@ await client.events.publish([
     userId: "user-456",
     itemId: "article-123",
     timestamp: new Date().toISOString(),
-    contextId: "homepage",
+    contextId: 101,
     metadata: {
       position: 2,
     },
@@ -109,7 +109,7 @@ When you need personalized content, call `client.recommendations.get` with the r
 ```ts
 const { results } = await client.recommendations.get({
   userId: "user-456",
-  contextId: "homepage",
+  contextId: 101,
   limit: 5,
   filters: {
     tags: { include: ["vector-search"] },
