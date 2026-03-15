@@ -23,6 +23,16 @@
               "contexts",
               "authentication"
             ]
+          },
+          {
+            "group": "Console How-To",
+            "pages": [
+              "guides/contexts",
+              "guides/events",
+              "guides/models",
+              "guides/analytics",
+              "guides/users-and-items"
+            ]
           }
         ]
       },

@@ -1,0 +1,107 @@
+---
+title: 'Configuring Events and Signal Templates'
+description: 'Define the user actions that teach the recommendation engine what matters, and group them into reusable training templates.'
+---
+
+Events are the signals your users generate when they interact with your product: views, clicks, purchases, shares, and any other action you decide is meaningful. NeuronSearchLab uses these signals to learn each user's preferences and improve ranking quality over time.
+
+This guide explains how to define event types, set their relative importance, and organise them into templates for training.
+
+---
+
+## Event types
+
+An event type maps a numeric ID (sent in your API or SDK calls) to a human-readable name and a weight. The weight tells the training process how much to value one signal relative to others.
+
+### Add an event type
+
+1. Open [Console > Events](https://console.neuronsearchlab.com/events).
+2. Enter a name in the **Event name** field, for example `click`, `purchase`, or `video_complete`.
+3. Set a weight between 1 and 100. Higher weight means the training process treats that signal as more informative.
+4. Click **Add event**.
+
+A common starting point:
+
+| Name | Weight |
+|------|--------|
+| impression | 1 |
+| click | 10 |
+| add_to_cart | 30 |
+| purchase | 100 |
+
+You can adjust weights at any time. Changes take effect on the next training run.
+
+### Send events from your application
+
+Pass the numeric event ID when tracking actions via the SDK:
+
+```ts
+await sdk.trackEvent({
+  eventId: 2,         // matches the ID shown in the console
+  userId: "user-123",
+  itemId: "item-456",
+  metadata: { placement: "homepage" },
+});
+```
+
+Or via the REST API:
+
+```bash
+curl -X POST https://api.neuronsearchlab.com/events \
+  -H "Authorization: Bearer <access_token>" \
+  -H "Content-Type: application/json" \
+  -d '[{
+    "event_id": 2,
+    "user_id": "user-123",
+    "item_id": "item-456",
+    "event_ts": "2025-01-15T14:30:00Z"
+  }]'
+```
+
+---
+
+## Signal templates
+
+A template captures a specific combination of event types, weights, and training thresholds. Saving a template lets you reproduce a training run exactly or switch between different configurations without losing your settings.
+
+### Create a template
+
+1. On the Events page, configure your event types and set the thresholds described below.
+2. Enter a name in the **Template name** field.
+3. Set the status to **Draft** (not yet used for training) or **Published** (ready to train from).
+4. Click **Save template**.
+
+### Training thresholds
+
+Two thresholds control when a model is trained:
+
+- **Per-signal threshold**: the minimum number of events for each individual event type before that signal is included in training. Set this to avoid training on noise from rarely used signals.
+- **Minimum total events**: the minimum total number of events across all signals before training will proceed. This prevents a model from training on too little data to generalise.
+
+### Train from a template
+
+1. Select a saved template from the template list.
+2. Configure the training options:
+   - **Epochs**: how many passes through the training data (default 5, range 1-50).
+   - **Batch size**: number of events processed together (64, 128, 256, or 512).
+   - **Learning rate**: step size for gradient updates (default 0.001).
+3. Click **Start training**. The console will show the job status and metrics as training progresses.
+
+---
+
+## Monitoring training runs
+
+Open [Console > Training Jobs](https://console.neuronsearchlab.com/training-jobs) to see the status of each run, its duration, and the metrics reported at completion. From this page you can:
+
+- View final training metrics and run manifests.
+- Approve a trained model package for deployment.
+- Promote an approved model to the live endpoint, replacing the current production model.
+- Stop an in-progress run if needed.
+
+---
+
+## Analytics: measuring signal quality
+
+After deploying a model, monitor how different event types are driving engagement in [Console > Analytics](https://console.neuronsearchlab.com/analytics). Track each event type as its own metric alongside recommendation serve counts to understand which signals correlate with downstream outcomes.
+
+If high-weight events are rarely occurring, consider lowering their weight or broadening what you treat as a conversion signal. If impressions are large but clicks are low, adjust your context filters and influence rules before retraining.

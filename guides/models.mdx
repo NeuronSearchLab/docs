@@ -1,0 +1,72 @@
+---
+title: 'Models'
+description: 'Manage the trained models that power your recommendations and control which version is live in production.'
+---
+
+A model is a trained representation of your catalog and user behaviour. NeuronSearchLab trains models on the events you send and the catalog items you have ingested. Once a model is trained and approved, you can deploy it to the live endpoint and it will immediately begin serving recommendations.
+
+---
+
+## Model families
+
+Models are grouped into families. Each family represents an ongoing sequence of training runs on your data. Within a family, each new training run produces a new version. The console shows all families available to your account, including shared base models and models trained specifically on your tenant's data.
+
+For each family the console shows:
+
+- The current version in production (if any)
+- The approval status of each version (Pending, Approved)
+- Creation date and training metadata
+
+---
+
+## Approve a model
+
+After a training run completes successfully, the new model package has a status of **Pending**. You must approve it before it can be deployed.
+
+1. Open [Console > Training Jobs](https://console.neuronsearchlab.com/training-jobs) or [Console > Models](https://console.neuronsearchlab.com/models).
+2. Find the completed training run and click **Approve**.
+3. The model status updates to **Approved**.
+
+Approving a model does not automatically change what is served. It makes the model available for promotion.
+
+---
+
+## Promote a model to production
+
+Once approved, you can promote a model to replace the current live endpoint.
+
+1. Find the approved model version.
+2. Click **Promote to production**.
+3. The console will show the endpoint status updating. Depending on infrastructure state this may take a moment.
+4. Once the endpoint status shows as **InService**, the promoted model is live and all subsequent recommendation requests will use it.
+
+You can promote a previous version at any time if you need to roll back.
+
+---
+
+## The production banner
+
+The Models page shows a banner indicating which model version is currently serving recommendations. The banner includes:
+
+- The model name and version number
+- The endpoint status (InService, Updating, etc.)
+
+If no model is currently deployed the banner is not shown and recommendation requests will return empty results.
+
+---
+
+## Training run metrics
+
+Each training run records a set of metrics at completion. Open a run from the Training Jobs page to view:
+
+- Training job status and duration
+- Final metrics (loss, accuracy, or custom metrics your training job reports)
+- The run manifest, which records the configuration used
+
+Use these metrics to compare runs and decide whether a new version is ready to promote.
+
+---
+
+## Trigger a new training run
+
+See the [Events and Signal Templates](/guides/events) guide for instructions on configuring event types, setting thresholds, and starting a training run.
