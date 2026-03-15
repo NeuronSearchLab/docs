@@ -1,0 +1,110 @@
+---
+title: 'Analytics'
+description: 'Understand how your recommendation engine is performing and use data to guide configuration decisions.'
+---
+
+The Analytics page gives you a time-series view of recommendation activity and user engagement. You can explore pre-built metrics, build custom charts, and drill down to individual requests or sessions.
+
+---
+
+## Time controls
+
+### Preset ranges
+
+Click the date button in the toolbar to choose a preset range:
+
+| Preset | Window |
+|--------|--------|
+| 24h | Last 24 hours |
+| 7d | Last 7 days |
+| 30d | Last 30 days |
+| 90d | Last 90 days |
+| 6m | Last 6 months |
+| 12m | Last 12 months |
+| YTD | Year to date |
+| This week | Current calendar week |
+| Last week | Previous calendar week |
+| This month | Current calendar month |
+| Last month | Previous calendar month |
+| Last year | Previous calendar year |
+
+### Custom range
+
+Select **Custom** from the date dropdown and enter a start and end date. Click **Apply** to load that window, or **Clear** to return to the previous preset.
+
+### Back and forward
+
+Use the arrow buttons to shift the current window backwards or forwards by one period. For example, if you are viewing "Last 7 days", clicking back loads the 7 days before that.
+
+### Granularity
+
+The **Granularity** dropdown controls how data is bucketed along the time axis: Minute, Hour, Day, Week, Month, Quarter, or Year. The system automatically coarsens the granularity if the selected window would produce more than 1,500 data points.
+
+---
+
+## Context filter
+
+Use the **Context** dropdown to restrict all metrics and charts to a specific context. Select **All contexts** to see aggregate data across your entire account.
+
+---
+
+## KPI cards
+
+The row of cards at the top of the page shows totals for the current window alongside a percentage change versus the equivalent previous period.
+
+- **Recommendations Served**: total number of recommendation responses returned by the API.
+- One card per event type you have defined, showing the total count of that event in the current window.
+
+A green value indicates an increase versus the previous period. A red value indicates a decrease. A value of 0% means the metric was unchanged or there is no previous data to compare against.
+
+---
+
+## Custom charts
+
+The widget grid lets you compose your own charts from any available metric.
+
+### Add a chart
+
+1. Click **Add chart** in the top toolbar.
+2. In the widget builder, choose a chart type: Line, Bar, or Area.
+3. Select the metric to plot from the dropdown. Available options are **Served** plus one entry per event type.
+4. Optionally enter a custom label. If you leave it blank the metric name is used.
+5. Click **Add**.
+
+The chart appears in the grid and displays data for the current time window and filters.
+
+### Remove a chart
+
+Click the close button in the top-right corner of any chart widget to remove it.
+
+### Reset layout
+
+Click the reset icon in the toolbar to remove all widgets and restore the default layout, which shows a single Recommendations Served line chart.
+
+---
+
+## Advanced filters
+
+The **Advanced** dropdown lets you narrow all data to a specific request, session, or user.
+
+| Filter | What it does |
+|--------|-------------|
+| Request ID | Shows only the served recommendation matching that UUID and any events attributed to it |
+| Session ID | Shows only served recommendations and events within a single user session |
+| User ID | Shows only events from a specific user |
+
+When any advanced filter is active, the toolbar shows an **On** badge next to the Advanced button. Clear individual fields and click **Apply** to remove filters.
+
+These filters are useful for debugging a specific recommendation request or tracing a single user's journey through your product.
+
+---
+
+## Interpreting results
+
+A few patterns to look for:
+
+**High serve count, low click events**: the engine is returning results but users are not engaging. Review your context filters and influence rules. You may be filtering too aggressively or promoting items that do not resonate.
+
+**Spikes in a specific event type**: cross-reference with product changes or campaigns deployed around the same time. The session filter can help isolate whether a spike comes from real user behaviour or test traffic.
+
+**Delta showing a large drop after a model change**: compare the current model's performance against the previous window, which pre-dates the training run. If engagement dropped, consider reverting the model from the Training Jobs page while you investigate.

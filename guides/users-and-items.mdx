@@ -1,0 +1,81 @@
+---
+title: 'Exploring Users and Items'
+description: 'Inspect your catalog and user embeddings to understand how the engine sees your data.'
+---
+
+The console provides two exploration views: one for catalog items and one for users. Both show the embedding metadata stored for each entity and let you inspect event history and activity.
+
+---
+
+## Catalog items (Explore)
+
+Open [Console > Explore](https://console.neuronsearchlab.com/explore) to browse all items in your catalog.
+
+### Searching
+
+Use the search field to filter items by name, description, or item ID. Results update as you type.
+
+### Item detail panel
+
+Click any item to open the detail panel on the right side of the screen. The panel has two tabs.
+
+**Details**
+
+Shows the stored embedding metadata for the item:
+
+- Item ID
+- Name and description
+- Active status
+- Embedding model and version
+- Last modified date
+- Any additional metadata fields stored with the item
+
+**Recent Activity**
+
+Lists the most recent user events associated with this item, including the user ID, event type, timestamp, and placement. This lets you quickly verify that events are being received and attributed correctly.
+
+---
+
+## Users
+
+Open [Console > Users](https://console.neuronsearchlab.com/users) to browse all users who have been embedded.
+
+### Searching and sorting
+
+Use the search field to filter by user ID or name. Click column headers to sort by user ID or last active date.
+
+### User detail panel
+
+Click any user row to open the detail panel. The panel has two tabs.
+
+**Details**
+
+Shows the embedding metadata for the user:
+
+- Entity ID
+- Name (if provided)
+- Active status
+- Embedding model and version
+- Last modified date
+- Any metadata fields attached to the user embedding
+
+**Event History**
+
+Lists the most recent events recorded for this user, ordered by time. Each entry shows:
+
+- Event type
+- Item ID the event was associated with
+- Timestamp (relative and absolute)
+- Placement (if recorded)
+
+This is useful for verifying that your SDK integration is sending events correctly and that the user's history looks as expected before investigating recommendation quality.
+
+---
+
+## What embeddings represent
+
+Each user and item has a vector embedding stored in the platform. These embeddings are the numerical representations the engine uses to measure similarity. When a recommendation is requested for a user, the engine finds items whose embeddings are closest to the user's embedding in the vector space.
+
+Embeddings are updated each time a model training run completes. The **Last modified** date in the detail panel shows when the current embedding was written.
+
+The embedding model name and version fields record which training run produced the current embedding, letting you trace exactly which model version is responsible for a user or item's current representation.

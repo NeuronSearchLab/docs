@@ -1,0 +1,123 @@
+---
+title: 'Configuring Contexts'
+description: 'Control what your recommendation engine shows, prioritises, and protects on each surface of your product.'
+---
+
+A context is a named configuration that shapes what the recommendation engine returns for a specific surface. You create one context per placement, such as a homepage feed, a product detail page, or an email digest, and reference its ID in every API call for that surface.
+
+This guide covers all the controls available inside the context editor.
+
+## Create a context
+
+1. Open [Console > Contexts](https://console.neuronsearchlab.com/contexts) and click **New context**.
+2. Give it a descriptive name such as "Homepage Feed" or "Post-purchase Sidebar".
+3. Add an optional description so teammates understand its purpose.
+4. Select the model this context draws recommendations from.
+5. Choose the recommendation type:
+   - **Item to User** returns items relevant to a given user.
+   - **User to Item** returns users similar to a given item.
+   - **Item to Item** returns items similar to a given item.
+   - **User to User** returns users similar to a given user.
+6. Save the context and note its numeric ID. Your engineering team will pass this ID in `context_id` on every recommendation request.
+
+---
+
+## Filters
+
+Filters restrict which items are eligible for recommendation. Only items that pass all active filters will appear in results.
+
+To add a filter:
+
+1. In the **Filters** section, click **Add Condition**.
+2. Select a metadata field from your catalog (for example `category`, `in_stock`, `price`).
+3. Choose an operator: `=`, `!=`, `LIKE`, `NOT LIKE`, `>`, `<`, `>=`, `<=`, `IN`, `NOT IN`.
+4. Enter the value to compare against.
+5. Add more conditions and set each one to combine with the previous using `AND` or `OR`.
+
+**Example:** To restrict a context to in-stock items in the "Electronics" category:
+
+| Field | Operator | Value | Logic |
+|-------|----------|-------|-------|
+| `in_stock` | `=` | `true` | |
+| `category` | `=` | `Electronics` | AND |
+
+---
+
+## Influence rules
+
+Influence rules adjust the score of items that match a condition, moving them up or down relative to other results without hard-filtering them out.
+
+To add an influence rule:
+
+1. In the **Influence** section, click **Add Influence Rule**.
+2. Set the type to **Promote** (score higher) or **Demote** (score lower).
+3. Select the field to match on (for example `category` or a specific `item_id`).
+4. Enter the value to match.
+5. Choose the weight:
+   - `+10%`, `+25%`, `+50%`, `2x` for promotion
+   - `-25%`, `-50%` for demotion
+
+**Example:** To promote new arrivals while keeping older items in the mix:
+
+| Type | Field | Value | Weight |
+|------|-------|-------|--------|
+| Promote | `is_new_arrival` | `true` | +50% |
+
+---
+
+## Group by fields
+
+Group by fields enforce diversity by limiting how many items from the same group can appear consecutively or within a result set.
+
+To add a group by field:
+
+1. In the **Group By Fields** section, click **Add Group By Field**.
+2. Select the metadata field to group on, such as `category` or `brand`.
+
+When grouping is active, the engine will spread results across distinct values of that field rather than surfacing many items from the same group.
+
+---
+
+## Sliding window for repeat items
+
+The sliding window prevents items a user has recently seen from appearing again too soon.
+
+1. Check **Exclude items the user has already viewed**.
+2. Set the **Amount** and **Unit** (Minutes, Hours, Days, Weeks, or All time).
+
+Setting the unit to **All time** permanently excludes any item the user has ever viewed. Choosing a time window such as **7 Days** means items reappear after that period.
+
+---
+
+## Pinned and forced items
+
+Use **Ensure top X** to guarantee that specific items always appear within the first results.
+
+1. Check **Ensure top X** in the additional options.
+2. Set **Top X count** to the number of positions to fill with forced items.
+3. Specify the **Forced items** by item ID.
+
+This is useful for sponsored placements, editorial picks, or legally required disclosures that must always be surfaced.
+
+---
+
+## Random content injection
+
+Checking **Include random content in recommendations** mixes a small proportion of randomly selected items into results. This introduces serendipity and helps the engine discover new interests for users who have a narrow history.
+
+---
+
+## Preview recommendations
+
+Use the **Preview Recommendations** panel at the bottom of the context editor to test the current configuration before saving.
+
+1. Select a user from the dropdown, or click **Random User** to pick one at random.
+2. The panel displays the items that would be returned for that user under the current context settings.
+
+Preview results are live: changes to filters, influence rules, or other settings update the preview immediately, letting you verify the output before committing.
+
+---
+
+## Iterate over time
+
+As your product evolves, return to the context editor to adjust settings. Changing influence weights, adding new filters, or widening the repeat-item window takes effect immediately for all subsequent API calls using that context ID. No redeployment is required.
