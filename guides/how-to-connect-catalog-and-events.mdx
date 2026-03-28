@@ -1,0 +1,63 @@
+---
+title: 'How-To: Connect Catalog and Events'
+description: 'Set up reliable item ingestion and event tracking for recommendation quality.'
+---
+
+Use this guide when you need to keep item data current and user behavior signals flowing into NeuronSearchLab.
+
+## Setup
+
+1. Define canonical item identifiers (`entity_id`) in your source catalog.
+2. Map source fields to `/items` payloads (`name`, `description`, `metadata`).
+3. Emit user events to `/events` from all recommendation surfaces.
+
+## Common workflows
+
+### Upsert catalog items
+
+```bash
+curl -X POST https://api.neuronsearchlab.com/items \
+  -H "Authorization: Bearer <access_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "entity_id": "item-123",
+    "name": "Nike Running Shoes",
+    "description": "High-performance running shoes.",
+    "metadata": { "category": "Footwear", "brand": "Nike", "price": 109.99 }
+  }'
+```
+
+### Submit user interaction events
+
+```bash
+curl -X POST https://api.neuronsearchlab.com/events \
+  -H "Authorization: Bearer <access_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "user-456",
+    "event_type": "click",
+    "entity_id": "item-123",
+    "timestamp": "2026-03-28T15:00:00Z",
+    "weight": 1.0
+  }'
+```
+
+### Maintain ingestion quality
+
+- Validate required fields before publishing payloads.
+- Use UTC ISO timestamps for event consistency.
+- Monitor event throughput and lag in your own pipeline metrics.
+
+## Example app journey: Daily sync + real-time feedback
+
+1. Nightly job upserts changed catalog items using `/items`.
+2. App session requests recommendations from `/recommendations`.
+3. Frontend interaction events are forwarded to backend.
+4. Backend publishes click/purchase events to `/events` in near real time.
+5. Team reviews Analytics to confirm engagement trends are improving.
+
+## Next steps
+
+- [How-To: Serve Personalized Recommendations](./how-to-serve-recommendations)
+- [POST /items reference](/api-reference/endpoint/submit-items)
+- [POST /events reference](/api-reference/endpoint/submit-events)
