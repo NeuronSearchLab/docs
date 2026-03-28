@@ -33,6 +33,15 @@
               "guides/analytics",
               "guides/users-and-items"
             ]
+          },
+          {
+            "group": "Developer How-To",
+            "pages": [
+              "guides/how-to-serve-recommendations",
+              "guides/how-to-connect-catalog-and-events",
+              "guides/how-to-launch-a-new-context",
+              "guides/how-to-measure-recommendation-performance"
+            ]
           }
         ]
       },

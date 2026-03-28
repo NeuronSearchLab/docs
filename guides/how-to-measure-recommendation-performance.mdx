@@ -1,0 +1,46 @@
+---
+title: 'How-To: Measure Recommendation Performance'
+description: 'Track recommendation outcomes and iterate on contexts with analytics.'
+---
+
+Use this guide to move from shipping recommendations to continuously improving them.
+
+## Setup
+
+1. Open Analytics in Console.
+2. Select a time range (for example last 7 days).
+3. Set granularity appropriate to traffic volume.
+
+## Common workflows
+
+### Evaluate baseline performance
+
+Track at least:
+- Recommendations Served
+- Click events
+- Purchase or conversion events
+
+Start with all contexts, then narrow to one context at a time for actionability.
+
+### Investigate anomalies
+
+Use context and advanced filters (`request_id`, `session_id`, `user_id`) to debug sudden drops or spikes.
+
+### Build an optimization loop
+
+1. Change one context variable (quantity, filter, or ranking influence).
+2. Observe engagement deltas over a fixed window.
+3. Keep changes that improve KPI targets; revert those that regress.
+
+## Example app journey: Improve homepage CTR
+
+1. Baseline homepage context metrics are captured for 14 days.
+2. Team adjusts homepage context filters to remove low-engagement categories.
+3. New settings roll out to 25% of traffic.
+4. CTR and downstream purchase events are compared versus baseline.
+5. Winning configuration is rolled out to 100% traffic.
+
+## Next steps
+
+- [Analytics guide](/guides/analytics)
+- [How-To: Launch a New Context](./how-to-launch-a-new-context)

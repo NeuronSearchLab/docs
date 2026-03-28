@@ -1,0 +1,44 @@
+---
+title: 'How-To: Launch a New Context'
+description: 'Create and release a new recommendation surface with context-specific logic.'
+---
+
+Use this guide when launching recommendations into a new surface (for example homepage, PDP, checkout upsell, or email digest).
+
+## Setup
+
+1. Define the business goal for the new surface (CTR, conversion, AOV, retention).
+2. Create a dedicated context in Console -> Contexts.
+3. Configure context-level defaults (quantity, filters, boosts).
+
+## Common workflows
+
+### Validate context behavior in staging
+
+- Call `GET /recommendations` with the new `context_id` and representative `user_id` values.
+- Compare output quality with and without the context applied.
+- Confirm the right item categories and constraints are reflected.
+
+### Roll out progressively
+
+- Start with a small traffic segment.
+- Keep context-specific instrumentation so results can be measured independently.
+- Increase rollout percentage only after quality checks pass.
+
+### Keep context docs operational
+
+For each context, maintain a short owner note with purpose, constraints, and KPI target so changes remain auditable.
+
+## Example app journey: Checkout upsell launch
+
+1. Merchandising defines checkout upsell objectives.
+2. Team creates context `205` with checkout-safe filters.
+3. Backend requests recommendations using `context_id=205` during checkout.
+4. Events are tagged from checkout interactions and posted to `/events`.
+5. Analytics is filtered by the checkout context to evaluate lift.
+
+## Next steps
+
+- [Contexts overview](/contexts)
+- [Console Contexts How-To](/guides/contexts)
+- [How-To: Measure Recommendation Performance](./how-to-measure-recommendation-performance)
