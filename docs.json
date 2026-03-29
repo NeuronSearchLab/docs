@@ -28,6 +28,8 @@
             "group": "Console How-To",
             "pages": [
               "guides/contexts",
+              "guides/rerank-controls",
+              "guides/api-keys",
               "guides/events",
               "guides/models",
               "guides/analytics",

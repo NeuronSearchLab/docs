@@ -3,11 +3,16 @@ title: 'Authentication'
 description: 'Secure access to NeuronSearchLab APIs and SDKs.'
 ---
 
-NeuronSearchLab uses OAuth 2.0 client credentials to authenticate server-to-server requests. Follow these practices to protect your integration.
+NeuronSearchLab offers two authentication methods:
 
-## Create API clients
+- **SDK Credentials** — OAuth 2.0 client credentials for direct API access via the SDK. Best for production integrations.
+- **API Keys** — Simple Bearer tokens for the console proxy. Include features like [rerank controls](/guides/rerank-controls). See the [API Keys guide](/guides/api-keys) for details.
 
-1. Visit [Console → Security → API Clients](https://console.neuronsearchlab.com/security/clients).
+This page covers SDK credential setup. Follow these practices to protect your integration.
+
+## Create SDK credentials
+
+1. Visit [Console → SDK Credentials](https://console.neuronsearchlab.com/security).
 2. Click **New client** and provide a descriptive name per application or environment.
 3. Download the generated **Client ID** and **Client Secret**. Store the secret in a secure vault—never ship it to browsers or mobile apps.
 
