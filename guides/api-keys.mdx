@@ -1,0 +1,69 @@
+---
+title: 'API Keys'
+description: 'Create Bearer tokens for programmatic access to the NeuronSearchLab console API.'
+---
+
+API keys provide a simple way to authenticate programmatic requests against the NeuronSearchLab console API. Unlike [SDK Credentials](/authentication) (OAuth client credentials for the core API), API keys are Bearer tokens that authenticate through the console proxy and benefit from features like [rerank controls](/guides/rerank-controls).
+
+## When to use API keys vs SDK credentials
+
+| | API Keys | SDK Credentials |
+| --- | --- | --- |
+| **Auth method** | Bearer token (`nsl_...`) | OAuth 2.0 client credentials |
+| **Endpoint** | Console proxy (`console.neuronsearchlab.com/api/...`) | Core API (`api.neuronsearchlab.com`) |
+| **Rerank controls** | Applied automatically | Not available |
+| **Use case** | Testing, internal tools, proxy-based integrations | Production SDK integration |
+
+## Create an API key
+
+1. Navigate to **Console > API Keys**.
+2. Click **New API Key**.
+3. Enter a descriptive name (e.g. "Staging Backend", "Internal Dashboard").
+4. Select an environment tag for organisational purposes.
+5. Choose which scopes the key can access — `recommendations`, `events`, or `items`.
+6. Click **Create Key**.
+
+The full key is displayed once. Copy it immediately and store it securely.
+
+## Authenticate requests
+
+Include your API key as a Bearer token in the `Authorization` header:
+
+```bash
+curl "https://console.neuronsearchlab.com/api/recommendations?user_id=42&context_id=101" \
+  -H "Authorization: Bearer nsl_abc12345_..."
+```
+
+## Key format
+
+API keys follow the format `nsl_<prefix>_<token>`:
+
+- `nsl_` — fixed prefix identifying a NeuronSearchLab key.
+- `<prefix>` — 8-character identifier shown in the console for easy recognition.
+- `<token>` — the full random token. Only the SHA-256 hash is stored server-side.
+
+## Scopes
+
+Each key is restricted to specific API scopes:
+
+| Scope | Grants access to |
+| --- | --- |
+| `recommendations` | `GET /api/recommendations` |
+| `events` | `POST /api/events` (coming soon) |
+| `items` | `POST /api/items`, `PATCH /api/items/:id`, `DELETE /api/items` (coming soon) |
+
+If a key lacks the required scope, the proxy returns `403 Forbidden`.
+
+## Revoke a key
+
+1. Navigate to **Console > API Keys**.
+2. Click **Revoke** on the key you want to deactivate.
+
+Revocation is immediate and permanent. Create a new key if you need to restore access.
+
+## Security practices
+
+- **One key per service or environment.** Avoid sharing keys across applications.
+- **Tag keys with the correct environment** to make auditing easier.
+- **Rotate keys periodically.** Create a new key, deploy it, then revoke the old one.
+- **Never expose keys client-side.** API keys are for server-to-server use only.

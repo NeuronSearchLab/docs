@@ -1,0 +1,78 @@
+---
+title: 'Rerank Controls'
+description: 'Configure reranking behaviour per context to tune relevance and personalisation.'
+---
+
+Rerank controls let you adjust how the recommendation proxy re-orders results before returning them to your application. Controls are configured per context and applied automatically when requests pass through the console proxy.
+
+## How it works
+
+When a recommendation request hits the console proxy (`/api/recommendations`), the proxy:
+
+1. Looks up the rerank configuration for the requested context.
+2. Resolves the final controls by checking global defaults, surface presets, and any request-level overrides.
+3. Injects the resolved `surface`, `rerank_mode`, and `rerank_depth` parameters into the upstream API Gateway request.
+4. Returns the upstream response annotated with `applied_controls` so you can see exactly what was applied.
+
+## Configure in the console
+
+1. Navigate to **Console > Configuration > Rerank Controls**.
+2. Click a context row to open the editor.
+3. Set the **Global Default** — the baseline mode and depth applied when no surface-specific preset matches.
+4. Optionally configure **Surface Presets** to override behaviour for `search`, `results`, or `recommendations` surfaces independently.
+5. Save your changes.
+
+## Global defaults
+
+| Field | Description |
+| --- | --- |
+| **Default Surface** | The surface assumed when the caller does not specify one. |
+| **Rerank Mode** | `off` (no reranking), `balanced` (moderate), or `aggressive` (strong personalisation, higher latency). |
+| **Rerank Depth** | Number of candidates to rerank. Higher values improve quality at the cost of latency. |
+
+## Surface presets
+
+Each surface (`search`, `results`, `recommendations`) can override the global mode and depth. Surfaces that match the global default show as "inheriting" in the UI.
+
+## Request-level overrides
+
+Callers can pass `surface`, `rerank_mode`, and `rerank_depth` as query parameters. The proxy validates these against allowed values and clamps depth to the configured maximum.
+
+```bash
+curl "https://console.neuronsearchlab.com/api/recommendations?user_id=42&context_id=101&surface=search&rerank_mode=aggressive&rerank_depth=120" \
+  -H "Authorization: Bearer nsl_..."
+```
+
+## Feature flags and kill switch
+
+Rerank controls support staged rollouts via environment variables:
+
+| Variable | Description |
+| --- | --- |
+| `RERANK_CONTROLS_STAGE` | `off`, `internal`, `canary`, or `general`. Controls who receives reranking. |
+| `RERANK_KILL_SWITCH` | Set to `true` to immediately disable all reranking. |
+| `RERANK_MAX_DEPTH` | Hard ceiling for rerank depth across all contexts. |
+| `RERANK_INTERNAL_TEAM_IDS` | Comma-separated team IDs allowed during the `internal` stage. |
+
+When the kill switch is active or the stage is `off`, the proxy returns `rerank_mode: off` and `rerank_depth: 0` regardless of configuration.
+
+## Response annotations
+
+Every proxied response includes metadata about the applied controls:
+
+```json
+{
+  "recommendations": [...],
+  "applied_controls": {
+    "surface": "recommendations",
+    "rerank_mode": "balanced",
+    "rerank_depth": 80,
+    "source": "surface_preset"
+  },
+  "fallback_reason": null,
+  "control_stage": "general",
+  "context_id": 101
+}
+```
+
+The `source` field tells you where the final values came from: `global_default`, `surface_preset`, `request_override`, or `kill_switch`.
