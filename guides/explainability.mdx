@@ -1,0 +1,80 @@
+---
+title: 'Explainability'
+description: 'Debug why a specific item was recommended to a specific user by inspecting scores, rules, and pipeline stages.'
+---
+
+The Explainability page lets you trace exactly why an item appeared (or did not appear) in a user's recommendations. It shows the raw similarity score, which rules matched, and how each pipeline stage affected the result.
+
+---
+
+## Running an explanation
+
+1. Navigate to **Console > Ranking > Explainability**.
+2. Enter a **User ID** and **Item ID**.
+3. Click **Explain**.
+
+The system queries real data and returns a breakdown of the recommendation decision.
+
+---
+
+## What you see
+
+### Similarity score
+
+The raw cosine similarity between the user's embedding and the item's embedding, converted to a 0-1 score. This is the base relevance signal before any rules or pipeline adjustments.
+
+### Applied rules
+
+Each active rule is listed with:
+
+- **Rule name and type** (boost, pin, filter, etc.)
+- **Match status** — a green **matched** badge if the rule's conditions were satisfied for this user-item pair, or a grey **no match** badge if conditions did not match.
+- **Conditions** — what the rule checks (item metadata fields, segment membership, etc.)
+
+This tells you immediately which rules are affecting this specific recommendation and which are not.
+
+### Pipeline stages
+
+Each pipeline stage is shown with a status badge:
+
+| Status | Meaning | Colour |
+|--------|---------|--------|
+| **passed** | Stage ran normally | Green |
+| **disabled** | Stage is turned off in pipeline config | Grey |
+| **skipped** | Stage was skipped for this request | Yellow |
+| **partial** | Stage ran but with limited data | Amber |
+
+### Feature contributions
+
+A breakdown of what signals contributed to the final score — the embedding similarity, any metadata features, and rule adjustments.
+
+---
+
+## Common debugging scenarios
+
+### "Why is this item ranked so low?"
+
+1. Check the similarity score. If it is low, the user's behaviour does not strongly align with this item's embedding.
+2. Check for `bury` or `filter` rules that matched. A bury rule reduces the score; a filter rule removes the item entirely.
+3. Check if a higher-priority `pin` rule placed another item in the position you expected this one to occupy.
+
+### "Why is this item appearing when it shouldn't?"
+
+1. Look for `boost` or `pin` rules that matched unexpectedly. The rule's conditions may be broader than intended.
+2. Check whether the user belongs to a segment that triggers a promotional rule.
+3. Verify the item's metadata — the rule may be matching on stale or incorrect data.
+
+### "Why are rules not applying?"
+
+1. Check the rule's **Active** toggle — it may be inactive.
+2. Check the **schedule** — the rule may have a start date in the future or an end date in the past.
+3. Check the **segment condition** — the user may not belong to the target segment. Create a segment with broader conditions to verify.
+4. Check the pipeline config — if the **rules stage** is disabled, no rules will apply regardless of their configuration.
+
+---
+
+## Tips
+
+- **Use Explainability before launching a campaign.** Test your rules against real user-item pairs to verify they behave as expected.
+- **Combine with Analytics.** If engagement drops after deploying a new rule, use Explainability to check whether the rule is matching more broadly than intended.
+- **Test edge cases.** Try explaining items for users who are in multiple segments, or items that match conditions for multiple rules, to understand priority interactions.

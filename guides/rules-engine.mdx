@@ -1,0 +1,107 @@
+---
+title: 'Rules Engine'
+description: 'Create ranking rules that boost, bury, pin, filter, or diversify items based on business logic.'
+---
+
+The rules engine lets you override ML-generated rankings with business logic. Rules run after scoring and before final ranking, giving you precise control over what appears in recommendations and where.
+
+---
+
+## Creating a rule
+
+1. Navigate to **Console > Ranking > Rules Engine**.
+2. Click **New Rule**.
+3. Fill in the required fields:
+   - **Name** — a descriptive label (e.g. "Pin new series to top 3").
+   - **Type** — the kind of action the rule performs (see below).
+   - **Priority** — higher numbers execute first. Use priority to control which rules take precedence.
+   - **Active** — toggle on to make the rule live.
+4. Add conditions to control when the rule applies.
+5. Configure the action parameters.
+6. Optionally set a schedule (start and end dates).
+7. Click **Create Rule**.
+
+---
+
+## Rule types
+
+| Type | What it does | Example use |
+|------|-------------|-------------|
+| `boost` | Multiply an item's score by a factor | Promote seasonal content |
+| `bury` | Reduce an item's score by a factor | Demote low-quality items |
+| `pin` | Lock an item into a specific position | Feature a new release at position 1 |
+| `filter` | Remove items that match conditions | Hide out-of-stock products |
+| `diversify` | Ensure variety across a metadata field | No more than 3 items from the same category |
+| `slot` | Reserve positions for items matching criteria | Always show one editorial pick in the top 5 |
+
+---
+
+## Conditions
+
+Conditions determine which items or users a rule applies to. A rule with no conditions applies to all items for all users.
+
+### Item metadata conditions
+
+Match against fields in the item's metadata:
+
+| Field | Operator | Value | Meaning |
+|-------|----------|-------|---------|
+| `genre` | `equals` | `action` | Item genre is "action" |
+| `price` | `greater_than` | `50` | Item costs more than 50 |
+| `stock_status` | `equals` | `out_of_stock` | Item is out of stock |
+
+### Segment conditions
+
+Target a rule to users in a specific segment:
+
+1. Add a condition and set the field to `segment_id`.
+2. A dropdown appears listing all available segments.
+3. Select the segment. The rule now only applies to users who belong to that segment.
+
+This is how you build targeted campaigns — for example, boosting a series only for users who haven't watched it yet.
+
+---
+
+## Scheduling
+
+Rules support time-based activation via start and end dates.
+
+| Configuration | Behaviour |
+|--------------|-----------|
+| Both dates set | Rule is active only within the window |
+| Start date only | Rule activates at that time, no automatic end |
+| End date only | Rule is active now but deactivates after the deadline |
+| Neither date set | Rule is always active (subject to the Active toggle) |
+
+### Setting a schedule
+
+1. In the rule editor, use the **Start date** and **End date** datetime pickers.
+2. Rules with a schedule show a **scheduled** badge in the table view.
+3. Click **Clear schedule** to remove dates and make the rule always-active.
+
+Scheduling is enforced at the database level, so time zone handling is consistent regardless of where the request originates.
+
+---
+
+## Priority and execution order
+
+Rules execute in **descending priority order** (highest first). When multiple rules affect the same item:
+
+- A `pin` at priority 100 places the item before a `boost` at priority 50 can change its score.
+- A `filter` at any priority removes the item entirely, so later rules never see it.
+
+Use priority deliberately:
+- **100+** for hard business constraints (compliance, filtering)
+- **50-99** for campaign promotions
+- **1-49** for soft merchandising preferences
+
+---
+
+## How rules interact with experiments
+
+When an A/B experiment is running, each variant can include `config_overrides` that specify:
+
+- `include_rule_ids` — only these rules apply for users in this variant
+- `exclude_rule_ids` — these rules are skipped for users in this variant
+
+This lets you test the impact of specific rules against a control group. See [A/B Testing](/guides/ab-testing) for details.

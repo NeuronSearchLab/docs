@@ -37,6 +37,17 @@
             ]
           },
           {
+            "group": "Ranking Platform",
+            "pages": [
+              "guides/user-segments",
+              "guides/rules-engine",
+              "guides/pipeline-config",
+              "guides/ab-testing",
+              "guides/explainability",
+              "guides/scenarios"
+            ]
+          },
+          {
             "group": "Developer How-To",
             "pages": [
               "guides/how-to-serve-recommendations",
