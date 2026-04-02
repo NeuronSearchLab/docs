@@ -1,0 +1,67 @@
+---
+title: 'Pipeline Config'
+description: 'Configure the multi-stage recommendation pipeline — enable or disable stages, set candidate limits, and control page sizes.'
+---
+
+The pipeline config page gives you control over the multi-stage recommendation pipeline. Each recommendation request flows through a series of stages, and you can enable, disable, or tune each one independently.
+
+---
+
+## Pipeline stages
+
+Recommendations are produced through these stages, in order:
+
+| Stage | Purpose | Key config |
+|-------|---------|-----------|
+| **Candidate generation** | Retrieve initial candidates from the vector index using cosine similarity | `candidate_limit` — max candidates to pull |
+| **Feature enrichment** | Attach metadata and computed features to each candidate | — |
+| **Scoring** | Run the ML model scoring pass over enriched candidates | — |
+| **Rules** | Apply business rules (boost, bury, pin, filter, diversify) | Can be disabled entirely |
+| **Ranking** | Final sort by adjusted scores | — |
+| **Post-processing** | Trim to page size and apply any final transforms | `page_size` — number of items returned |
+
+---
+
+## Configuring the pipeline
+
+1. Navigate to **Console > Ranking > Pipeline Config**.
+2. Each stage is shown as a card with its current status (enabled/disabled) and configuration.
+3. Toggle a stage on or off. Disabled stages are skipped entirely at runtime.
+4. Where available, adjust stage-specific settings like `candidate_limit` or `page_size`.
+5. Save your changes.
+
+### When to disable stages
+
+- **Disable Rules** to produce pure ML-ranked results. Useful as a control arm in an A/B experiment to measure whether your business rules help or hurt engagement.
+- **Disable Feature Enrichment** if you are testing raw embedding similarity without metadata features.
+
+### Tuning candidate limits
+
+The `candidate_limit` in the candidate generation stage controls how many items are pulled from the vector index before scoring. A higher limit gives the scoring model more candidates to choose from but increases latency. Start with 100-200 and increase if you notice the final results lack diversity.
+
+### Tuning page size
+
+The `page_size` in post-processing determines how many items are returned in the API response. This does not affect internal processing — all stages operate on the full candidate set. The trim happens at the end.
+
+---
+
+## Pipeline and experiments
+
+When running an A/B experiment, each variant can reference a different pipeline config. For example:
+
+- **Control**: default pipeline with all stages enabled
+- **Treatment**: pipeline with the rules stage disabled
+
+This lets you isolate the impact of specific pipeline stages on recommendation quality. See [A/B Testing](/guides/ab-testing) for setup details.
+
+---
+
+## Fallback behaviour
+
+If no pipeline config exists for your team, the system uses sensible defaults:
+
+- All stages enabled
+- `candidate_limit`: 100
+- `page_size`: 20
+
+You only need to configure the pipeline if you want to change these defaults.

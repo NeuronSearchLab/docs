@@ -1,0 +1,122 @@
+---
+title: 'A/B Testing'
+description: 'Run controlled experiments to compare ranking strategies and measure their impact on user engagement.'
+---
+
+A/B testing lets you split live traffic between different ranking configurations and measure which performs better. You can test rule combinations, pipeline settings, or entirely different strategies against a control group.
+
+---
+
+## Creating an experiment
+
+1. Navigate to **Console > A/B Testing**.
+2. Click **New Experiment**.
+3. Enter a name and description. The description should capture your hypothesis — for example, "Pinning new releases to top 3 will increase click-through rate by 15%."
+4. Switch to the **Variants** tab.
+5. Configure at least two variants:
+   - **Control** — the baseline experience (typically your current configuration).
+   - **Treatment** — the change you want to test.
+6. Set **traffic fractions** using the sliders. They should sum to 100%.
+7. Click **Create Experiment**.
+
+The experiment starts in **draft** status and does not affect live traffic until you move it to **running**.
+
+---
+
+## Variant configuration
+
+Each variant has:
+
+| Field | Description |
+|-------|-------------|
+| **Name** | A label like "Control" or "New rules" |
+| **Traffic fraction** | Percentage of users assigned to this variant (0-100%) |
+| **Description** | What this variant tests |
+| **Pipeline ID** | Optional: assign a different pipeline config to this variant |
+| **Config overrides** | Optional: JSON overrides for rule inclusion/exclusion |
+
+### Config overrides
+
+Use `config_overrides` to control which rules apply per variant:
+
+```json
+{
+  "include_rule_ids": [5, 12],
+  "exclude_rule_ids": [3]
+}
+```
+
+- `include_rule_ids` — only these rules apply for users in this variant. All other rules are skipped.
+- `exclude_rule_ids` — these specific rules are skipped. All other rules apply normally.
+
+This is how you test the impact of a specific rule or set of rules against a control group.
+
+---
+
+## Traffic assignment
+
+Assignment is **deterministic and consistent**:
+
+1. For each request, the engine computes `hash(user_id + experiment_id) mod 1000`.
+2. The result is matched against cumulative traffic fraction buckets.
+3. The same user always gets the same variant for a given experiment.
+
+This means:
+- No cookies or session storage required.
+- Assignment is consistent across requests and devices (as long as the user ID is the same).
+- You can run multiple experiments simultaneously — each experiment assigns independently.
+
+---
+
+## Experiment lifecycle
+
+| Status | What happens |
+|--------|-------------|
+| **Draft** | Experiment is configured but not live. No users are assigned. |
+| **Running** | Live. Users are assigned to variants and data is collected. `start_date` is set automatically on first transition to running. |
+| **Paused** | Assignment continues for consistency, but you may want to pause to investigate unexpected results. |
+| **Completed** | Experiment is over. `end_date` is set automatically. Results are final. |
+
+To change status, open the experiment and click the desired status button on the Setup tab.
+
+---
+
+## Measuring results
+
+The **Results** tab shows computed metrics for each variant.
+
+### Available metrics
+
+| Metric | Definition |
+|--------|-----------|
+| **CTR** | Total user events divided by total served impressions for users in this variant |
+| **Conversion rate** | Fraction of users in the variant who generated at least one event |
+| **Sample size** | Number of unique users assigned to this variant during the experiment window |
+
+### Lift calculation
+
+For each treatment variant, the Results tab shows **lift vs. control**:
+
+- Positive lift (green) means the treatment outperformed the control.
+- Negative lift (red) means the treatment underperformed.
+- Lift is calculated as `(treatment_metric - control_metric) / control_metric`.
+
+### Refreshing metrics
+
+Click **Refresh metrics** to recompute from the latest data. Metrics are computed by:
+
+1. Querying all users who were served recommendations during the experiment window.
+2. Deterministically re-assigning each to a variant using the same hash as the live engine.
+3. Aggregating served impressions and user events per variant.
+
+Refresh as often as you need — each click pulls the latest data.
+
+---
+
+## Best practices
+
+- **Run experiments for at least 1-2 weeks** to account for day-of-week effects.
+- **Don't change rules mid-experiment** unless you intentionally want to measure the impact of the change.
+- **Use meaningful sample sizes.** If one variant has very few users, the metrics will be noisy. Ensure traffic fractions give each variant enough volume.
+- **Document your hypothesis** in the experiment description so you can review what you were testing months later.
+- **Complete experiments** when done. This sets the end date and freezes the measurement window.

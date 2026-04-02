@@ -1,0 +1,109 @@
+---
+title: 'User Segments'
+description: 'Define user cohorts by behaviour, demographics, or item interactions and use them to target ranking rules.'
+---
+
+User segments let you define reusable groups of users based on their behaviour, profile data, or interactions with specific items. Segments are evaluated at recommendation time and can be referenced as conditions in ranking rules, giving you fine-grained control over who sees what.
+
+---
+
+## Creating a segment
+
+1. Navigate to **Console > Ranking > User Segments**.
+2. Click **New Segment**.
+3. Enter a name and optional description.
+4. Add one or more conditions (see below).
+5. Toggle **Active** on so the segment is evaluated at request time.
+6. Click **Create Segment**.
+
+A user belongs to a segment only when **all** conditions match (AND logic). If you need OR logic, create separate segments and reference them independently in rules.
+
+---
+
+## Condition types
+
+Each condition has a **type**, a **field**, an **operator**, and optionally a **value**.
+
+### Behavioral
+
+Counts the number of events of a given name for the user.
+
+| Field | Meaning |
+|-------|---------|
+| Event name (e.g. `click`, `purchase`) | The event type to count |
+
+**Example:** `click greater_than 10` matches users with more than 10 click events.
+
+### Demographic
+
+Looks up a value from the user's metadata.
+
+| Field | Meaning |
+|-------|---------|
+| Metadata key (e.g. `country`, `device`) | The user metadata field to check |
+
+**Example:** `country equals US` matches users whose metadata has `country: "US"`.
+
+### Computed
+
+Checks derived statistics calculated from the user's event history.
+
+| Field | Meaning |
+|-------|---------|
+| `total_events` | Total number of events for the user |
+| `days_since_first` | Days since the user's first recorded event |
+
+**Example:** `total_events greater_than 50` matches users with high engagement.
+
+### Item interaction
+
+Checks whether a user has interacted with a specific item and how many times.
+
+| Field | Meaning |
+|-------|---------|
+| Item ID (e.g. `movie_123`) | The specific item to check interactions for |
+
+The operator dropdown shows contextual labels:
+
+| Operator | Label | Meaning |
+|----------|-------|---------|
+| `exists` | has interacted | User has at least one event involving this item |
+| `greater_than` | interactions > | Interaction count exceeds the threshold |
+| `less_than` | interactions < | Interaction count is below the threshold |
+| `equals` | interactions = | Interaction count matches exactly |
+| `not_equals` | interactions != | Interaction count does not match |
+
+**Example:** `movie_123 exists` matches users who have watched, clicked, or otherwise interacted with `movie_123`.
+
+---
+
+## How segments are evaluated
+
+At recommendation time the engine:
+
+1. Pre-fetches the user's event counts, metadata, computed stats, and item interaction counts in efficient batch queries.
+2. Evaluates each active segment's conditions against this data.
+3. Returns the list of matching segment IDs to the rules engine.
+
+Segment evaluation is non-blocking. If the segment tables are unavailable, recommendations still return without segment data.
+
+---
+
+## Using segments in rules
+
+Once a segment exists, you can target a rule to it:
+
+1. Open the rule editor (see [Rules Engine](/guides/rules-engine)).
+2. Add a condition and set the field to `segment_id`.
+3. The UI shows a dropdown of all available segments instead of a free-text field.
+4. Select the segment you want to target.
+
+The rule then only applies to users who belong to that segment at request time.
+
+---
+
+## Tips
+
+- **Start broad, then narrow.** Create a simple segment first, verify it works via the Explainability page, then refine conditions.
+- **Combine with scheduling.** A segment like "users who haven't watched Series X" paired with a scheduled rule creates a time-bounded promotional campaign.
+- **Item interaction is powerful.** Use it to distinguish between users who have started content vs. those who have never seen it — critical for upsell and completion campaigns.
