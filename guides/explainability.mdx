@@ -3,6 +3,8 @@ title: 'Explainability'
 description: 'Debug why a specific item was recommended to a specific user by inspecting scores, rules, and pipeline stages.'
 ---
 
+> Use [Studio](/guides/studio-workflow) when you want to preview and verify a surface in one workflow. This page is the detailed explainability reference.
+
 The Explainability page lets you trace exactly why an item appeared (or did not appear) in a user's recommendations. It shows the raw similarity score, which rules matched, and how each pipeline stage affected the result.
 
 ---
@@ -78,4 +80,3 @@ A breakdown of what signals contributed to the final score — the embedding sim
 - **Use Explainability before launching a campaign.** Test your rules against real user-item pairs to verify they behave as expected.
 - **Combine with Analytics.** If engagement drops after deploying a new rule, use Explainability to check whether the rule is matching more broadly than intended.
 - **Test edge cases.** Try explaining items for users who are in multiple segments, or items that match conditions for multiple rules, to understand priority interactions.
-

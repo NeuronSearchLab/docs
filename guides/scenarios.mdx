@@ -7,7 +7,56 @@ These walkthroughs show how the ranking platform features work together to solve
 
 ---
 
-## Scenario 1: Streaming platform series launch
+## Scenario 1: newsroom weather emergency
+
+**Goal:** use Studio to create one deterministic homepage outcome during a live weather event: the closures guide must appear in slot `2`.
+
+### Step 1: open the right studio
+
+1. Open **Console > Studio**.
+2. Select the homepage weather emergency studio.
+
+### Step 2: create the rule
+
+1. Open the **Rules** tab.
+2. Click **New Rule**.
+3. Create a `pin` rule named `Pin school closures guide to slot 2`.
+4. Add a condition:
+   - field: `entity_id`
+   - operator: `equals`
+   - value: `item-school-closures-live`
+5. Set the action to pin the item to position `2`.
+6. Save the rule as active.
+
+### Step 3: preview the exact outcome
+
+1. Open the **Preview** tab.
+2. Enter a reader ID.
+3. Run preview.
+
+**Pass condition:** the item `School closures and travel disruption map` is in slot `2`.
+
+### Step 4: verify why it happened
+
+1. Open the **Verify** tab.
+2. Enter the same item ID and user ID.
+3. Run explain.
+
+**Pass condition:** Verify shows the rule `Pin school closures guide to slot 2` matched the item.
+
+### Step 5: publish
+
+1. Open the **Publish** tab.
+2. Confirm:
+   - an active rule exists
+   - the active pipeline includes the rules stage
+   - no experiment is excluding the rule
+
+This scenario is a good operational test because only one valid result exists. If the item is not in slot `2`, the change failed.
+
+---
+
+## Scenario 2: Streaming platform series launch
 
 **Goal:** Promote a new series for two weeks, targeting users who haven't watched it yet, while running an A/B test to measure the impact.
 
@@ -69,7 +118,7 @@ Create two segments to separate users who have and haven't engaged with the seri
 
 ---
 
-## Scenario 2: E-commerce flash sale weekend
+## Scenario 3: E-commerce flash sale weekend
 
 **Goal:** Boost sale items for a weekend, show premium items to high-value customers, suppress out-of-stock products, and test whether manual merchandising rules outperform pure ML.
 
@@ -128,7 +177,7 @@ Create two segments to separate users who have and haven't engaged with the seri
 
 ---
 
-## Scenario 3: Content freshness and diversity
+## Scenario 4: Content freshness and diversity
 
 **Goal:** Ensure recommendations always include recent content and don't over-represent a single category.
 
@@ -155,7 +204,7 @@ Create two segments to separate users who have and haven't engaged with the seri
 
 ---
 
-## Scenario 4: Gradual feature rollout
+## Scenario 5: Gradual feature rollout
 
 **Goal:** Roll out a new set of ranking rules to 10% of users first, then expand.
 
@@ -192,4 +241,3 @@ These scenarios demonstrate a pattern: **segments define who, rules define what,
 | A/B Testing | Measure impact with traffic splits |
 | Explainability | Debug and verify before launch |
 | Analytics | Monitor outcomes in production |
-

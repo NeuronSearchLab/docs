@@ -3,6 +3,8 @@ title: 'Rules Engine'
 description: 'Create ranking rules that boost, bury, pin, filter, or diversify items based on business logic.'
 ---
 
+> Use [Studio](/guides/studio-workflow) first for most ranking changes. This page is the advanced rules reference.
+
 The rules engine lets you override ML-generated rankings with business logic. Rules run after scoring and before final ranking, giving you precise control over what appears in recommendations and where.
 
 ---
@@ -105,4 +107,3 @@ When an A/B experiment is running, each variant can include `config_overrides` t
 - `exclude_rule_ids` — these rules are skipped for users in this variant
 
 This lets you test the impact of specific rules against a control group. See [A/B Testing](/guides/ab-testing) for details.
-
