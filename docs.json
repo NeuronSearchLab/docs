@@ -25,25 +25,27 @@
             ]
           },
           {
-            "group": "Console How-To",
+            "group": "Console Workflow",
             "pages": [
-              "guides/contexts",
-              "guides/rerank-controls",
+              "guides/studio-workflow",
+              "guides/quick-search",
               "guides/api-keys",
-              "guides/events",
               "guides/models",
               "guides/analytics",
-              "guides/users-and-items"
+              "guides/users-and-items",
+              "guides/ab-testing"
             ]
           },
           {
-            "group": "Ranking Platform",
+            "group": "Advanced Console",
             "pages": [
+              "guides/contexts",
               "guides/user-segments",
               "guides/rules-engine",
               "guides/pipeline-config",
-              "guides/ab-testing",
               "guides/explainability",
+              "guides/rerank-controls",
+              "guides/events",
               "guides/scenarios"
             ]
           },
@@ -52,7 +54,6 @@
             "pages": [
               "guides/how-to-serve-recommendations",
               "guides/how-to-connect-catalog-and-events",
-              "guides/how-to-launch-a-new-context",
               "guides/how-to-measure-recommendation-performance"
             ]
           }
@@ -130,4 +131,3 @@
     }
   }
 }
-
