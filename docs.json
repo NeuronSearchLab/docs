@@ -11,10 +11,11 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
             "group": "Get Started",
+            "icon": "rocket",
             "pages": [
               "introduction",
               "quickstart",
@@ -26,6 +27,7 @@
           },
           {
             "group": "Console Workflow",
+            "icon": "browser",
             "pages": [
               "guides/studio-workflow",
               "guides/quick-search",
@@ -38,6 +40,7 @@
           },
           {
             "group": "Advanced Console",
+            "icon": "gear",
             "pages": [
               "guides/contexts",
               "guides/user-segments",
@@ -51,6 +54,7 @@
           },
           {
             "group": "Developer How-To",
+            "icon": "code",
             "pages": [
               "guides/how-to-serve-recommendations",
               "guides/how-to-connect-catalog-and-events",
@@ -65,10 +69,12 @@
         "groups": [
           {
             "group": "API Documentation",
+            "icon": "plug",
             "pages": ["api-reference/introduction"]
           },
           {
             "group": "Endpoint Examples",
+            "icon": "brackets-curly",
             "pages": [
               "api-reference/endpoint/authenticate",
               "api-reference/endpoint/get-recommendations",
@@ -83,10 +89,12 @@
         "groups": [
           {
             "group": "JavaScript SDK",
+            "icon": "js",
             "pages": ["sdk/introduction"]
           },
           {
             "group": "MCP Integration",
+            "icon": "robot",
             "pages": ["sdk/mcp"]
           }
         ]
