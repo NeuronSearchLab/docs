@@ -34,6 +34,8 @@ Tokens default to a 60-minute lifetime. Cache them server-side and refresh proac
 
 Obtain an access token using the client credentials grant, then pass it to the SDK:
 
+### JavaScript / TypeScript
+
 ```ts
 import NeuronSDK from '@neuronsearchlab/sdk';
 
@@ -43,7 +45,23 @@ const sdk = new NeuronSDK({
 });
 ```
 
-The SDK retries transient errors with exponential backoff. You are responsible for refreshing the access token before it expires (tokens default to 60 minutes) and calling `sdk.setAccessToken(newToken)` to update it.
+### PHP / Laravel
+
+```php
+<?php
+
+use NeuronSearchLab\NeuronSDK;
+
+$sdk = new NeuronSDK([
+    'baseUrl' => 'https://api.neuronsearchlab.com',
+    'accessToken' => '<your_access_token>',
+]);
+```
+
+Both SDKs retry transient errors with exponential backoff. You are responsible for refreshing the access token before it expires (tokens default to 60 minutes) and updating the client:
+
+- JavaScript: `sdk.setAccessToken(newToken)`
+- PHP: `$sdk->setAccessToken($newToken)`
 
 ## Protect secrets in production
 
@@ -51,4 +69,4 @@ The SDK retries transient errors with exponential backoff. You are responsible f
 - Rotate credentials regularly using your secrets manager.
 - Audit token usage through the console activity logs.
 
-For endpoint-specific authentication details, refer to the [API Reference introduction](/api-reference/introduction).
+For endpoint-specific authentication details, refer to the [API Reference introduction](/api-reference/introduction), the [JavaScript SDK](/sdk/introduction), or the [PHP SDK](/sdk/php).

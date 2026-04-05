@@ -1,0 +1,248 @@
+---
+title: "PHP SDK"
+icon: "code"
+description: "Install, configure, and use the official NeuronSearchLab PHP SDK in Laravel or any PHP application."
+---
+
+<Note>
+The PHP SDK is published on <a href="https://packagist.org/packages/neuronsearchlab/sdk-php">Packagist</a> and the source lives on <a href="https://github.com/NeuronSearchLab/neuronsearchlab-sdk-php">GitHub</a>. Install it with Composer in Laravel or any other PHP app.
+</Note>
+
+## Installation
+
+```bash
+composer require neuronsearchlab/sdk-php
+```
+
+If you are using Laravel, this is the standard installation path. Composer pulls the package from Packagist automatically.
+
+---
+
+## Initialize the client
+
+The SDK uses a Bearer token for authentication. Obtain an access token by exchanging your [SDK credentials](/authentication) and pass it when creating the client:
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use NeuronSearchLab\NeuronSDK;
+
+$sdk = new NeuronSDK([
+    'baseUrl' => 'https://api.neuronsearchlab.com',
+    'accessToken' => '<your_access_token>',
+]);
+```
+
+### Configuration options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `baseUrl` | string | required | API base URL |
+| `accessToken` | string | required | Bearer token from `/auth/token` |
+| `timeoutMs` | int | `10000` | HTTP request timeout in ms |
+| `maxRetries` | int | `2` | Retry count on 429/5xx/timeouts |
+| `collateWindowSeconds` | float | `3` | Buffer events for this many seconds before flushing |
+| `maxBatchSize` | int | `200` | Flush immediately when the buffer reaches this size |
+| `maxBufferedEvents` | int | `5000` | Drop oldest events beyond this limit |
+| `maxEventRetries` | int | `5` | Retry count for buffered event sends |
+| `disableArrayBatching` | bool | `false` | Force single-event sends |
+| `propagateRecommendationRequestId` | bool | `true` | Auto-attach `request_id` from recommendations to subsequent events |
+| `sessionId` | string or null | `null` | Override the SDK-wide session ID |
+| `autoSessionId` | bool | `true` | Auto-generate a session UUID |
+| `httpClient` | callable | cURL | Custom HTTP transport for non-cURL environments or tests |
+
+---
+
+## Get recommendations
+
+```php
+$result = $sdk->getRecommendations([
+    'userId' => 'user-123',
+    'contextId' => 'homepage',
+    'limit' => 10,
+]);
+
+var_dump($result['recommendations']);
+```
+
+Each recommendation includes `entity_id`, `name`, `description`, `score`, and any `metadata` you stored with the item. The response also includes a `request_id` for event attribution.
+
+### Auto-generated sections
+
+Use `getAutoRecommendations` for paginated, auto-titled recommendation sections:
+
+```php
+$section = $sdk->getAutoRecommendations([
+    'userId' => 'user-123',
+    'limit' => 5,
+    'windowDays' => 7,
+]);
+
+if (!empty($section['next_cursor'])) {
+    $next = $sdk->getAutoRecommendations([
+        'userId' => 'user-123',
+        'cursor' => $section['next_cursor'],
+    ]);
+}
+```
+
+---
+
+## Track events
+
+Events provide the feedback loop that powers personalization. The PHP SDK buffers events in memory for the lifetime of the current process.
+
+```php
+$sdk->trackEvent([
+    'eventId' => 1,
+    'userId' => 'user-123',
+    'itemId' => 'item-456',
+])->wait();
+```
+
+### How batching works in PHP
+
+1. Events are buffered with a `client_ts` timestamp.
+2. The buffer flushes when it reaches `maxBatchSize`.
+3. You can force delivery with `flushEvents()` or by calling `->wait()` on the returned `PendingResult`.
+4. Remaining buffered events are flushed during PHP shutdown.
+5. Failed sends are retried with exponential backoff.
+
+```php
+$pending = $sdk->trackEvent([
+    'eventId' => 2,
+    'userId' => 'user-123',
+    'itemId' => 'item-456',
+]);
+
+$pending->wait();
+
+$sdk->flushEvents();
+```
+
+### Request ID propagation
+
+When `propagateRecommendationRequestId` is enabled, the SDK captures the `request_id` from `getRecommendations()` and automatically attaches it to subsequent `trackEvent()` calls unless you explicitly provide `requestId` or `request_id`.
+
+```php
+$recs = $sdk->getRecommendations([
+    'userId' => 'user-123',
+    'limit' => 5,
+]);
+
+$sdk->trackEvent([
+    'eventId' => 1,
+    'userId' => 'user-123',
+    'itemId' => $recs['recommendations'][0]['entity_id'],
+])->wait();
+```
+
+---
+
+## Manage catalog items
+
+### Upsert an item
+
+```php
+$sdk->upsertItem([
+    'itemId' => 'item-456',
+    'name' => 'Nike Running Shoes',
+    'description' => 'High-performance running shoes for daily training.',
+    'metadata' => [
+        'category' => 'Footwear',
+        'brand' => 'Nike',
+        'price' => 109.99,
+    ],
+]);
+```
+
+### Update an item
+
+```php
+$sdk->patchItem([
+    'itemId' => 'item-456',
+    'active' => false,
+]);
+```
+
+Or use the convenience helper:
+
+```php
+$sdk->setItemActive('item-456', false);
+```
+
+### Delete items
+
+```php
+$sdk->deleteItems(['itemId' => 'item-456']);
+
+$sdk->deleteItems([
+    ['itemId' => 'item-456'],
+    ['itemId' => 'item-789'],
+]);
+```
+
+---
+
+## Error handling
+
+The SDK exposes `SDKHttpError` and `SDKTimeoutError`:
+
+```php
+<?php
+
+use NeuronSearchLab\SDKHttpError;
+use NeuronSearchLab\SDKTimeoutError;
+
+try {
+    $sdk->getRecommendations(['userId' => 'user-123']);
+} catch (SDKHttpError $error) {
+    error_log(sprintf('HTTP %d: %s', $error->status, $error->statusText));
+} catch (SDKTimeoutError $error) {
+    error_log(sprintf('Request timed out after %dms', $error->timeoutMs));
+}
+```
+
+Transient errors such as 429s, 5xxs, and timeouts are retried automatically.
+
+---
+
+## Logging
+
+Configure structured logging for debugging and observability:
+
+```php
+<?php
+
+use function NeuronSearchLab\configureLogger;
+
+configureLogger([
+    'level' => 'DEBUG',
+    'enableNetworkBodyLogging' => true,
+    'enablePerformanceLogging' => true,
+]);
+```
+
+Available log levels: `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`, `FATAL`.
+
+---
+
+## Session management
+
+The SDK auto-generates a session UUID on initialization when `autoSessionId` is enabled. You can override or read it:
+
+```php
+$sdk->setSessionId('custom-session-id');
+var_dump($sdk->getSessionId());
+```
+
+---
+
+## Links
+
+- [Install from Packagist](https://packagist.org/packages/neuronsearchlab/sdk-php)
+- [Source on GitHub](https://github.com/NeuronSearchLab/neuronsearchlab-sdk-php)
+- [REST API reference](/api-reference/introduction)
+- [JavaScript SDK](/sdk/introduction)
