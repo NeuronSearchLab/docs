@@ -93,6 +93,11 @@
             "pages": ["sdk/introduction"]
           },
           {
+            "group": "PHP SDK",
+            "icon": "code",
+            "pages": ["sdk/php"]
+          },
+          {
             "group": "MCP Integration",
             "icon": "robot",
             "pages": ["sdk/mcp"]

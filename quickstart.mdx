@@ -58,7 +58,10 @@ curl -X GET "https://api.neuronsearchlab.com/recommendations?user_id=user-123&co
 
 Send optional query parameters such as `limit`, `filters`, or `boosts` to tailor the response. Responses include ranked items with associated metadata so you can render UI components quickly.
 
-If you prefer higher level abstractions, install the [official SDK](https://www.npmjs.com/package/@neuronsearchlab/sdk) and call `sdk.getRecommendations()` from your server.
+If you prefer higher level abstractions, use one of the official SDKs from your backend:
+
+- JavaScript/TypeScript: [`@neuronsearchlab/sdk` on npm](https://www.npmjs.com/package/@neuronsearchlab/sdk)
+- PHP/Laravel: [`neuronsearchlab/sdk-php` on Packagist](https://packagist.org/packages/neuronsearchlab/sdk-php)
 
 ---
 
@@ -81,6 +84,16 @@ In addition to the API and SDK, you can manage your data and monitor performance
 ## Extend your integration
 
 NeuronSearchLab supports rich documentation and examples to help you integrate quickly and effectively.
+
+<CardGroup>
+  <Card title="PHP SDK" icon="code" href="/sdk/php">
+    Install the official PHP SDK with Composer for Laravel or any PHP service.
+  </Card>
+
+  <Card title="JavaScript SDK" icon="js" href="/sdk/introduction">
+    Use the official npm package from Node.js or TypeScript services.
+  </Card>
+</CardGroup>
 
 <CardGroup>
   <Card title="Serve Recommendations" icon="sparkles" href="/guides/how-to-serve-recommendations">
