@@ -9,16 +9,11 @@ These walkthroughs show how the ranking platform features work together to solve
 
 ## Scenario 1: newsroom weather emergency
 
-**Goal:** use Studio to create one deterministic homepage outcome during a live weather event: the closures guide must appear in slot `2`.
+**Goal:** Pin a closures guide to slot 2 on the homepage during a live weather event.
 
-### Step 1: open the right studio
+### Step 1: create the rule
 
-1. Open **Console > Studio**.
-2. Select the homepage weather emergency studio.
-
-### Step 2: create the rule
-
-1. Open the **Rules** tab.
+1. Open **Console > Rules Engine**.
 2. Click **New Rule**.
 3. Create a `pin` rule named `Pin school closures guide to slot 2`.
 4. Add a condition:
@@ -26,31 +21,22 @@ These walkthroughs show how the ranking platform features work together to solve
    - operator: `equals`
    - value: `item-school-closures-live`
 5. Set the action to pin the item to position `2`.
-6. Save the rule as active.
+6. Scope the rule to your homepage context.
+7. Save the rule as active.
 
-### Step 3: preview the exact outcome
+### Step 2: verify with Explainability
 
-1. Open the **Preview** tab.
-2. Enter a reader ID.
-3. Run preview.
+1. Open **Console > Explainability**.
+2. Enter a reader ID and the item ID `item-school-closures-live`.
+3. Click **Explain**.
 
-**Pass condition:** the item `School closures and travel disruption map` is in slot `2`.
+**Pass condition:** Explainability shows the rule `Pin school closures guide to slot 2` matched the item.
 
-### Step 4: verify why it happened
+### Step 3: confirm pipeline includes rules stage
 
-1. Open the **Verify** tab.
-2. Enter the same item ID and user ID.
-3. Run explain.
-
-**Pass condition:** Verify shows the rule `Pin school closures guide to slot 2` matched the item.
-
-### Step 5: publish
-
-1. Open the **Publish** tab.
-2. Confirm:
-   - an active rule exists
-   - the active pipeline includes the rules stage
-   - no experiment is excluding the rule
+1. Open **Console > Pipeline Config**.
+2. Confirm the active pipeline for the homepage context has the **Rules** stage enabled.
+3. Confirm no experiment is excluding the rule.
 
 This scenario is a good operational test because only one valid result exists. If the item is not in slot `2`, the change failed.
 
@@ -65,7 +51,7 @@ This scenario is a good operational test because only one valid result exists. I
 Create two segments to separate users who have and haven't engaged with the series.
 
 **Segment: "Hasn't watched Series X"**
-1. Go to **Ranking > User Segments** and click **New Segment**.
+1. Go to **Console > User Segments** and click **New Segment**.
 2. Add a condition:
    - Type: `item_interaction`
    - Item ID: the series item ID (e.g. `series_x_ep1`)
@@ -83,7 +69,7 @@ Create two segments to separate users who have and haven't engaged with the seri
 ### Step 2: Create the rules
 
 **Rule: "Pin Series X for new viewers"**
-1. Go to **Ranking > Rules Engine** and click **New Rule**.
+1. Go to **Console > Rules Engine** and click **New Rule**.
 2. Type: `pin`. Priority: `80`.
 3. Add a condition: field = `segment_id`, select "Hasn't watched Series X".
 4. Action: pin the series into top 3 positions.
@@ -100,7 +86,7 @@ Create two segments to separate users who have and haven't engaged with the seri
 
 ### Step 3: Run an A/B test
 
-1. Go to **A/B Testing** and click **New Experiment**.
+1. Go to **Console > A/B Testing** and click **New Experiment**.
 2. Name: "Series X launch campaign".
 3. Description: "Hypothesis: pinning Series X for non-viewers increases completion rate."
 4. Variants:
@@ -124,7 +110,7 @@ Create two segments to separate users who have and haven't engaged with the seri
 
 ### Step 1: Create the high-value customer segment
 
-1. Go to **Ranking > User Segments** and click **New Segment**.
+1. Go to **Console > User Segments** and click **New Segment**.
 2. Add a condition:
    - Type: `computed`
    - Field: `total_events`
@@ -135,7 +121,7 @@ Create two segments to separate users who have and haven't engaged with the seri
 ### Step 2: Create the rules
 
 **Rule: "Flash sale boost"**
-1. Go to **Ranking > Rules Engine** and click **New Rule**.
+1. Go to **Console > Rules Engine** and click **New Rule**.
 2. Type: `boost`. Priority: `60`.
 3. Add a condition: field = `category`, operator = `equals`, value = `sale`.
 4. Action: boost with a high factor.
@@ -159,17 +145,17 @@ Create two segments to separate users who have and haven't engaged with the seri
 
 ### Step 3: Set up the pure ML experiment
 
-1. Go to **Ranking > Pipeline Config**.
+1. Go to **Console > Pipeline Config**.
 2. Create or note your default pipeline (all stages enabled).
 3. Consider creating a second pipeline with the **rules stage disabled** for pure ML ranking.
-4. Go to **A/B Testing** and create an experiment:
+4. Go to **Console > A/B Testing** and create an experiment:
    - **Control** (50%): default pipeline.
    - **Treatment** (50%): pipeline with rules stage disabled.
 5. Set to **Running** on Friday.
 
 ### Step 4: Monitor the sale
 
-1. Open **Analytics** and watch served volume.
+1. Open **Console > Analytics** and watch served volume.
 2. Filter by user ID to spot-check that VIP users see premium items.
 3. Refresh experiment metrics throughout the weekend.
 4. After the sale, complete the experiment and compare conversion rates.
@@ -197,7 +183,7 @@ Create two segments to separate users who have and haven't engaged with the seri
 
 ### Step 2: Verify with Explainability
 
-1. Go to **Ranking > Explainability**.
+1. Go to **Console > Explainability**.
 2. Enter a test user ID and an item ID for a recently published item.
 3. Confirm the "Boost new content" rule shows **matched**.
 4. Try an older item and confirm it shows **no match**.
@@ -215,7 +201,7 @@ Create two segments to separate users who have and haven't engaged with the seri
 
 ### Step 2: Create a staged experiment
 
-1. Go to **A/B Testing** and create an experiment:
+1. Go to **Console > A/B Testing** and create an experiment:
    - **Control** (90%): no config overrides.
    - **Treatment** (10%): config overrides with `include_rule_ids` set to the new rule IDs.
 2. Set to **Running**.

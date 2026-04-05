@@ -1,113 +1,73 @@
 ---
-title: 'Studio Workflow'
-description: 'Use Studio to choose a surface, change ranking logic, preview output, verify why it happened, and publish live behavior.'
+title: 'NeuronSearchLab AI'
+description: 'Use the built-in AI assistant to manage your recommendation engine through natural language conversation.'
 ---
 
-Studio is the default console workflow for shaping outcomes. Instead of jumping between separate pages for contexts, rules, pipelines, and explainability, Studio keeps the full loop in one place:
+NeuronSearchLab AI is a conversational assistant built into the console. Instead of navigating between pages to create rules, check recommendations, or debug rankings, you can describe what you want in plain language and the assistant will do it for you.
 
-1. Choose a studio.
-2. Change logic.
-3. Preview output.
-4. Verify why it happened.
-5. Publish.
+Open it from the sidebar by clicking **NeuronSearchLab AI**.
 
-![Studio workflow overview](/images/studio-workflow-overview.png)
+## What it can do
 
-## What a studio is
+The assistant has access to the same tools available in the [MCP server](/sdk/mcp), which means it can:
 
-A studio is the working surface for a recommendation experience. In practice that can be:
+- **Get recommendations** for any user and context
+- **Search your catalog** by keyword
+- **Explain rankings** — why an item appeared at a given position
+- **Create, update, and delete items** in your catalog
+- **Track events** on behalf of a user
+- **Manage contexts, pipelines, and rules** (when connected with admin credentials)
+- **Run experiments** and view results
+- **Manage segments and campaigns**
 
-- A homepage rail
-- A related content module
-- A campaign surface
-- A fallback global behavior
+Every action the assistant takes is shown inline as a tool call with a status indicator, so you can see exactly what happened.
 
-Studio is intentionally outcome-focused. You might pin an item, demote a class of items, add grouping, adjust retrieval, or change execution. The point is not only placement. The point is shaping what the user sees.
+## Getting started
 
-## The workflow
+When you first open the assistant, you will see a set of starter prompts to help you explore what it can do. For example:
 
-### 1. Choose studio
+- "Get 5 recommendations for user abc123"
+- "Explain why item X ranked where it did"
+- "Create a boost rule for items in the Electronics category"
+- "Search my catalog for running shoes"
 
-Open **Console > Studio** and select the surface you want to work on.
+Type a message in the input field and press Enter. The assistant streams its response and shows any tool calls it makes along the way.
 
-- Use **Global studio** when you want to change fallback behavior.
-- Use a named context studio when you want to shape a specific surface.
+## How it connects to your data
 
-The Studio header shows the key live state for that surface:
+The assistant uses the SDK credentials configured under **Console > SDK Credentials**. If your team has active credentials, the assistant can call the NeuronSearchLab API on your behalf. The assistant page shows which credential is active at the top of the chat.
 
-- active rules
-- pin rules
-- active pipeline status
-- most recent update
+If no credentials are configured, the assistant will prompt you to set them up first.
 
-### 2. Change logic
+## Conversation workflow
 
-Use the tabs to make changes without leaving the workflow:
+A typical workflow looks like this:
 
-- **Context** for retrieval boundaries, grouping, dedupe, forced items, and ordering controls
-- **Rules** for boost, bury, pin, filter, cap, and diversity logic
-- **Pipeline** for stage execution and rule-stage availability
+1. Ask the assistant to get recommendations for a user.
+2. Review the ranked results it returns.
+3. Ask it to explain why a specific item ranked where it did.
+4. If the ranking is wrong, ask it to create or adjust a rule.
+5. Get recommendations again to verify the change took effect.
 
-Studio-scoped creation happens inline. A rule or pipeline created inside Studio inherits the current studio scope automatically.
+This replaces the need to switch between the Explainability, Rules, and Context pages for quick investigations.
 
-### 3. Preview output
+## When to use NeuronSearchLab AI vs the console pages
 
-Open the **Preview** tab and run the studio against a real user.
+The assistant is best for:
 
-- Enter a user ID
-- Choose the result limit
-- Run preview
+- Quick investigations and debugging
+- One-off rule changes
+- Exploring your catalog or user data
+- Learning how the platform works
 
-The preview shows the actual ranked output you should expect the front-end to receive next. This is the fastest way to answer the question, “what would the user see right now?”
+Use the dedicated console pages when you need to:
 
-## 4. Verify why it happened
+- Configure complex multi-condition rules with the visual editor
+- Set up A/B experiments with traffic splits
+- Build and manage pipeline stages
+- Review analytics dashboards over time
+- Manage team members, billing, or API keys
 
-Open the **Verify** tab to confirm the result is not only visible, but explainable.
+## Tool visibility
 
-Use Verify to confirm:
-
-- the item actually matched the rule you created
-- the active pipeline includes the rules stage
-- no experiment is silently excluding your rule
-- the item’s final position is consistent with the logic you expected
-
-This is the step that prevents “the admin UI saved but nothing changed” failures.
-
-## 5. Publish
-
-Open the **Publish** tab before you leave the workflow.
-
-Studio shows the live publish model explicitly:
-
-- saving an active rule publishes immediately
-- saving an active pipeline publishes immediately
-- saving a context publishes immediately
-
-There is no separate draft promotion step for these objects today. That makes Preview and Verify critical before you affect the front-end.
-
-## Example: newsroom emergency rail
-
-This is a good Studio test because it has one unambiguous expected outcome.
-
-Scenario:
-
-- Industry: news publisher
-- Surface: homepage weather emergency rail
-- Goal: pin the item `School closures and travel disruption map` to slot `2`
-- User impact: readers should see the closures guide immediately after the live blog, not in a variable position
-
-Quantifiable pass condition:
-
-- the preview result in slot `2` is exactly `School closures and travel disruption map`
-- Verify shows the pin rule matched that item
-
-That is the kind of change Studio is designed to make easy to prove end to end.
-
-## When to leave Studio
-
-Use the advanced pages when you need lower-level control across many objects at once:
-
-- [Advanced contexts](/guides/contexts)
-- [Advanced rules](/guides/rules-engine)
-- [Advanced pipeline configuration](/guides/pipeline-config)
-- [Explainability details](/guides/explainability)
+Every tool the assistant calls is displayed inline with its name and status. You can see the parameters it sent and the response it received. This transparency means you can verify the assistant is doing what you asked and learn the underlying API patterns at the same time.

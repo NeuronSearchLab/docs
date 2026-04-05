@@ -39,28 +39,30 @@ See the [endpoint reference](/api-reference/endpoint/get-recommendations) for th
 
 ## Use the JavaScript SDK
 
-Install the SDK and authenticate it with your client credentials:
+Install the SDK and initialise it with an access token obtained from the `/auth/token` endpoint:
 
 ```bash
 npm install @neuronsearchlab/sdk
 ```
 
 ```ts
-import { NeuronSearchLab } from '@neuronsearchlab/sdk';
+import NeuronSDK from '@neuronsearchlab/sdk';
 
-const client = new NeuronSearchLab({
-  clientId: process.env.NEURON_CLIENT_ID!,
-  clientSecret: process.env.NEURON_CLIENT_SECRET!,
+const sdk = new NeuronSDK({
+  baseUrl: 'https://api.neuronsearchlab.com',
+  accessToken: '<your_access_token>',
 });
 
-const { data } = await client.recommendations.list({
+const result = await sdk.getRecommendations({
   userId: 'user-123',
-  contextId: 101,
+  contextId: '101',
   limit: 10,
 });
+
+console.log(result.recommendations);
 ```
 
-The SDK automatically exchanges credentials for an access token and retries transient failures. Explore more SDK capabilities in the [SDK introduction](/sdk/introduction).
+The SDK retries transient failures automatically with exponential backoff. Explore more SDK capabilities in the [SDK introduction](/sdk/introduction).
 
 ## Render and measure
 
