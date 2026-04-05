@@ -54,6 +54,7 @@
             "pages": [
               "guides/how-to-serve-recommendations",
               "guides/how-to-connect-catalog-and-events",
+              "guides/how-to-launch-a-new-context",
               "guides/how-to-measure-recommendation-performance"
             ]
           }
@@ -81,8 +82,12 @@
         "tab": "SDK",
         "groups": [
           {
-            "group": "Integrate with SDK",
+            "group": "JavaScript SDK",
             "pages": ["sdk/introduction"]
+          },
+          {
+            "group": "MCP Integration",
+            "pages": ["sdk/mcp"]
           }
         ]
       }

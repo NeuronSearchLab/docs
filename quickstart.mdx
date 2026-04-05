@@ -9,11 +9,11 @@ NeuronSearchLab is a hosted API service that provides real-time personalized rec
 
 ### 1. Register or log in
 
-Go to [console.neuronsearchlab.com/register](https://console.neuronsearchlab.com/register) or [login](https://console.neuronsearchlab.com/login) to create an account. You can invite teammates later from the **Organization** settings page.
+Go to [console.neuronsearchlab.com/signup](https://console.neuronsearchlab.com/signup) or [login](https://console.neuronsearchlab.com/login) to create an account. You can invite teammates later from the **User Management** page in Settings.
 
 ### 2. Generate client credentials
 
-Once logged in, open **Security** → **API Clients** and create a new client. Copy the **Client ID** and **Client Secret**. They are required to authenticate your backend services.
+Once logged in, open **SDK Credentials** in Settings and create a new client. Copy the **Client ID** and **Client Secret**. They are required to authenticate your backend services.
 
 <Warning>
   **Never expose the Client Secret in browser code or mobile apps.** Store it in your server-side environment variables or a secrets manager.
@@ -21,7 +21,7 @@ Once logged in, open **Security** → **API Clients** and create a new client. C
 
 ### 3. Add your first dataset
 
-Navigate to **Catalog** → **Items** and use the upload flow to add a handful of representative items. Include metadata such as category, price, tags, and thumbnails to improve downstream recommendations.
+Navigate to **Items** in the Explore section and use the upload flow to add a handful of representative items. Include metadata such as category, price, tags, and thumbnails to improve downstream recommendations.
 
 ---
 
@@ -57,7 +57,7 @@ curl -X GET "https://api.neuronsearchlab.com/recommendations?user_id=user-123&co
 
 Send optional query parameters such as `limit`, `filters`, or `boosts` to tailor the response. Responses include ranked items with associated metadata so you can render UI components quickly.
 
-If you prefer higher level abstractions, install the [official SDK](https://www.npmjs.com/package/@neuronsearchlab/sdk) and call `client.recommendations.list()` from your server.
+If you prefer higher level abstractions, install the [official SDK](https://www.npmjs.com/package/@neuronsearchlab/sdk) and call `sdk.getRecommendations()` from your server.
 
 ---
 
@@ -65,10 +65,15 @@ If you prefer higher level abstractions, install the [official SDK](https://www.
 
 In addition to the API and SDK, you can manage your data and monitor performance through the [NeuronSearchLab Console](https://console.neuronsearchlab.com). Key areas include:
 
-- **Contexts** - Define business rules, default filters, and ranking objectives.
-- **Events** - Inspect incoming engagement signals and replay payloads for debugging.
-- **Catalog** - Search and edit item metadata to keep recommendations fresh.
-- **Insights** - Track conversion metrics, latency, and popular queries over time.
+- **Dashboard** — Usage overview, credit tracking, and setup checklist.
+- **Context** — Define contexts for each recommendation surface with filters, influence rules, and grouping.
+- **Rules Engine** — Create business rules to boost, bury, pin, filter, or diversify items.
+- **Pipeline Config** — Control the multi-stage recommendation pipeline.
+- **Explainability** — Debug why a specific item was recommended to a specific user.
+- **Analytics** — Track recommendation volume, engagement events, and performance over time.
+- **Items & Users** — Browse your catalog and user embeddings.
+- **A/B Testing** — Split traffic between strategies and measure impact.
+- **NeuronSearchLab AI** — Conversational assistant for managing recommendations through natural language.
 
 ---
 

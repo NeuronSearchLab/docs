@@ -1,0 +1,186 @@
+---
+title: "MCP Integration"
+description: "Connect NeuronSearchLab to AI assistants like Claude, Cursor, and Windsurf using the Model Context Protocol."
+---
+
+The NeuronSearchLab MCP server lets you use your recommendation engine from any MCP-compatible AI client. Ask questions, manage your catalog, debug rankings, and run experiments through natural language conversation.
+
+## Installation
+
+The MCP server is published as an npm package. No local installation is required — your MCP client runs it automatically via `npx`.
+
+### Claude Desktop
+
+Add this to your Claude Desktop configuration file (`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "neuronsearchlab": {
+      "command": "npx",
+      "args": ["-y", "@neuronsearchlab/mcp"],
+      "env": {
+        "NSL_CLIENT_ID": "your-client-id",
+        "NSL_CLIENT_SECRET": "your-client-secret"
+      }
+    }
+  }
+}
+```
+
+### Cursor / Windsurf
+
+Add the same configuration to your editor's MCP settings. The server uses stdio transport and works with any MCP-compatible client.
+
+### Claude Code
+
+```bash
+claude mcp add neuronsearchlab -- npx -y @neuronsearchlab/mcp \
+  --env NSL_CLIENT_ID=your-client-id \
+  --env NSL_CLIENT_SECRET=your-client-secret
+```
+
+---
+
+## Configuration
+
+All configuration is done through environment variables:
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `NSL_CLIENT_ID` | Yes (public mode) | — | OAuth 2.0 client ID from Console > SDK Credentials |
+| `NSL_CLIENT_SECRET` | Yes (public mode) | — | OAuth 2.0 client secret |
+| `NSL_PLATFORM_MODE` | No | `public` | `public` or `internal` |
+| `NSL_API_KEY` | Yes (internal mode) | — | API key with admin scope |
+| `NSL_TIMEOUT_MS` | No | `15000` | Request timeout in milliseconds |
+
+### Public mode (default)
+
+Uses OAuth 2.0 client credentials to authenticate against the public API (`api.neuronsearchlab.com`). This mode provides access to recommendations, catalog management, events, segments, experiments, campaigns, and analytics.
+
+### Internal mode
+
+Uses a static API key to authenticate against the console API (`console.neuronsearchlab.com`). This mode provides access to context, pipeline, and rule management — the same admin operations available in the console.
+
+```json
+{
+  "mcpServers": {
+    "neuronsearchlab": {
+      "command": "npx",
+      "args": ["-y", "@neuronsearchlab/mcp"],
+      "env": {
+        "NSL_PLATFORM_MODE": "internal",
+        "NSL_API_KEY": "nsl_your_api_key"
+      }
+    }
+  }
+}
+```
+
+---
+
+## Available tools
+
+### Recommendations and catalog (public mode)
+
+| Tool | Description |
+|------|-------------|
+| `get_recommendations` | Fetch personalised recommendations for a user |
+| `get_auto_recommendations` | Paginated auto-generated sections for infinite-scroll feeds |
+| `explain_ranking` | Debug why an item ranked at a given position |
+| `search_items` | Search your catalog by keyword |
+| `upsert_item` | Add or update a catalog item |
+| `patch_item` | Partially update an item (e.g. enable/disable) |
+| `delete_items` | Permanently remove items |
+| `track_event` | Record a user interaction event |
+
+### Segments (public mode)
+
+| Tool | Description |
+|------|-------------|
+| `list_segments` | List all user segments |
+| `get_segment` | Get segment definition |
+| `create_segment` | Create a user segment |
+| `update_segment` | Modify a segment |
+| `delete_segment` | Remove a segment |
+| `get_segment_stats` | Get segment size and overlap stats |
+
+### Experiments (public mode)
+
+| Tool | Description |
+|------|-------------|
+| `list_experiments` | List all A/B experiments |
+| `get_experiment` | Get experiment details |
+| `create_experiment` | Create an A/B test with variants |
+| `update_experiment` | Modify an experiment |
+| `start_experiment` | Begin traffic splitting |
+| `stop_experiment` | End an experiment |
+| `get_experiment_results` | Get statistical results |
+
+### Campaigns (public mode)
+
+| Tool | Description |
+|------|-------------|
+| `list_campaigns` | List all campaigns |
+| `create_campaign` | Create a time-bound campaign |
+| `activate_campaign` | Enable a campaign |
+| `pause_campaign` | Pause a campaign |
+| `delete_campaign` | Remove a campaign |
+
+### Analytics (public mode)
+
+| Tool | Description |
+|------|-------------|
+| `get_ranking_metrics` | Get ranking performance metrics |
+| `get_experiment_metrics` | Get live experiment stats |
+| `get_segment_metrics` | Get segment performance |
+
+### Admin tools (internal mode)
+
+| Tool | Description |
+|------|-------------|
+| `list_contexts` / `create_context` / `update_context` / `delete_context` | Manage recommendation contexts |
+| `list_pipelines` / `create_pipeline` / `activate_pipeline` / `clone_pipeline` | Manage ranking pipelines |
+| `list_rules` / `create_rule` / `toggle_rule` / `delete_rule` | Manage ranking rules |
+
+---
+
+## Example conversations
+
+### Get recommendations
+
+> "Get 5 recommendations for user alice@example.com in the homepage context"
+
+The assistant calls `get_recommendations` and returns the ranked items with scores and metadata.
+
+### Debug a ranking
+
+> "Why did item prod-456 rank so low for user alice?"
+
+The assistant calls `explain_ranking` and shows the score breakdown, which rules matched, and how each pipeline stage affected the result.
+
+### Create a rule
+
+> "Create a boost rule that promotes items in the Electronics category with a 2x weight"
+
+The assistant calls `create_rule` with the appropriate conditions and actions.
+
+### Track an event
+
+> "Record that alice clicked on item prod-456"
+
+The assistant calls `track_event` with the user ID, item ID, and event type.
+
+---
+
+## Error handling
+
+The MCP server includes automatic retry with exponential backoff for transient errors (429, 5xx, timeouts). All tool responses are formatted as human-readable text so the AI assistant can interpret and relay results clearly.
+
+---
+
+## Next steps
+
+- Get your SDK credentials from [Console > SDK Credentials](https://console.neuronsearchlab.com/security).
+- Try the built-in [NeuronSearchLab AI](/guides/studio-workflow) assistant in the console — it uses the same MCP tools.
+- View the [JavaScript SDK](/sdk/introduction) for direct programmatic access.

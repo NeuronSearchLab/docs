@@ -31,18 +31,18 @@ Tokens default to a 60-minute lifetime. Cache them server-side and refresh proac
 
 ## Authenticate SDK requests
 
-The official SDK handles token exchange automatically. Provide credentials once during initialization:
+Obtain an access token using the client credentials grant, then pass it to the SDK:
 
 ```ts
-import { NeuronSearchLab } from '@neuronsearchlab/sdk';
+import NeuronSDK from '@neuronsearchlab/sdk';
 
-const client = new NeuronSearchLab({
-  clientId: process.env.NEURON_CLIENT_ID!,
-  clientSecret: process.env.NEURON_CLIENT_SECRET!,
+const sdk = new NeuronSDK({
+  baseUrl: 'https://api.neuronsearchlab.com',
+  accessToken: '<your_access_token>',
 });
 ```
 
-The SDK refreshes tokens in the background and retries transient errors with exponential backoff.
+The SDK retries transient errors with exponential backoff. You are responsible for refreshing the access token before it expires (tokens default to 60 minutes) and calling `sdk.setAccessToken(newToken)` to update it.
 
 ## Protect secrets in production
 

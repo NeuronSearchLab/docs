@@ -1,148 +1,242 @@
 ---
 title: "Integrate with the SDK"
-description: "Install, configure, and use the official NeuronSearchLab SDK in your applications."
+description: "Install, configure, and use the official NeuronSearchLab JavaScript SDK in your applications."
 ---
 
 <Note>
-The SDK is a lightweight wrapper over the public API. Everything you can do in the REST interface is available here with first-class TypeScript types.
+The SDK is a lightweight TypeScript client with built-in event batching, automatic retries, and structured logging for the NeuronSearchLab API.
 </Note>
 
 ## Installation
 
-Install the package from npm and add it to your project dependencies:
-
 ```bash
 npm install @neuronsearchlab/sdk
-# or
-yarn add @neuronsearchlab/sdk
 ```
 
-If you are using TypeScript, no additional type definitions are required—the SDK ships with them.
+The SDK ships with TypeScript declarations — no additional type packages needed.
 
 ---
 
-## Authenticate the client
+## Initialize the client
 
-The client uses bearer tokens issued by the NeuronSearchLab identity service. Fetch an access token using your existing authentication flow, then configure the SDK once at startup:
+The SDK uses a Bearer token for authentication. Obtain an access token by exchanging your [SDK credentials](/authentication) and pass it when creating the client:
 
 ```ts
-import { NeuronSearchLabClient } from "@neuronsearchlab/sdk";
+import NeuronSDK from "@neuronsearchlab/sdk";
 
-const client = new NeuronSearchLabClient({
+const sdk = new NeuronSDK({
   baseUrl: "https://api.neuronsearchlab.com",
-  getAccessToken: async () => {
-    const response = await fetch("https://api.neuronsearchlab.com/auth/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        clientId: process.env.NEURONSEARCHLAB_CLIENT_ID!,
-        clientSecret: process.env.NEURONSEARCHLAB_CLIENT_SECRET!,
-        grantType: "client_credentials",
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Unable to obtain access token");
-    }
-
-    const { access_token } = await response.json();
-    return access_token as string;
-  },
+  accessToken: "<your_access_token>",
 });
 ```
 
-The `getAccessToken` callback is called automatically before each request and should resolve to a string. The example above demonstrates the client credentials grant, but you can plug in any logic—such as refreshing a cached token or forwarding a user's session.
+### Configuration options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `baseUrl` | string | required | API base URL |
+| `accessToken` | string | required | Bearer token from `/auth/token` |
+| `timeoutMs` | number | `10000` | HTTP request timeout in ms |
+| `maxRetries` | number | `2` | Retry count on 429/5xx/timeouts |
+| `collateWindowSeconds` | number | `3` | Buffer events for this many seconds before flushing |
+| `maxBatchSize` | number | `200` | Flush immediately when buffer reaches this size |
+| `maxBufferedEvents` | number | `5000` | Drop oldest events beyond this limit |
+| `propagateRecommendationRequestId` | boolean | `true` | Auto-attach `request_id` from recommendations to subsequent events |
+| `autoSessionId` | boolean | `true` | Auto-generate a session UUID |
 
 ---
 
-## Upsert catalog items
-
-Use `client.items.upsert` to add or update catalog entries. Each item supports metadata, custom attributes, and optional embeddings.
+## Get recommendations
 
 ```ts
-await client.items.upsert([
-  {
-    id: "article-123",
-    title: "Building contextual recommendations",
-    tags: ["personalization", "vector-search"],
-    url: "https://example.com/articles/123",
-    metadata: {
-      vertical: "news",
-      language: "en",
-    },
-  },
-]);
+const result = await sdk.getRecommendations({
+  userId: "user-123",
+  contextId: "homepage",
+  limit: 10,
+});
+
+console.log(result.recommendations);
+// [{ entity_id, name, description, score, metadata }, ...]
 ```
 
-You can batch multiple items in a single call. The SDK handles retryable errors with exponential backoff.
+Each recommendation includes `entity_id`, `name`, `description`, `score`, and any `metadata` you stored with the item. The response also includes a `request_id` for event attribution.
 
----
+### Auto-generated sections
 
-## Record user events
-
-Events provide the feedback loop that powers personalization. Send them as they happen from your frontend or backend:
+Use `getAutoRecommendations` for paginated, auto-titled recommendation sections — ideal for infinite-scroll feeds:
 
 ```ts
-await client.events.publish([
-  {
-    id: "event-1",
-    type: "click",
-    userId: "user-456",
-    itemId: "article-123",
-    timestamp: new Date().toISOString(),
-    contextId: 101,
-    metadata: {
-      position: 2,
-    },
-  },
-]);
-```
-
-The SDK automatically stamps the correct `Authorization` header and ensures your payload matches the API schema.
-
----
-
-## Request recommendations
-
-When you need personalized content, call `client.recommendations.get` with the relevant identifiers and filters:
-
-```ts
-const { results } = await client.recommendations.get({
-  userId: "user-456",
-  contextId: 101,
+const section = await sdk.getAutoRecommendations({
+  userId: "user-123",
   limit: 5,
-  filters: {
-    tags: { include: ["vector-search"] },
-  },
+  windowDays: 7,
 });
 
-console.log(results);
-```
+console.log(section.section?.title);
+// e.g. "Because you liked Running Shoes"
 
-Each result includes the item payload you previously upserted, along with relevance scores. Adjust the `filters`, `boosts`, or `fallback` options to tune the experience.
+// Load next section
+if (section.next_cursor) {
+  const next = await sdk.getAutoRecommendations({
+    userId: "user-123",
+    cursor: section.next_cursor,
+  });
+}
+```
 
 ---
 
-## Error handling and retries
+## Track events
 
-Network issues and rate limits can happen. The client exposes interceptors so you can adjust retry logic or instrument metrics:
+Events provide the feedback loop that powers personalization. The SDK buffers events in memory and flushes them in batches for efficiency.
 
 ```ts
-client.interceptors.onError((error) => {
-  if (error.response?.status === 429) {
-    console.warn("Back off—too many requests", error.response.headers["retry-after"]);
-  }
-
-  throw error;
+await sdk.trackEvent({
+  eventId: 1,
+  userId: "user-123",
+  itemId: "item-456",
 });
 ```
 
-You can also wrap individual calls in your own retry helper if you need custom behavior.
+### How batching works
+
+1. Events are buffered with a `client_ts` timestamp.
+2. The buffer flushes when the collate window elapses (default 3s) or the buffer reaches `maxBatchSize`.
+3. On page unload (`beforeunload`, `pagehide`), remaining events are flushed automatically.
+4. Failed sends are retried with exponential backoff.
+
+You can flush manually at any time:
+
+```ts
+await sdk.flushEvents();
+```
+
+### Request ID propagation
+
+When `propagateRecommendationRequestId` is enabled (the default), the SDK captures the `request_id` from `getRecommendations()` and automatically attaches it to subsequent `trackEvent()` calls. This links events back to the recommendation request that produced them.
+
+```ts
+const recs = await sdk.getRecommendations({ userId: "user-123", limit: 5 });
+
+// request_id is auto-attached — no need to pass it
+await sdk.trackEvent({
+  eventId: 1,
+  userId: "user-123",
+  itemId: recs.recommendations[0].entity_id,
+});
+```
+
+---
+
+## Manage catalog items
+
+### Upsert an item
+
+```ts
+await sdk.upsertItem({
+  itemId: "item-456",
+  name: "Nike Running Shoes",
+  description: "High-performance running shoes for daily training.",
+  metadata: { category: "Footwear", brand: "Nike", price: 109.99 },
+});
+```
+
+The `description` field is used to generate embeddings for similarity matching.
+
+### Update an item
+
+```ts
+await sdk.patchItem({
+  itemId: "item-456",
+  active: false, // disable the item
+});
+```
+
+Or use the convenience helper:
+
+```ts
+await sdk.setItemActive("item-456", false);
+```
+
+### Delete items
+
+```ts
+await sdk.deleteItems({ itemId: "item-456" });
+
+// Batch delete
+await sdk.deleteItems([
+  { itemId: "item-456" },
+  { itemId: "item-789" },
+]);
+```
+
+---
+
+## Error handling
+
+The SDK exports two error classes:
+
+```ts
+import NeuronSDK, { SDKHttpError, SDKTimeoutError } from "@neuronsearchlab/sdk";
+
+try {
+  await sdk.getRecommendations({ userId: "user-123" });
+} catch (err) {
+  if (err instanceof SDKHttpError) {
+    console.error(`HTTP ${err.status}: ${err.statusText}`, err.body);
+  } else if (err instanceof SDKTimeoutError) {
+    console.error(`Request timed out after ${err.timeoutMs}ms`);
+  }
+}
+```
+
+Transient errors (429, 5xx, timeouts) are retried automatically with exponential backoff up to `maxRetries` times.
+
+---
+
+## Logging
+
+Configure structured logging for debugging and observability:
+
+```ts
+import { configureLogger } from "@neuronsearchlab/sdk";
+
+configureLogger({
+  level: "DEBUG",
+  enableNetworkBodyLogging: true,
+  enablePerformanceLogging: true,
+});
+```
+
+Available log levels: `TRACE`, `DEBUG`, `INFO` (default), `WARN`, `ERROR`, `FATAL`.
+
+You can also provide a custom transport to send logs to your own logging infrastructure:
+
+```ts
+configureLogger({
+  level: "WARN",
+  transport: (entry) => {
+    // entry: { level, message, timestamp, context }
+    myLogger.log(entry);
+  },
+});
+```
+
+---
+
+## Session management
+
+The SDK auto-generates a session UUID on initialization (when `autoSessionId` is true). All events include the session ID automatically. You can override or read it:
+
+```ts
+sdk.setSessionId("custom-session-id");
+console.log(sdk.getSessionId());
+```
 
 ---
 
 ## Next steps
 
-- Explore the [complete SDK reference](https://www.npmjs.com/package/@neuronsearchlab/sdk) for every method and option.
-- Visit the [API documentation](../api-reference/introduction) to understand the underlying REST endpoints.
-- Reach out to <a href="mailto:contact@neuronsearchlab.com">contact@neuronsearchlab.com</a> if you need help modeling data or planning rollouts.
+- View the [API documentation](/api-reference/introduction) for the underlying REST endpoints.
+- Set up the [MCP integration](/sdk/mcp) to use NeuronSearchLab from AI assistants like Claude.
+- Reach out to <a href="mailto:contact@neuronsearchlab.com">contact@neuronsearchlab.com</a> if you need help.
