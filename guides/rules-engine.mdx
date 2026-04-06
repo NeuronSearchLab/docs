@@ -1,10 +1,19 @@
 ---
 title: 'Rules Engine'
 icon: 'scale-balanced'
-description: 'Create ranking rules that boost, bury, pin, filter, or diversify items based on business logic.'
+description: 'Create post-scoring ranking rules that boost, bury, pin, filter, cap, dedupe, reorder, group, and otherwise reshape recommendation results.'
 ---
 
-The rules engine lets you override ML-generated rankings with business logic. Rules run after scoring and before final ranking, giving you precise control over what appears in recommendations and where.
+The Rules Engine lets you override ML-generated rankings with deliberate post-scoring logic. Contexts decide how candidates are retrieved and pre-filtered. Rules decide what happens to those scored candidates before the final response is returned.
+
+Use rules when you need to:
+
+- promote or demote matching items
+- suppress repeats or cap over-represented content
+- pin items to exact positions
+- override sort order or inject controlled randomness
+- return grouped results instead of a flat list
+- weight results using user topic affinity
 
 ---
 
@@ -13,33 +22,70 @@ The rules engine lets you override ML-generated rankings with business logic. Ru
 1. Navigate to **Console > Rules Engine**.
 2. Click **New Rule**.
 3. Fill in the required fields:
-   - **Name** — a descriptive label (e.g. "Pin new series to top 3").
-   - **Type** — the kind of action the rule performs (see below).
-   - **Priority** — higher numbers execute first. Use priority to control which rules take precedence.
+   - **Name** — a descriptive label such as "Boost new arrivals" or "Cap sponsored items".
+   - **Type** — the action the rule performs.
+   - **Priority** — higher numbers execute first.
    - **Active** — toggle on to make the rule live.
-4. Add conditions to control when the rule applies.
-5. Configure the action parameters.
+4. Add one or more conditions to control when the rule applies.
+5. Configure the action parameters for the selected rule type.
 6. Optionally set a schedule (start and end dates).
 7. Click **Create Rule**.
 
 ---
 
-## Rule types
+## Where rules fit
 
-| Type | What it does | Example use |
-|------|-------------|-------------|
-| `boost` | Multiply an item's score by a factor | Promote seasonal content |
-| `bury` | Reduce an item's score by a factor | Demote low-quality items |
-| `pin` | Lock an item into a specific position | Feature a new release at position 1 |
-| `filter` | Remove items that match conditions | Hide out-of-stock products |
-| `diversify` | Ensure variety across a metadata field | No more than 3 items from the same category |
-| `slot` | Reserve positions for items matching criteria | Always show one editorial pick in the top 5 |
+| Configure in | Use it for |
+|-------------|------------|
+| **Contexts** | Model selection, recommendation type, and pre-query filters that narrow the candidate pool before scoring |
+| **Rules Engine** | Post-scoring ranking, suppression, ordering, grouping, and business logic applied after scoring |
+
+If you need to change what gets scored in the first place, use a **Context**. If you need to change how scored candidates are promoted, suppressed, ordered, or reshaped, use the **Rules Engine**.
+
+---
+
+## Rule type reference
+
+| Type | What it does | Main action settings | Example configuration |
+|------|--------------|----------------------|-----------------------|
+| `boost` | Multiplies matching item scores upward so they rise in the ranked list. | `weight` | Conditions: `is_new_arrival = true` • Action: `weight = 1.8` |
+| `bury` | Multiplies matching item scores downward so they fall relative to stronger candidates. | `weight` | Conditions: `quality_band = low` • Action: `weight = 0.4` |
+| `filter` | Removes matching items from the result set entirely. | None | Conditions: `availability = out_of_stock` |
+| `pin` | Moves the first matching item to a fixed 1-based position after ranking. | `pin_position` | Conditions: `item_id = launch-hero-2026` • Action: `pin_position = 1` |
+| `cap` | Limits how much of the final list matching items may occupy. | `cap_fraction` | Conditions: `content_type = sponsored` • Action: `cap_fraction = 0.2` |
+| `diversity` | Limits repetition across a metadata field so the result set stays varied. | `diversity_field`, `diversity_max` | Action: `diversity_field = brand`, `diversity_max = 2` |
+| `dedupe` | Prevents the same item or entity from reappearing within a sliding result window. | `dedupe_window` | Action: `dedupe_window = 24` |
+| `randomize` | Shuffles result order to introduce variety on low-stakes or discovery-oriented surfaces. | None | Conditions: `surface = explore` |
+| `reorder` | Overrides the default relevance sort with a metadata field sort. | `order_field`, `order_direction` | Action: `order_field = published_at`, `order_direction = desc` |
+| `ensure_top` | Preserves a minimum number of high-relevance items in the top band even when other rules are active. | `top_count` | Action: `top_count = 5` |
+| `group_by` | Returns grouped results based on one or more metadata fields instead of a flat ranked list. | `group_by_fields` | Action: `group_by_fields = ["category", "brand"]` |
+| `weighted_topic` | Reweights results using a topic or category field derived from user behaviour. | `topic_field` | Action: `topic_field = category` |
+
+---
+
+## Choosing the right rule
+
+Think about rules in four buckets:
+
+- **Score modifiers**: `boost`, `bury`, `weighted_topic`
+- **Hard constraints**: `filter`, `cap`, `diversity`, `dedupe`
+- **Ordering controls**: `pin`, `randomize`, `reorder`, `ensure_top`
+- **Response shaping**: `group_by`
+
+This makes rule design simpler:
+
+- Use **boost** or **bury** when you want relevance to matter, but not be absolute.
+- Use **filter** when an item must never appear.
+- Use **cap** or **diversity** when too much of one class of content is crowding the list.
+- Use **pin** when a specific item must occupy a specific slot.
+- Use **reorder** when relevance should be secondary to a known business sort such as recency.
+- Use **group_by** when the consuming surface is meant to show grouped entities rather than a flat list.
 
 ---
 
 ## Conditions
 
-Conditions determine which items or users a rule applies to. A rule with no conditions applies to all items for all users.
+Conditions determine which items or users a rule applies to. A rule with no conditions applies to everything in scope.
 
 ### Item metadata conditions
 
@@ -47,9 +93,9 @@ Match against fields in the item's metadata:
 
 | Field | Operator | Value | Meaning |
 |-------|----------|-------|---------|
-| `genre` | `equals` | `action` | Item genre is "action" |
+| `genre` | `equals` | `action` | Item genre is action |
 | `price` | `greater_than` | `50` | Item costs more than 50 |
-| `stock_status` | `equals` | `out_of_stock` | Item is out of stock |
+| `stock_status` | `equals` | `out_of_stock` | Item is unavailable |
 
 ### Segment conditions
 
@@ -59,7 +105,59 @@ Target a rule to users in a specific segment:
 2. A dropdown appears listing all available segments.
 3. Select the segment. The rule now only applies to users who belong to that segment.
 
-This is how you build targeted campaigns — for example, boosting a series only for users who haven't watched it yet.
+This is how you build targeted campaigns, such as boosting a new series only for users who have not yet watched it.
+
+---
+
+## Notes for each rule type
+
+### `boost`
+
+Use `boost` when you want a soft promotion rather than a hard override. Higher weights push matching items upward while still allowing genuinely stronger results to compete.
+
+### `bury`
+
+Use `bury` for items that should remain eligible but less prominent, such as low-margin products, stale inventory, or low-quality content.
+
+### `filter`
+
+Use `filter` for non-negotiable constraints such as compliance, availability, or market restrictions. Once filtered out, an item is gone for that request.
+
+### `pin`
+
+Use `pin` when a specific item must land in a precise slot. Pinning happens after ranking, so it is best for high-confidence placements like launch heroes or mandated disclosures.
+
+### `cap`
+
+Use `cap` when matching items are allowed, but only up to a share of the list. This is especially useful for sponsored, house-brand, or single-vendor content.
+
+### `diversity`
+
+Use `diversity` when a single attribute dominates the list. Common fields are `brand`, `category`, `series_id`, or `author`.
+
+### `dedupe`
+
+Use `dedupe` when repeated entities hurt trust or usefulness. Typical examples are not showing the same SKU twice in a carousel or the same article again in the next few positions.
+
+### `randomize`
+
+Use `randomize` on exploratory or serendipity-focused surfaces where exact ranking is less important than freshness and variety.
+
+### `reorder`
+
+Use `reorder` when business logic should temporarily outweigh relevance, such as sorting by `published_at desc` for a latest-news rail or by `price asc` for a clearance shelf.
+
+### `ensure_top`
+
+Use `ensure_top` to protect the top band from becoming entirely campaign-driven. It works well alongside boosts and pins when you still want the first few results to remain relevance-led.
+
+### `group_by`
+
+Use `group_by` when the consuming UI is designed around grouped entities, such as categories, brands, or collections instead of single items.
+
+### `weighted_topic`
+
+Use `weighted_topic` when users consistently engage with recognizable content topics. A field such as `category`, `topic`, or `tag_family` is a good fit.
 
 ---
 
@@ -70,17 +168,17 @@ Rules support time-based activation via start and end dates.
 | Configuration | Behaviour |
 |--------------|-----------|
 | Both dates set | Rule is active only within the window |
-| Start date only | Rule activates at that time, no automatic end |
+| Start date only | Rule activates at that time, with no automatic end |
 | End date only | Rule is active now but deactivates after the deadline |
-| Neither date set | Rule is always active (subject to the Active toggle) |
+| Neither date set | Rule is always active, subject to the **Active** toggle |
 
 ### Setting a schedule
 
 1. In the rule editor, use the **Start date** and **End date** datetime pickers.
 2. Rules with a schedule show a **scheduled** badge in the table view.
-3. Click **Clear schedule** to remove dates and make the rule always-active.
+3. Click **Clear schedule** to remove dates and make the rule always active.
 
-Scheduling is enforced at the database level, so time zone handling is consistent regardless of where the request originates.
+Scheduling is enforced at the database level, so time-zone handling stays consistent regardless of where the request originates.
 
 ---
 
@@ -88,13 +186,15 @@ Scheduling is enforced at the database level, so time zone handling is consisten
 
 Rules execute in **descending priority order** (highest first). When multiple rules affect the same item:
 
-- A `pin` at priority 100 places the item before a `boost` at priority 50 can change its score.
-- A `filter` at any priority removes the item entirely, so later rules never see it.
+- A `pin` at priority 100 can still place an item ahead of a `boost` at priority 50.
+- A `filter` removes the item entirely, so later rules never see it.
+- A `cap` or `diversity` rule can trim over-represented content even after score adjustments.
 
 Use priority deliberately:
-- **100+** for hard business constraints (compliance, filtering)
-- **50-99** for campaign promotions
-- **1-49** for soft merchandising preferences
+
+- **100+** for hard business constraints and compliance-sensitive rules
+- **50-99** for campaigns, featured placements, and seasonal pushes
+- **1-49** for softer merchandising preferences
 
 ---
 
@@ -105,4 +205,4 @@ When an A/B experiment is running, each variant can include `config_overrides` t
 - `include_rule_ids` — only these rules apply for users in this variant
 - `exclude_rule_ids` — these rules are skipped for users in this variant
 
-This lets you test the impact of specific rules against a control group. See [A/B Testing](/guides/ab-testing) for details.
+This lets you test the impact of specific rule sets against a control group. See [A/B Testing](/guides/ab-testing) for details.

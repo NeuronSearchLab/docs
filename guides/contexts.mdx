@@ -1,12 +1,12 @@
 ---
 title: 'Configuring Contexts'
 icon: 'sliders'
-description: 'Control what your recommendation engine shows, prioritises, and protects on each surface of your product.'
+description: 'Define retrieval defaults and pre-query filters for each recommendation surface.'
 ---
 
-A context is a named configuration that shapes what the recommendation engine returns for a specific surface. You create one context per placement, such as a homepage feed, a product detail page, or an email digest, and reference its ID in every API call for that surface.
+A context is a named configuration that shapes what the recommendation engine retrieves for a specific surface. Create one context per placement, such as a homepage feed, product detail page, or email digest, and reference its ID in every API call for that surface.
 
-This guide covers all the controls available inside the context editor.
+This guide covers the controls that belong in the current context editor.
 
 ## Create a context
 
@@ -23,102 +23,58 @@ This guide covers all the controls available inside the context editor.
 
 ---
 
+## Retrieval settings
+
+Contexts control the retrieval defaults for a surface:
+
+- **Embedding model** decides which representation is used to compare users and items.
+- **Recommendation type** decides whether the request is user-driven or item-driven.
+- **Pre-query filters** decide which candidates are even allowed into the scoring stage.
+
+If the question is "what pool should the model search?", the answer usually belongs in the context.
+
+---
+
 ## Filters
 
-Filters restrict which items are eligible for recommendation. Only items that pass all active filters will appear in results.
+Filters restrict which items are eligible before scoring. Only items that pass the active filters are considered by the ranking pipeline.
 
 To add a filter:
 
-1. In the **Filters** section, click **Add Condition**.
-2. Select a metadata field from your catalog (for example `category`, `in_stock`, `price`).
+1. In the **Advanced** tab, click **Add Filter**.
+2. Select a metadata field from your catalog, such as `category`, `in_stock`, or `price`.
 3. Choose an operator: `=`, `!=`, `LIKE`, `NOT LIKE`, `>`, `<`, `>=`, `<=`, `IN`, `NOT IN`.
 4. Enter the value to compare against.
-5. Add more conditions and set each one to combine with the previous using `AND` or `OR`.
+5. Add more conditions and combine them with `AND` or `OR` as needed.
 
-**Example:** To restrict a context to in-stock items in the "Electronics" category:
+**Example:** Restrict a context to in-stock items in the Electronics category:
 
 | Field | Operator | Value | Logic |
 |-------|----------|-------|-------|
 | `in_stock` | `=` | `true` | |
 | `category` | `=` | `Electronics` | AND |
 
----
-
-## Influence rules
-
-Influence rules adjust the score of items that match a condition, moving them up or down relative to other results without hard-filtering them out.
-
-To add an influence rule:
-
-1. In the **Influence** section, click **Add Influence Rule**.
-2. Set the type to **Promote** (score higher) or **Demote** (score lower).
-3. Select the field to match on (for example `category` or a specific `item_id`).
-4. Enter the value to match.
-5. Choose the weight:
-   - `+10%`, `+25%`, `+50%`, `2x` for promotion
-   - `-25%`, `-50%` for demotion
-
-**Example:** To promote new arrivals while keeping older items in the mix:
-
-| Type | Field | Value | Weight |
-|------|-------|-------|--------|
-| Promote | `is_new_arrival` | `true` | +50% |
+Use context filters for durable eligibility rules such as inventory, country, brand, or catalog partitioning.
 
 ---
 
-## Group by fields
+## What now belongs in Rules Engine
 
-Group by fields enforce diversity by limiting how many items from the same group can appear consecutively or within a result set.
+Contexts are no longer the place for post-scoring merchandising controls. If you need to change how scored results are promoted, suppressed, ordered, or grouped, use [Rules Engine](/guides/rules-engine).
 
-To add a group by field:
+| Use case | Configure in |
+|----------|--------------|
+| Promote or demote matching items | **Rules Engine** with `boost` or `bury` |
+| Remove items after scoring | **Rules Engine** with `filter` |
+| Limit list share or enforce variety | **Rules Engine** with `cap`, `diversity`, or `dedupe` |
+| Pin, reorder, randomize, or protect top slots | **Rules Engine** with `pin`, `reorder`, `randomize`, or `ensure_top` |
+| Return grouped results | **Rules Engine** with `group_by` |
+| Reweight by user topic affinity | **Rules Engine** with `weighted_topic` |
 
-1. In the **Group By Fields** section, click **Add Group By Field**.
-2. Select the metadata field to group on, such as `category` or `brand`.
-
-When grouping is active, the engine will spread results across distinct values of that field rather than surfacing many items from the same group.
-
----
-
-## Sliding window for repeat items
-
-The sliding window prevents items a user has recently seen from appearing again too soon.
-
-1. Check **Exclude items the user has already viewed**.
-2. Set the **Amount** and **Unit** (Minutes, Hours, Days, Weeks, or All time).
-
-Setting the unit to **All time** permanently excludes any item the user has ever viewed. Choosing a time window such as **7 Days** means items reappear after that period.
-
----
-
-## Pinned and forced items
-
-Use **Ensure top X** to guarantee that specific items always appear within the first results.
-
-1. Check **Ensure top X** in the additional options.
-2. Set **Top X count** to the number of positions to fill with forced items.
-3. Specify the **Forced items** by item ID.
-
-This is useful for sponsored placements, editorial picks, or legally required disclosures that must always be surfaced.
-
----
-
-## Random content injection
-
-Checking **Include random content in recommendations** mixes a small proportion of randomly selected items into results. This introduces serendipity and helps the engine discover new interests for users who have a narrow history.
-
----
-
-## Preview recommendations
-
-Use the **Preview Recommendations** panel at the bottom of the context editor to test the current configuration before saving.
-
-1. Select a user from the dropdown, or click **Random User** to pick one at random.
-2. The panel displays the items that would be returned for that user under the current context settings.
-
-Preview results are live: changes to filters, influence rules, or other settings update the preview immediately, letting you verify the output before committing.
+If the question is "how should already-scored candidates be reshaped?", the answer belongs in the Rules Engine.
 
 ---
 
 ## Iterate over time
 
-As your product evolves, return to the context editor to adjust settings. Changing influence weights, adding new filters, or widening the repeat-item window takes effect immediately for all subsequent API calls using that context ID. No redeployment is required.
+As your product evolves, return to the context editor to refine retrieval settings and eligibility filters. When you need to change ranking behaviour after scoring, pair those context changes with explicit rules rather than overloading the context itself.

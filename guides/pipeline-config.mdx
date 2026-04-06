@@ -17,7 +17,7 @@ Recommendations are produced through these stages, in order:
 | **Candidate generation** | Retrieve initial candidates from the vector index using cosine similarity | `candidate_limit` — max candidates to pull |
 | **Feature enrichment** | Attach metadata and computed features to each candidate | — |
 | **Scoring** | Run the ML model scoring pass over enriched candidates | — |
-| **Rules** | Apply business rules (boost, bury, pin, filter, diversify) | Can be disabled entirely |
+| **Rules** | Apply business rules such as boost, bury, pin, filter, cap, diversity, dedupe, reorder, and grouping controls | Can be disabled entirely |
 | **Ranking** | Final sort by adjusted scores | — |
 | **Post-processing** | Trim to page size and apply any final transforms | `page_size` — number of items returned |
 
