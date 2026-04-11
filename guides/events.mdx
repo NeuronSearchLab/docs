@@ -8,6 +8,13 @@ Events are the signals your users generate when they interact with your product:
 
 This guide explains how to define event types, set their relative importance, and organise them into templates for training.
 
+The key idea is:
+
+- the **Events page is where you define the training recipe**
+- a **template** is that recipe
+- starting training from a template creates a **new trained version**
+- review, approval, naming, and promotion happen later on the **Models** page
+
 ---
 
 ## Event types
@@ -86,7 +93,21 @@ Two thresholds control when a model is trained:
    - **Epochs**: how many passes through the training data (default 5, range 1-50).
    - **Batch size**: number of events processed together (64, 128, 256, or 512).
    - **Learning rate**: step size for gradient updates (default 0.001).
-3. Click **Start training**. The console will show the job status and metrics as training progresses.
+3. Click **Start training**. The console will create a new trained version from that template and show the run status as training progresses.
+
+This step does **not** require you to already have a model record. New accounts can train immediately.
+
+## What happens after training
+
+After a run finishes:
+
+- a new trained version appears on the **Models** page
+- the system gives it a default name based on the template and the run identifier
+- your team can add a human-friendly label and description
+- you can approve it
+- you can promote it to a serving target
+
+If you retrain later, the platform creates another new version. It does not overwrite the earlier one.
 
 ---
 
@@ -95,9 +116,9 @@ Two thresholds control when a model is trained:
 Open [Console > Training Jobs](https://console.neuronsearchlab.com/training-jobs) to see the status of each run, its duration, and the metrics reported at completion. From this page you can:
 
 - View final training metrics and run manifests.
-- Approve a trained model package for deployment.
-- Promote an approved model to the live endpoint, replacing the current production model.
 - Stop an in-progress run if needed.
+
+For approval, version labelling, and promotion, continue in [Console > Models](https://console.neuronsearchlab.com/models).
 
 ---
 

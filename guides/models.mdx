@@ -4,55 +4,129 @@ icon: 'brain'
 description: 'Manage the trained models that power your recommendations and control which version is live in production.'
 ---
 
-A model is a trained representation of your catalog and user behaviour. NeuronSearchLab trains models on the events you send and the catalog items you have ingested. Once a model is trained and approved, you can deploy it to the live endpoint and it will immediately begin serving recommendations.
+A trained version is the output of a training run. A registered model is the long-lived operator-facing track you use to organise versions, decide what should stay active, and manage ongoing rollout decisions.
+
+The important mental model is:
+
+- **Events** define what the system should learn from
+- **Templates** package those signals into a repeatable training recipe
+- **Training runs** create new trained versions
+- **Models** are optional long-lived tracks you use to organise versions over time
+- **Serving targets** decide which approved version is live for a given tenant or surface
 
 ---
 
-## Model families
+## How To Think About Training
 
-Models are grouped into families. Each family represents an ongoing sequence of training runs on your data. Within a family, each new training run produces a new version. The console shows all families available to your account, including shared base models and models trained specifically on your tenant's data.
+Users should think about training and retraining as a versioning workflow, not as editing one monolithic model in place.
 
-For each family the console shows:
+1. Create or update a signal template on the **Events** page.
+2. Start a training run from that template.
+3. Let the platform create a **new trained version**.
+4. Review the result on the **Models** page.
+5. Optionally add a human-friendly label and description.
+6. Approve the trained version when it is ready.
+7. Promote it to a serving target when you want it live.
+8. Repeat the same flow whenever you retrain.
 
-- The current version in production (if any)
-- The approval status of each version (Pending, Approved)
-- Creation date and training metadata
+That means retraining does **not** overwrite the previous result. It creates another version you can compare, approve, reject, or promote.
+
+## Training And Retraining Flow
+
+```mermaid
+flowchart TD
+    A["Define signals on Events page"] --> B["Save template"]
+    B --> C["Start training run"]
+    C --> D["Platform creates new trained version"]
+    D --> E["Review version on Models page"]
+    E --> F["Optional: add label and description"]
+    F --> G{"Ready for use?"}
+    G -->|No| H["Leave unapproved or retrain again"]
+    G -->|Yes| I["Approve version"]
+    I --> J["Promote to serving target"]
+    J --> K["Version becomes active"]
+    K --> L["Later retraining creates another new version"]
+    L --> E
+```
+
+## System Name vs Human Label
+
+Every trained version has two layers of identity:
+
+- A **system name** generated from the template name and the training run identifier
+- An optional **label** and **description** added by your team
+
+Example:
+
+- System name: `Engagement booster v2 · train-42-1712912345`
+- Label: `Homepage recommender`
+- Description: `Tighter freshness weighting for spring campaign`
+
+The system name preserves provenance. The label and description make the version easier for operators to recognise later.
+
+## Registered Models vs Trained Versions
+
+Use these two concepts differently:
+
+- **Trained versions** are the raw outputs of training runs
+- **Registered models** are long-lived tracks you create when you want an explicit operator-owned model record for rollout, version management, or ongoing retraining policy
+
+A common pattern is:
+
+- Train several versions from one template
+- Review and compare them
+- Promote one version
+- Later create a registered model if you want a named track for that recommendation strategy
+
+## What The Models Page Shows
+
+The Models page brings together:
+
+- Successful trained versions from recent runs
+- Approval state
+- Serving targets
+- Which version is active
+- Registered models, if you use them as long-lived tracks
+
+This lets you operate even if you are a brand-new account with no pre-existing model records.
 
 ---
 
-## Approve a model
+## Approve A Trained Version
 
-After a training run completes successfully, the new model package has a status of **Pending**. You must approve it before it can be deployed.
+After a training run completes successfully, the new trained version has a status of **Pending**. You must approve it before it can be promoted.
 
 1. Open [Console > Training Jobs](https://console.neuronsearchlab.com/training-jobs) or [Console > Models](https://console.neuronsearchlab.com/models).
-2. Find the completed training run and click **Approve**.
-3. The model status updates to **Approved**.
+2. Find the completed version and click **Approve**.
+3. The version status updates to **Approved**.
 
-Approving a model does not automatically change what is served. It makes the model available for promotion.
+Approving a version does not automatically change what is served. It makes that version eligible for promotion.
 
 ---
 
-## Promote a model to production
+## Promote A Version To Production
 
-Once approved, you can promote a model to replace the current live endpoint.
+Once approved, you can promote a version to replace what is currently live on a serving target.
 
-1. Find the approved model version.
+1. Find the approved trained version.
 2. Click **Promote to production**.
-3. The console will show the endpoint status updating. Depending on infrastructure state this may take a moment.
-4. Once the endpoint status shows as **InService**, the promoted model is live and all subsequent recommendation requests will use it.
+3. Choose the serving target you want to update.
+4. The console will show the target status updating.
+5. Once the target returns to a healthy state, the promoted version is live and subsequent recommendation requests use it.
 
 You can promote a previous version at any time if you need to roll back.
 
 ---
 
-## The production banner
+## Active Version
 
-The Models page shows a banner indicating which model version is currently serving recommendations. The banner includes:
+The Models page shows which version is currently active on each serving target. That gives you a clear answer to:
 
-- The model name and version number
-- The endpoint status (InService, Updating, etc.)
+- Which version is live?
+- Where is it live?
+- When was it last promoted?
 
-If no model is currently deployed the banner is not shown and recommendation requests will return empty results.
+If no version is active yet, the target remains unassigned until you promote one.
 
 ---
 
@@ -64,10 +138,10 @@ Each training run records a set of metrics at completion. Open a run from the Tr
 - Final metrics (loss, accuracy, or custom metrics your training job reports)
 - The run manifest, which records the configuration used
 
-Use these metrics to compare runs and decide whether a new version is ready to promote.
+Use these metrics to compare versions and decide whether a new one is ready to approve or promote.
 
 ---
 
-## Trigger a new training run
+## Trigger A New Training Run
 
-See the [Events and Signal Templates](/guides/events) guide for instructions on configuring event types, setting thresholds, and starting a training run.
+See the [Configuring Events and Signal Templates](/guides/events) guide for instructions on defining signals, saving templates, and creating the next trained version.
