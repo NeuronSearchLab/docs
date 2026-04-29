@@ -21,7 +21,10 @@ GET /v1/events/evt_12345
   "item_id": "itm_7f3a2c9e",
   "type": "click",
   "click": {},
+  "session_id": "sess_4a93",
+  "request_id": "c7f0d2bb-56b1-4ca7-8f09-84d8e4ed02b4",
   "context_id": "ctx_101",
+  "placement": "home_feed",
   "metadata": {
     "context_id": "ctx_101",
     "click": {}
@@ -30,6 +33,8 @@ GET /v1/events/evt_12345
   "created": 1777478405
 }
 ```
+
+`session_id`, `request_id`, and `placement` are `null` when not provided at ingest time.
 
 ## Errors
 

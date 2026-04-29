@@ -62,7 +62,10 @@ Legacy aliases `event_type`, `event_id`, `itemId`, `item_id`, `client_ts`, and `
         "amount": 4999,
         "currency": "usd"
       },
+      "session_id": null,
+      "request_id": null,
       "context_id": "ctx_101",
+      "placement": null,
       "metadata": {
         "surface": "home_feed",
         "purchase": {
@@ -75,9 +78,23 @@ Legacy aliases `event_type`, `event_id`, `itemId`, `item_id`, `client_ts`, and `
     }
   ],
   "has_more": false,
-  "url": "/v1/events"
+  "url": "/v1/events",
+  "inserted": 1,
+  "processed": 1,
+  "session": {
+    "with_session_id": 0,
+    "with_request_id": 0
+  },
+  "embedding_refresh": {
+    "users_in_batch": 1,
+    "enqueued": true,
+    "mode": "async",
+    "min_seconds": 30
+  }
 }
 ```
+
+The response also returns ingestion stats (`inserted`, `processed`, `session`) and an `embedding_refresh` block describing the async user-embedding refresh job that was enqueued for the affected users.
 
 ## Errors
 
