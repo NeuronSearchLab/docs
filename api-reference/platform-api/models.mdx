@@ -1,0 +1,49 @@
+---
+title: "Models and Training"
+description: "Model versions, families, serving endpoints, and training jobs."
+---
+
+Routes for the full training-to-serving lifecycle. See the [Models guide](/guides/models) for the broader workflow.
+
+## Model versions
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/models` | List trained model versions |
+| `POST` | `/api/models` | Create model metadata |
+| `GET` | `/api/models/{id}` | Retrieve model version |
+| `PATCH` | `/api/models/{id}` | Update model version |
+| `DELETE` | `/api/models/{id}` | Delete model version |
+
+## Model families
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/model-families` | List model families |
+| `GET` | `/api/model-families/{id}` | Retrieve model family |
+| `POST` | `/api/model-families/lifecycle` | Create lifecycle operation |
+| `POST` | `/api/model-families/deploy` | Deploy model family |
+| `GET` | `/api/model-families/details` | Model family details |
+
+## Serving endpoints
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/model-endpoints` | List serving endpoints |
+| `POST` | `/api/model-endpoints` | Create serving endpoint |
+| `PATCH` | `/api/model-endpoints/{id}` | Update serving endpoint |
+| `DELETE` | `/api/model-endpoints/{id}` | Delete serving endpoint |
+
+## Training jobs
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `POST` | `/api/training/start` | Start training run |
+| `GET` | `/api/training-jobs` | List training jobs |
+| `GET` | `/api/training-jobs/{id}` | Retrieve training job |
+| `POST` | `/api/training-jobs/approve` | Approve training job |
+| `POST` | `/api/training-jobs/promote` | Promote training job |
+| `POST` | `/api/training-jobs/stop` | Stop training job |
+| `GET` | `/api/training-jobs/metrics/{jobName}` | Training metrics |
+| `GET` | `/api/training-jobs/logs/{jobName}` | Training logs |
+| `GET` | `/api/training-jobs/logs/{jobName}/stream` | Streaming training logs |

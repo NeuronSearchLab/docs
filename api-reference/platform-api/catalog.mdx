@@ -1,0 +1,26 @@
+---
+title: "Catalog"
+description: "Item search, item details, and metadata key listings for console operators."
+---
+
+Read and search routes for the items catalog from the console. For programmatic ingest, use the public [`POST /v1/items`](/api-reference/endpoint/submit-items) endpoint.
+
+## Routes
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/items/search` | Search catalog items |
+| `POST` | `/api/items/search` | Advanced item search with body filters |
+| `GET` | `/api/items/{itemId}` | Retrieve item detail for the console |
+| `GET` | `/api/items/metadata-keys` | List known item metadata keys |
+
+## User segments
+
+Segments group users by behaviour, attributes, or item interactions, and feed into the [Rules Engine](/guides/rules-engine) and experiments.
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/segments` | List user segments |
+| `POST` | `/api/segments` | Create user segment |
+| `PATCH` | `/api/segments/{id}` | Update user segment |
+| `DELETE` | `/api/segments/{id}` | Delete user segment |

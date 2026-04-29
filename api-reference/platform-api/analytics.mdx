@@ -1,0 +1,36 @@
+---
+title: "Analytics and Insights"
+description: "Dashboard metrics, recommendation analytics, search, explainability, and assistant chat."
+---
+
+Read-only routes that power the console's reporting and debugging surfaces. See the [Analytics guide](/guides/analytics) and the [Explainability guide](/guides/explainability) for context.
+
+## Dashboard
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/dashboard` | Dashboard metrics and setup state |
+
+## Analytics
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/analytics` | Recommendation, event, and catalog analytics |
+| `GET` | `/api/analytics/top-items` | Top item engagement summary |
+| `GET` | `/api/analytics/items/{itemId}` | Item-level analytics |
+| `GET` | `/api/analytics/users/{userId}` | User-level analytics |
+| `POST` | `/api/analytics/items/compare` | Compare item performance |
+
+## Search and explainability
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/search` | Console-wide search |
+| `GET` | `/api/explain` | Explain a recommendation result |
+
+## Assistant
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `POST` | `/api/assistant/chat` | Console assistant chat |
+| `POST` | `/api/studio/chat` | Studio assistant chat |

@@ -1,0 +1,50 @@
+---
+title: "Administration"
+description: "API keys, team management, billing, integrations, and catalog ingest configuration."
+---
+
+Routes that manage the tenant's account, credentials, billing relationship, and ingest plumbing.
+
+## API keys
+
+See the [API Keys guide](/guides/api-keys) for the full lifecycle.
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/api-keys` | List platform API keys |
+| `POST` | `/api/api-keys` | Create platform API key |
+| `PATCH` | `/api/api-keys/{id}` | Update platform API key metadata/scopes |
+| `DELETE` | `/api/api-keys/{id}` | Revoke platform API key |
+
+## Team
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/team` | Current team metadata |
+| `POST` | `/api/team/invite` | Invite team member |
+
+## Billing
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `POST` | `/api/billing/portal` | Create billing portal session |
+| `POST` | `/api/billing/change-plan` | Change billing plan |
+
+## Integrations
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/integrations` | List integrations |
+| `POST` | `/api/integrations` | Save integration |
+
+## Catalog ingest
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/catalogue-ingest` | List catalog ingest configs |
+| `POST` | `/api/catalogue-ingest` | Create catalog ingest config |
+| `PATCH` | `/api/catalogue-ingest/{id}` | Update catalog ingest config |
+| `DELETE` | `/api/catalogue-ingest/{id}` | Delete catalog ingest config |
+| `POST` | `/api/catalogue-ingest/{id}/trigger` | Trigger catalog ingest run |
+| `GET` | `/api/catalogue-ingest/scheduler` | Scheduler status |
+| `POST` | `/api/catalogue-ingest/scheduler` | Update scheduler |

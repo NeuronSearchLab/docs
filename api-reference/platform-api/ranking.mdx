@@ -1,0 +1,50 @@
+---
+title: "Ranking"
+description: "Contexts, rules, pipelines, rerank controls, and A/B experiments."
+---
+
+Routes that govern how candidates are retrieved, scored, and reordered before being served. Background and conceptual overviews live in the [Contexts](/guides/contexts), [Rules Engine](/guides/rules-engine), [Pipeline Config](/guides/pipeline-config), and [A/B Testing](/guides/ab-testing) guides.
+
+## Contexts
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/context` | List contexts |
+| `POST` | `/api/context/create` | Create context |
+| `PATCH` | `/api/context/{id}` | Update context |
+| `GET` | `/api/context/{id}/active-model` | Resolve active model for a context |
+
+## Rules engine
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/rules` | List ranking rules |
+| `POST` | `/api/rules` | Create ranking rule |
+| `PATCH` | `/api/rules/{id}` | Update ranking rule |
+| `DELETE` | `/api/rules/{id}` | Delete ranking rule |
+
+## Pipelines
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/pipelines` | List ranking pipelines |
+| `POST` | `/api/pipelines` | Create ranking pipeline |
+| `PATCH` | `/api/pipelines/{id}` | Update ranking pipeline |
+| `DELETE` | `/api/pipelines/{id}` | Delete ranking pipeline |
+
+## Rerank controls
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/rerank-controls` | Read rerank controls |
+| `POST` | `/api/rerank-controls` | Save rerank controls |
+
+## Experiments
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/experiments` | List A/B experiments |
+| `POST` | `/api/experiments` | Create A/B experiment |
+| `PATCH` | `/api/experiments/{id}` | Update A/B experiment |
+| `DELETE` | `/api/experiments/{id}` | Delete A/B experiment |
+| `GET` | `/api/experiments/{id}/metrics` | Experiment metrics |
