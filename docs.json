@@ -66,7 +66,6 @@
       },
       {
         "tab": "API Reference",
-        "openapi": "api-reference/openapi.json",
         "groups": [
           {
             "group": "Public API",
