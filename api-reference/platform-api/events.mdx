@@ -1,0 +1,27 @@
+---
+title: "Events"
+description: "Configure event types, training templates, and signal weights from the console."
+---
+
+Use these routes to define which user behaviors count as signals, how heavily they are weighted, and which combinations train new model versions. For programmatic event ingest, use the public [`POST /v1/events`](/api-reference/endpoint/submit-events) endpoint.
+
+## Event types
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/events/event-types` | List event types |
+| `POST` | `/api/events/event-types` | Create event type |
+| `PUT` | `/api/events/event-types/{id}` | Update event type |
+| `DELETE` | `/api/events/event-types/{id}` | Delete event type |
+
+## Training templates
+
+Templates capture a specific combination of event types, weights, and training thresholds. See the [Configuring Events guide](/guides/events) for end-to-end usage.
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/events/templates` | List training event templates |
+| `POST` | `/api/events/templates` | Create training event template |
+| `PUT` | `/api/events/templates/{id}` | Update training event template |
+| `DELETE` | `/api/events/templates/{id}` | Delete training event template |
+| `POST` | `/api/events/save-values` | Save event value configuration |

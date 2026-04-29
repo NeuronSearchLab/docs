@@ -66,32 +66,49 @@
       },
       {
         "tab": "API Reference",
+        "openapi": "/api-reference/openapi.json",
         "groups": [
           {
-            "group": "API Documentation",
-            "icon": "plug",
+            "group": "Public API",
             "pages": ["api-reference/introduction"]
           },
           {
-            "group": "Endpoint Examples",
-            "icon": "brackets-curly",
+            "group": "Authentication",
+            "pages": ["api-reference/endpoint/authenticate"]
+          },
+          {
+            "group": "Items",
             "pages": [
-              "api-reference/endpoint/authenticate",
+              "api-reference/endpoint/submit-items",
               "api-reference/endpoint/list-items",
               "api-reference/endpoint/retrieve-item",
-              "api-reference/endpoint/get-recommendations",
-              "api-reference/endpoint/submit-events",
-              "api-reference/endpoint/list-events",
-              "api-reference/endpoint/retrieve-event",
-              "api-reference/endpoint/submit-items",
               "api-reference/endpoint/update-item",
               "api-reference/endpoint/delete-item"
             ]
           },
           {
+            "group": "Events",
+            "pages": [
+              "api-reference/endpoint/submit-events",
+              "api-reference/endpoint/list-events",
+              "api-reference/endpoint/retrieve-event"
+            ]
+          },
+          {
+            "group": "Recommendations",
+            "pages": ["api-reference/endpoint/get-recommendations"]
+          },
+          {
             "group": "Platform API",
-            "icon": "terminal",
-            "pages": ["api-reference/platform-api"]
+            "pages": [
+              "api-reference/platform-api/introduction",
+              "api-reference/platform-api/catalog",
+              "api-reference/platform-api/events",
+              "api-reference/platform-api/ranking",
+              "api-reference/platform-api/models",
+              "api-reference/platform-api/analytics",
+              "api-reference/platform-api/administration"
+            ]
           }
         ]
       },

@@ -1,0 +1,56 @@
+---
+title: "Platform API Overview"
+description: "Authentication, scopes, and error format for the NeuronSearchLab control-plane API."
+---
+
+The Platform API is the control-plane surface behind the NeuronSearchLab console. Use it for tenant administration, console automation, and internal tools that need to mutate control-plane configuration. It is separate from the public recommendation API at `api.neuronsearchlab.com/v1`.
+
+## Base URL
+
+```bash
+https://console.neuronsearchlab.com/api
+```
+
+## Authentication
+
+Platform routes accept either:
+
+- a signed-in console session, or
+- an API key in the `Authorization` header.
+
+```http
+Authorization: Bearer nsl_<prefix>_<token>
+```
+
+API keys are created in **Console > Platform API Keys** and are shown once. The server stores only a SHA-256 hash.
+
+## Scopes
+
+| Scope | Intended access |
+| --- | --- |
+| `admin` | Full tenant administration routes |
+| `recommendations` | Recommendation proxy routes when enabled |
+| `events` | Event configuration and event automation routes |
+| `items` | Catalog item automation routes |
+
+Most current Platform API routes require `admin`. Routes that support narrower keys document the required scope on each resource page.
+
+## Error Format
+
+Platform API errors return a simple JSON envelope:
+
+```json
+{
+  "error": "Unauthorized"
+}
+```
+
+Common statuses are `400`, `401`, `403`, `404`, and `500`.
+
+<Note>
+The Platform API uses a different error shape than the public `/v1` API. Public-API clients should rely on the structured `error.type` / `error.code` / `error.message` envelope documented in the [public API introduction](/api-reference/introduction).
+</Note>
+
+## Platform vs Public API
+
+Use the public `/v1` API for customer application traffic. Use the Platform API only for tenant administration, console automation, and internal tools that need to mutate control-plane configuration.
