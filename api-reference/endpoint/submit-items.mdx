@@ -38,6 +38,8 @@ POST /v1/items
 | `description` | string | no | Text used for embeddings and debugging. |
 | `metadata` | object | no | JSON object with filterable catalog attributes. |
 
+You can also send an array of item objects to create multiple items in one call.
+
 ## Response
 
 ```json
@@ -57,6 +59,8 @@ POST /v1/items
   "updated_at": 1777478400
 }
 ```
+
+When the request body is an array, the response is a list envelope (`object: "list"`) whose `data` array contains every created item. A single-item request returns the item resource directly.
 
 ## Errors
 
