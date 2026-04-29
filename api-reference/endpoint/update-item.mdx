@@ -1,0 +1,59 @@
+---
+title: "POST /v1/items/{id}"
+icon: "pen"
+description: "Update an existing catalog item."
+openapi: "POST /v1/items/{id}"
+---
+
+## Description
+
+Updates an existing item. All body fields are optional, but at least one field must be supplied. If `name`, `description`, or `metadata` changes, the item embedding is refreshed.
+
+## Request
+
+```http
+POST /v1/items/itm_7f3a2c9e
+```
+
+```json
+{
+  "name": "Wireless Headphones v2",
+  "metadata": {
+    "category": "electronics",
+    "availability": "in_stock"
+  },
+  "active": true
+}
+```
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `name` | string | no | Replacement item name. |
+| `description` | string | no | Replacement description. |
+| `metadata` | object | no | Replacement metadata object. |
+| `active` | boolean | no | Whether the item is eligible for recommendations. |
+
+## Response
+
+```json
+{
+  "id": "itm_7f3a2c9e",
+  "object": "item",
+  "name": "Wireless Headphones v2",
+  "description": "Noise-cancelling Bluetooth headphones.",
+  "metadata": {
+    "category": "electronics",
+    "availability": "in_stock"
+  },
+  "active": true,
+  "created": 1777478400,
+  "updated_at": 1777478500
+}
+```
+
+## Errors
+
+| Status | Scenario |
+| --- | --- |
+| `400` | Malformed item ID, empty body, or invalid field |
+| `404` | Item does not exist for the authenticated tenant |

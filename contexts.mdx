@@ -19,25 +19,25 @@ Start with a handful of high-impact contexts, then expand as you identify more n
 ## Configure contexts in the console
 
 1. Navigate to [Console → Contexts](https://console.neuronsearchlab.com/contexts).
-2. Click **New context** and enter a numeric **Context ID** (for example `101`). The ID is stored as a number and is the value your engineering team will send in API calls.
+2. Click **New context** and note the public **Context ID** (for example `ctx_101`). The console stores an internal numeric row ID, but API calls should use the `ctx_` prefixed form.
 3. Fill in the modal to define how the context should behave:
    - **Context Name** and **Description** document the placement.
    - Select an **Associated Model** and **Recommendation Type** once the underlying model exists.
    - Configure **Filters** and optional combinations (AND/OR) to enforce inventory and eligibility rules.
    - Use the context to decide what gets retrieved before scoring.
    - Use the **Rules Engine** for post-scoring controls such as boost, bury, pin, dedupe, reorder, or grouping.
-4. Save the configuration and share the numeric context ID with your engineering team.
+4. Save the configuration and share the prefixed context ID with your engineering team.
 
 ## Reference contexts in API calls
 
 Attach the context ID to every recommendation request so NeuronSearchLab can apply the proper logic.
 
 ```bash
-curl -X GET "https://api.neuronsearchlab.com/recommendations" \
+curl -X GET "https://api.neuronsearchlab.com/v1/recommendations" \
   -H "Authorization: Bearer <access_token>" \
   -G \
   --data-urlencode "user_id=user-123" \
-  --data-urlencode "context_id=101"
+  --data-urlencode "context_id=ctx_101"
 ```
 
 The context you choose also appears in analytics, allowing you to compare conversion rates and engagement across placements.

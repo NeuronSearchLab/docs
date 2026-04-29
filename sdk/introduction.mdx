@@ -28,7 +28,7 @@ The SDK uses a Bearer token for authentication. Obtain an access token by exchan
 import NeuronSDK from "@neuronsearchlab/sdk";
 
 const sdk = new NeuronSDK({
-  baseUrl: "https://api.neuronsearchlab.com",
+  baseUrl: "https://api.neuronsearchlab.com/v1",
   accessToken: "<your_access_token>",
 });
 ```
@@ -38,7 +38,7 @@ const sdk = new NeuronSDK({
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `baseUrl` | string | required | API base URL |
-| `accessToken` | string | required | Bearer token from `/auth/token` |
+| `accessToken` | string | required | Bearer token from the auth token endpoint |
 | `timeoutMs` | number | `10000` | HTTP request timeout in ms |
 | `maxRetries` | number | `2` | Retry count on 429/5xx/timeouts |
 | `collateWindowSeconds` | number | `3` | Buffer events for this many seconds before flushing |
@@ -54,15 +54,15 @@ const sdk = new NeuronSDK({
 ```ts
 const result = await sdk.getRecommendations({
   userId: "user-123",
-  contextId: "homepage",
+  contextId: "ctx_101",
   limit: 10,
 });
 
 console.log(result.recommendations);
-// [{ entity_id, name, description, score, metadata }, ...]
+// [{ id, object, item_id, rank, score, item, metadata }, ...]
 ```
 
-Each recommendation includes `entity_id`, `name`, `description`, `score`, and any `metadata` you stored with the item. The response also includes a `request_id` for event attribution.
+Each recommendation includes `id`, `object`, `item_id`, `rank`, `score`, and an embedded `item` object with the metadata you stored. The response also includes a `request_id` for event attribution.
 
 ### Auto-generated sections
 
@@ -95,15 +95,15 @@ Events provide the feedback loop that powers personalization. The SDK buffers ev
 
 ```ts
 await sdk.trackEvent({
-  eventId: 1,
+  type: "click",
   userId: "user-123",
-  itemId: "item-456",
+  itemId: "itm_7f3a2c9e",
 });
 ```
 
 ### How batching works
 
-1. Events are buffered with a `client_ts` timestamp.
+1. Events are buffered with a timestamp that maps to `occurred_at` in the API.
 2. The buffer flushes when the collate window elapses (default 3s) or the buffer reaches `maxBatchSize`.
 3. On page unload (`beforeunload`, `pagehide`), remaining events are flushed automatically.
 4. Failed sends are retried with exponential backoff.
@@ -123,9 +123,9 @@ const recs = await sdk.getRecommendations({ userId: "user-123", limit: 5 });
 
 // request_id is auto-attached — no need to pass it
 await sdk.trackEvent({
-  eventId: 1,
+  type: "click",
   userId: "user-123",
-  itemId: recs.recommendations[0].entity_id,
+  itemId: recs.recommendations[0].item_id,
 });
 ```
 
@@ -133,11 +133,11 @@ await sdk.trackEvent({
 
 ## Manage catalog items
 
-### Upsert an item
+### Create an item
 
 ```ts
 await sdk.upsertItem({
-  itemId: "item-456",
+  itemId: "itm_7f3a2c9e",
   name: "Nike Running Shoes",
   description: "High-performance running shoes for daily training.",
   metadata: { category: "Footwear", brand: "Nike", price: 109.99 },
@@ -150,7 +150,7 @@ The `description` field is used to generate embeddings for similarity matching.
 
 ```ts
 await sdk.patchItem({
-  itemId: "item-456",
+  itemId: "itm_7f3a2c9e",
   active: false, // disable the item
 });
 ```
@@ -158,18 +158,18 @@ await sdk.patchItem({
 Or use the convenience helper:
 
 ```ts
-await sdk.setItemActive("item-456", false);
+await sdk.setItemActive("itm_7f3a2c9e", false);
 ```
 
 ### Delete items
 
 ```ts
-await sdk.deleteItems({ itemId: "item-456" });
+await sdk.deleteItems({ itemId: "itm_7f3a2c9e" });
 
 // Batch delete
 await sdk.deleteItems([
-  { itemId: "item-456" },
-  { itemId: "item-789" },
+  { itemId: "itm_7f3a2c9e" },
+  { itemId: "itm_a8d1b247" },
 ]);
 ```
 

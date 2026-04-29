@@ -1,0 +1,36 @@
+---
+title: "GET /v1/items/{id}"
+icon: "box"
+description: "Retrieve a single catalog item."
+openapi: "GET /v1/items/{id}"
+---
+
+## Request
+
+```http
+GET /v1/items/itm_7f3a2c9e
+```
+
+## Response
+
+```json
+{
+  "id": "itm_7f3a2c9e",
+  "object": "item",
+  "name": "Wireless Headphones",
+  "description": "Noise-cancelling Bluetooth headphones.",
+  "metadata": {
+    "category": "electronics"
+  },
+  "active": true,
+  "created": 1777478400,
+  "updated_at": 1777478400
+}
+```
+
+## Errors
+
+| Status | Scenario |
+| --- | --- |
+| `400` | Malformed item ID |
+| `404` | Item does not exist for the authenticated tenant |

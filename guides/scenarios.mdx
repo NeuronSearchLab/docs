@@ -20,7 +20,7 @@ These walkthroughs show how the ranking platform features work together to solve
 4. Add a condition:
    - field: `entity_id`
    - operator: `equals`
-   - value: `item-school-closures-live`
+   - value: `itm_school_closures_live`
 5. Set the action to pin the item to position `2`.
 6. Scope the rule to your homepage context.
 7. Save the rule as active.
@@ -28,7 +28,7 @@ These walkthroughs show how the ranking platform features work together to solve
 ### Step 2: verify with Explainability
 
 1. Open **Console > Explainability**.
-2. Enter a reader ID and the item ID `item-school-closures-live`.
+2. Enter a reader ID and the item ID `itm_school_closures_live`.
 3. Click **Explain**.
 
 **Pass condition:** Explainability shows the rule `Pin school closures guide to slot 2` matched the item.
@@ -55,7 +55,7 @@ Create two segments to separate users who have and haven't engaged with the seri
 1. Go to **Console > User Segments** and click **New Segment**.
 2. Add a condition:
    - Type: `item_interaction`
-   - Item ID: the series item ID (e.g. `series_x_ep1`)
+   - Item ID: the series item ID (e.g. `itm_series_x_ep1`)
    - Operator: `interactions <`
    - Value: `1`
 3. Name it "Hasn't watched Series X" and save.

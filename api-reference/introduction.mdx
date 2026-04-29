@@ -1,99 +1,113 @@
 ---
 title: "Introduction"
 icon: "plug"
-description: "Understand how to integrate and use the NeuronSearchLab recommendation engine API."
+description: "Integrate with the versioned NeuronSearchLab recommendation API."
 ---
 
-<Note>
-All endpoints are protected by Bearer token authentication managed by NeuronSearchLab. Make sure you obtain a valid access token via the `/auth/token` endpoint before making requests.
-</Note>
+The NeuronSearchLab public API is the data-plane surface for catalog ingestion, event ingestion, and recommendation serving.
 
-## Base URL
+## Base URLs
 
 ```bash
-https://api.neuronsearchlab.com
+https://api.neuronsearchlab.com/v1
+https://auth.neuronsearchlab.com/oauth2/token
 ```
 
----
-
-## Endpoints Overview
-
-Below is a summary of available endpoints in the NeuronSearchLab API:
-
-### 🔐 Authentication
-
-#### `POST /auth/token`
-
-Obtain a bearer token for authenticating future requests. Pass `Content-Type: application/json` in the header and required credentials in the body (details will depend on how your NeuronSearchLab account is configured).
-
----
-
-### 📦 Items
-
-#### `POST /items`
-
-Submit or update items to be used in recommendations. Each item can contain metadata, embeddings, and identifiers.
-
-Authentication Scope: `neuronsearchlab-api/write`
-
----
-
-### 📊 Events
-
-#### `POST /events`
-
-Submit user events (e.g. clicks, views, likes). Events are stored and used for personalization.
-
-Authentication Scope: `neuronsearchlab-api/write`
-
----
-
-### 🎯 Recommendations
-
-#### `GET /recommendations`
-
-Fetch personalized or context-aware recommendations for a user. You can pass a numeric `context_id`, user identifiers, or other parameters to tailor the output.
-
-Authentication Scope: `neuronsearchlab-api/read`
-
----
-
-## CORS Support
-
-Each endpoint supports `OPTIONS` requests for CORS preflight. These include headers:
-
-- `Access-Control-Allow-Origin`
-- `Access-Control-Allow-Methods`
-- `Access-Control-Allow-Headers`
-
----
+Use `https://api.neuronsearchlab.com/v1` for all resource calls. The token endpoint is unauthenticated, lives on the auth subdomain, and is rate-limited independently from resource traffic.
 
 ## Authentication
 
-All protected endpoints require a valid **Bearer token** in the `Authorization` header:
+Protected endpoints require a Bearer token:
 
 ```http
-Authorization: Bearer <your_access_token>
+Authorization: Bearer <access_token>
 ```
 
-Tokens are issued by the NeuronSearchLab identity service. Scopes used:
+Tokens are issued with OAuth 2.0 client credentials. Access tokens expire after 3600 seconds by default and should be refreshed by your backend before expiry.
 
-- `neuronsearchlab-api/read`
-- `neuronsearchlab-api/write`
+Required scopes:
 
----
+| Scope | Access |
+| --- | --- |
+| `neuronsearchlab-api/read` | Read recommendations, items, and events |
+| `neuronsearchlab-api/write` | Create/update/delete items and submit events |
 
-## SDKs and Console
+<Note>
+The slash-delimited scope names are the current Cognito-issued values. Client libraries should treat the full string as opaque and split scopes only on spaces.
+</Note>
 
-To simplify integration, you can use our official SDK or web console:
+## Object Model
 
-- [JavaScript SDK on npm](https://www.npmjs.com/package/@neuronsearchlab/sdk)
-- [PHP SDK on Packagist](https://packagist.org/packages/neuronsearchlab/sdk-php)
-- [PHP SDK source on GitHub](https://github.com/NeuronSearchLab/neuronsearchlab-sdk-php)
-- [NeuronSearchLab Console](https://console.neuronsearchlab.com/login)
+Every resource response includes a read-only `object` discriminator.
 
----
+| Object | Example ID | Description |
+| --- | --- | --- |
+| `item` | `itm_7f3a2c9e` | Catalog item available for recommendation |
+| `event` | `evt_12345` | User interaction event |
+| `recommendation` | `rec_itm_7f3a2c9e` | Ranked recommendation result |
+| `list` | n/a | Cursor-paginated list envelope |
 
-<Alert type="info">
-Need help or have a question? Contact us at <a href="mailto:contact@neuronsearchlab.com">contact@neuronsearchlab.com</a>
-</Alert>
+Resource IDs use short prefixes so logs and payloads are easier to scan. Context IDs passed to recommendation requests use the `ctx_` prefix, for example `ctx_101`.
+
+## Timestamps
+
+Datetime fields are Unix timestamps in integer seconds.
+
+- Use `created` for resource creation time.
+- Use `<verb>ed_at` for action-derived timestamps such as `occurred_at`.
+- Use future-tense fields such as `expires_at` for future scheduled times.
+- Do not use `created_at` in public API payloads.
+
+## Pagination
+
+List endpoints use cursor-style pagination:
+
+```http
+GET /v1/items?limit=20&starting_after=itm_7f3a2c9e
+```
+
+List responses use this envelope:
+
+```json
+{
+  "object": "list",
+  "data": [],
+  "has_more": false,
+  "next_cursor": null,
+  "url": "/v1/items"
+}
+```
+
+`limit` defaults to `20` and is capped at `100`.
+
+## Errors
+
+Errors use a consistent JSON envelope:
+
+```json
+{
+  "error": {
+    "type": "invalid_request_error",
+    "code": "parameter_missing",
+    "message": "Required parameter 'user_id' is missing."
+  }
+}
+```
+
+Common statuses are `400` for invalid requests, `401` for missing or invalid credentials, `403` for insufficient scope, `404` for missing resources, `409` for create conflicts, `429` for rate limits, and `500` for unexpected server errors.
+
+## Endpoints
+
+| Method | Path | Scope |
+| --- | --- | --- |
+| `POST` | `/v1/items` | `neuronsearchlab-api/write` |
+| `GET` | `/v1/items` | `neuronsearchlab-api/read` |
+| `GET` | `/v1/items/{id}` | `neuronsearchlab-api/read` |
+| `POST` | `/v1/items/{id}` | `neuronsearchlab-api/write` |
+| `DELETE` | `/v1/items/{id}` | `neuronsearchlab-api/write` |
+| `POST` | `/v1/events` | `neuronsearchlab-api/write` |
+| `GET` | `/v1/events` | `neuronsearchlab-api/read` |
+| `GET` | `/v1/events/{id}` | `neuronsearchlab-api/read` |
+| `GET` | `/v1/recommendations` | `neuronsearchlab-api/read` |
+
+Each endpoint supports `OPTIONS` preflight with standard CORS headers.

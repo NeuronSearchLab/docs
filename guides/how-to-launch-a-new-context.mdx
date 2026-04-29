@@ -16,7 +16,7 @@ Use this guide when launching recommendations into a new surface (for example ho
 
 ### Validate context behavior in staging
 
-- Call `GET /recommendations` with the new `context_id` and representative `user_id` values.
+- Call `GET /v1/recommendations` with the new `context_id` and representative `user_id` values.
 - Compare output quality with and without the context applied.
 - Confirm the right item categories and constraints are reflected.
 
@@ -33,9 +33,9 @@ For each context, maintain a short owner note with purpose, constraints, and KPI
 ## Example app journey: Checkout upsell launch
 
 1. Merchandising defines checkout upsell objectives.
-2. Team creates context `205` with checkout-safe filters.
-3. Backend requests recommendations using `context_id=205` during checkout.
-4. Events are tagged from checkout interactions and posted to `/events`.
+2. Team creates context `ctx_205` with checkout-safe filters.
+3. Backend requests recommendations using `context_id=ctx_205` during checkout.
+4. Events are tagged from checkout interactions and posted to `/v1/events`.
 5. Analytics is filtered by the checkout context to evaluate lift.
 
 ## Next steps

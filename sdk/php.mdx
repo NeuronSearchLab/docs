@@ -30,7 +30,7 @@ require __DIR__ . '/vendor/autoload.php';
 use NeuronSearchLab\NeuronSDK;
 
 $sdk = new NeuronSDK([
-    'baseUrl' => 'https://api.neuronsearchlab.com',
+    'baseUrl' => 'https://api.neuronsearchlab.com/v1',
     'accessToken' => '<your_access_token>',
 ]);
 ```
@@ -40,7 +40,7 @@ $sdk = new NeuronSDK([
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `baseUrl` | string | required | API base URL |
-| `accessToken` | string | required | Bearer token from `/auth/token` |
+| `accessToken` | string | required | Bearer token from the auth token endpoint |
 | `timeoutMs` | int | `10000` | HTTP request timeout in ms |
 | `maxRetries` | int | `2` | Retry count on 429/5xx/timeouts |
 | `collateWindowSeconds` | float | `3` | Buffer events for this many seconds before flushing |
@@ -60,14 +60,14 @@ $sdk = new NeuronSDK([
 ```php
 $result = $sdk->getRecommendations([
     'userId' => 'user-123',
-    'contextId' => 'homepage',
+    'contextId' => 'ctx_101',
     'limit' => 10,
 ]);
 
 var_dump($result['recommendations']);
 ```
 
-Each recommendation includes `entity_id`, `name`, `description`, `score`, and any `metadata` you stored with the item. The response also includes a `request_id` for event attribution.
+Each recommendation includes `id`, `object`, `item_id`, `rank`, `score`, and an embedded `item` object with the metadata you stored. The response also includes a `request_id` for event attribution.
 
 ### Auto-generated sections
 
@@ -96,15 +96,15 @@ Events provide the feedback loop that powers personalization. The PHP SDK buffer
 
 ```php
 $sdk->trackEvent([
-    'eventId' => 1,
+    'type' => 'click',
     'userId' => 'user-123',
-    'itemId' => 'item-456',
+    'itemId' => 'itm_7f3a2c9e',
 ])->wait();
 ```
 
 ### How batching works in PHP
 
-1. Events are buffered with a `client_ts` timestamp.
+1. Events are buffered with a timestamp that maps to `occurred_at` in the API.
 2. The buffer flushes when it reaches `maxBatchSize`.
 3. You can force delivery with `flushEvents()` or by calling `->wait()` on the returned `PendingResult`.
 4. Remaining buffered events are flushed during PHP shutdown.
@@ -112,9 +112,9 @@ $sdk->trackEvent([
 
 ```php
 $pending = $sdk->trackEvent([
-    'eventId' => 2,
+    'type' => 'view',
     'userId' => 'user-123',
-    'itemId' => 'item-456',
+    'itemId' => 'itm_7f3a2c9e',
 ]);
 
 $pending->wait();
@@ -133,9 +133,9 @@ $recs = $sdk->getRecommendations([
 ]);
 
 $sdk->trackEvent([
-    'eventId' => 1,
+    'type' => 'click',
     'userId' => 'user-123',
-    'itemId' => $recs['recommendations'][0]['entity_id'],
+    'itemId' => $recs['recommendations'][0]['item_id'],
 ])->wait();
 ```
 
@@ -143,11 +143,11 @@ $sdk->trackEvent([
 
 ## Manage catalog items
 
-### Upsert an item
+### Create an item
 
 ```php
 $sdk->upsertItem([
-    'itemId' => 'item-456',
+    'itemId' => 'itm_7f3a2c9e',
     'name' => 'Nike Running Shoes',
     'description' => 'High-performance running shoes for daily training.',
     'metadata' => [
@@ -162,7 +162,7 @@ $sdk->upsertItem([
 
 ```php
 $sdk->patchItem([
-    'itemId' => 'item-456',
+    'itemId' => 'itm_7f3a2c9e',
     'active' => false,
 ]);
 ```
@@ -170,17 +170,17 @@ $sdk->patchItem([
 Or use the convenience helper:
 
 ```php
-$sdk->setItemActive('item-456', false);
+$sdk->setItemActive('itm_7f3a2c9e', false);
 ```
 
 ### Delete items
 
 ```php
-$sdk->deleteItems(['itemId' => 'item-456']);
+$sdk->deleteItems(['itemId' => 'itm_7f3a2c9e']);
 
 $sdk->deleteItems([
-    ['itemId' => 'item-456'],
-    ['itemId' => 'item-789'],
+    ['itemId' => 'itm_7f3a2c9e'],
+    ['itemId' => 'itm_a8d1b247'],
 ]);
 ```
 

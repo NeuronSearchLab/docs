@@ -1,0 +1,47 @@
+---
+title: "GET /v1/events"
+icon: "list"
+description: "List ingested events with cursor pagination."
+openapi: "GET /v1/events"
+---
+
+## Request
+
+```http
+GET /v1/events?user_id=usr_abc123&type=click&limit=50
+```
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `limit` | integer | no | Number of events to return. Defaults to `20`, maximum `100`. |
+| `starting_after` | string | no | Event ID cursor such as `evt_12345`. |
+| `user_id` | string | no | Filters to events for one user. |
+| `type` | string | no | Filters to one event type. |
+
+## Response
+
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "evt_12345",
+      "object": "event",
+      "user_id": "usr_abc123",
+      "item_id": "itm_7f3a2c9e",
+      "type": "click",
+      "click": {},
+      "context_id": "ctx_101",
+      "metadata": {
+        "context_id": "ctx_101",
+        "click": {}
+      },
+      "occurred_at": 1777478400,
+      "created": 1777478405
+    }
+  ],
+  "has_more": true,
+  "next_cursor": "evt_12345",
+  "url": "/v1/events"
+}
+```
