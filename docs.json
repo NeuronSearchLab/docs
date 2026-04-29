@@ -77,10 +77,21 @@
             "icon": "brackets-curly",
             "pages": [
               "api-reference/endpoint/authenticate",
+              "api-reference/endpoint/list-items",
+              "api-reference/endpoint/retrieve-item",
               "api-reference/endpoint/get-recommendations",
               "api-reference/endpoint/submit-events",
-              "api-reference/endpoint/submit-items"
+              "api-reference/endpoint/list-events",
+              "api-reference/endpoint/retrieve-event",
+              "api-reference/endpoint/submit-items",
+              "api-reference/endpoint/update-item",
+              "api-reference/endpoint/delete-item"
             ]
+          },
+          {
+            "group": "Platform API",
+            "icon": "terminal",
+            "pages": ["api-reference/platform-api"]
           }
         ]
       },

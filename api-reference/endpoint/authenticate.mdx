@@ -1,47 +1,49 @@
 ---
-title: "POST /auth/token"
+title: "POST /oauth2/token"
 icon: "lock"
-description: "Obtain a bearer token for authenticating requests."
-openapi: "POST /auth/token"
+description: "Exchange SDK credentials for a short-lived access token."
+openapi: "POST /oauth2/token"
 ---
 
-## Description
+## Endpoint
 
-This endpoint returns a bearer token that can be used to authorize requests to protected endpoints.
+```http
+POST https://auth.neuronsearchlab.com/oauth2/token
+```
+
+This endpoint is unauthenticated. Send SDK credentials with HTTP Basic authentication from a trusted server.
 
 ## Request
 
-**Endpoint:**
-```http
-POST /auth/token
+```bash
+curl -X POST https://auth.neuronsearchlab.com/oauth2/token \
+  -H "Authorization: Basic <base64(client_id:client_secret)>" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=client_credentials&scope=neuronsearchlab-api/read%20neuronsearchlab-api/write"
 ```
 
-**Headers:**
-```http
-Content-Type: application/json
-```
-
-**Body:**
-```json
-{
-  "username": "your_username",
-  "password": "your_password"
-}
-```
-
-> The actual required body depends on how your NeuronSearchLab identity client is configured.
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `grant_type` | string | yes | Must be `client_credentials`. |
+| `scope` | string | no | Space-delimited scopes. Omit to use the scopes configured for the client. |
 
 ## Response
 
-**200 OK**
 ```json
 {
   "access_token": "<token>",
   "expires_in": 3600,
-  "token_type": "Bearer"
+  "token_type": "Bearer",
+  "scope": "neuronsearchlab-api/read neuronsearchlab-api/write"
 }
 ```
 
-## Notes
+Use `access_token` as the Bearer token for `/v1` API calls. `expires_in` is a lifetime in seconds; compute `expires_at = now + expires_in` in your token cache and refresh before that time.
 
-Use the `access_token` from the response as the `Authorization` header value in future requests.
+## Errors
+
+| Status | Scenario |
+| --- | --- |
+| `400` | Unsupported grant type or malformed request body |
+| `401` | Invalid client credentials |
+| `429` | Token request rate limit exceeded |

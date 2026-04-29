@@ -1,0 +1,39 @@
+---
+title: "GET /v1/events/{id}"
+icon: "signal"
+description: "Retrieve a single ingested event."
+openapi: "GET /v1/events/{id}"
+---
+
+## Request
+
+```http
+GET /v1/events/evt_12345
+```
+
+## Response
+
+```json
+{
+  "id": "evt_12345",
+  "object": "event",
+  "user_id": "usr_abc123",
+  "item_id": "itm_7f3a2c9e",
+  "type": "click",
+  "click": {},
+  "context_id": "ctx_101",
+  "metadata": {
+    "context_id": "ctx_101",
+    "click": {}
+  },
+  "occurred_at": 1777478400,
+  "created": 1777478405
+}
+```
+
+## Errors
+
+| Status | Scenario |
+| --- | --- |
+| `400` | Malformed event ID |
+| `404` | Event does not exist for the authenticated tenant |

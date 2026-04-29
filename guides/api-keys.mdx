@@ -11,7 +11,7 @@ API keys provide a simple way to authenticate programmatic requests against the 
 | | API Keys | SDK Credentials |
 | --- | --- | --- |
 | **Auth method** | Bearer token (`nsl_...`) | OAuth 2.0 client credentials |
-| **Endpoint** | Console proxy (`console.neuronsearchlab.com/api/...`) | Core API (`api.neuronsearchlab.com`) |
+| **Endpoint** | Console Platform API (`console.neuronsearchlab.com/api/...`) | Public API (`api.neuronsearchlab.com/v1`) |
 | **Rerank controls** | Applied automatically | Not available |
 | **Use case** | Testing, internal tools, proxy-based integrations | Production SDK integration |
 
@@ -31,7 +31,7 @@ The full key is displayed once. Copy it immediately and store it securely.
 Include your API key as a Bearer token in the `Authorization` header:
 
 ```bash
-curl "https://console.neuronsearchlab.com/api/recommendations?user_id=42&context_id=101" \
+curl "https://console.neuronsearchlab.com/api/recommendations?user_id=42&context_id=ctx_101" \
   -H "Authorization: Bearer nsl_abc12345_..."
 ```
 
@@ -50,8 +50,9 @@ Each key is restricted to specific API scopes:
 | Scope | Grants access to |
 | --- | --- |
 | `recommendations` | `GET /api/recommendations` |
-| `events` | `POST /api/events` (coming soon) |
-| `items` | `POST /api/items`, `PATCH /api/items/:id`, `DELETE /api/items` (coming soon) |
+| `events` | Event configuration and event automation routes |
+| `items` | Catalog item automation routes |
+| `admin` | Full Platform API access |
 
 If a key lacks the required scope, the proxy returns `403 Forbidden`.
 

@@ -22,13 +22,13 @@ This page covers SDK credential setup. Follow these practices to protect your in
 Use the client credentials to request a short-lived access token.
 
 ```bash
-curl -X POST https://api.neuronsearchlab.com/auth/token \
+curl -X POST https://auth.neuronsearchlab.com/oauth2/token \
   -H "Authorization: Basic <base64(client_id:client_secret)>" \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "grant_type=client_credentials"
 ```
 
-Tokens default to a 60-minute lifetime. Cache them server-side and refresh proactively to avoid downtime.
+Tokens default to a 60-minute lifetime. Cache them server-side, compute an `expires_at` timestamp from `expires_in`, and refresh proactively to avoid downtime.
 
 ## Authenticate SDK requests
 
@@ -40,7 +40,7 @@ Obtain an access token using the client credentials grant, then pass it to the S
 import NeuronSDK from '@neuronsearchlab/sdk';
 
 const sdk = new NeuronSDK({
-  baseUrl: 'https://api.neuronsearchlab.com',
+  baseUrl: 'https://api.neuronsearchlab.com/v1',
   accessToken: '<your_access_token>',
 });
 ```
@@ -53,7 +53,7 @@ const sdk = new NeuronSDK({
 use NeuronSearchLab\NeuronSDK;
 
 $sdk = new NeuronSDK([
-    'baseUrl' => 'https://api.neuronsearchlab.com',
+    'baseUrl' => 'https://api.neuronsearchlab.com/v1',
     'accessToken' => '<your_access_token>',
 ]);
 ```

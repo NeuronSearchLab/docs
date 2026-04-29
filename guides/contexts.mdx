@@ -4,7 +4,7 @@ icon: 'sliders'
 description: 'Define retrieval defaults and pre-query filters for each recommendation surface.'
 ---
 
-A context is a named configuration that shapes what the recommendation engine retrieves for a specific surface. Create one context per placement, such as a homepage feed, product detail page, or email digest, and reference its ID in every API call for that surface.
+A context is a named configuration that shapes what the recommendation engine retrieves for a specific surface. Create one context per placement, such as a homepage feed, product detail page, or email digest, and reference its prefixed ID in every API call for that surface.
 
 This guide covers the controls that belong in the current context editor.
 
@@ -19,7 +19,7 @@ This guide covers the controls that belong in the current context editor.
    - **User to Item** returns users similar to a given item.
    - **Item to Item** returns items similar to a given item.
    - **User to User** returns users similar to a given user.
-6. Save the context and note its numeric ID. Your engineering team will pass this ID in `context_id` on every recommendation request.
+6. Save the context and note its public ID, such as `ctx_101`. Your engineering team will pass this ID in `context_id` on every recommendation request.
 
 ---
 

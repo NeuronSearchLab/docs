@@ -1,77 +1,72 @@
 ---
-title: "GET /recommendations"
+title: "GET /v1/recommendations"
 icon: "sparkles"
 description: "Retrieve personalized recommendations."
-openapi: "GET /recommendations"
+openapi: "GET /v1/recommendations"
 ---
 
 ## Description
 
-This endpoint returns a list of recommended items for a given user, optionally using context-based logic to tailor results. It requires an access token that includes the `neuronsearchlab-api/read` scope.
+Returns ranked recommendation objects for a user or item. Context IDs are prefixed strings such as `ctx_101`.
 
 ## Request
 
-**Endpoint:**
 ```http
-GET /recommendations
+GET /v1/recommendations?user_id=usr_abc123&context_id=ctx_101&limit=10
 ```
 
-**Headers:**
-```http
-Authorization: Bearer <access_token>
-Content-Type: application/json (when sending a body)
-```
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `user_id` | string | yes | End-user identifier. Falls back to the token subject when omitted. |
+| `context_id` | string | no | Prefixed context ID such as `ctx_101`. |
+| `limit` | integer | no | Number of recommendations to return. Defaults to `20`, maximum `100`. |
+| `starting_after` | string | no | Cursor from the previous page. Accepts a recommendation ID or item ID. |
+| `entity_type` | string | no | `User` or `Item`. Defaults to `User`. |
+| `name` | string | no | Overrides the saved embedding display name. |
+| `description` | string | no | Overrides the saved embedding description. |
+| `filter` | string | no | Metadata filter shorthand. Repeat to combine filters. |
 
-## Request Parameters
-
-Parameters may be supplied either as query parameters or in the JSON body. When both are present, they are merged with body values taking precedence.
-
-| Name         | Type   | Required | Description |
-|--------------|--------|----------|-------------|
-| user_id      | string | yes      | Identifier for the end user to personalize for. Falls back to the `sub` claim from the access token when omitted. |
-| context_id   | integer | no       | Identifier for an optional stored context that provides filters, groupings, and default limits. |
-| quantity     | int    | no       | Number of recommendations to return. Defaults to the context configuration when not specified. |
-| entity_type  | string | no       | Overrides the embedding type saved for the entity. Must be `User` or `Item`. |
-| name         | string | no       | Overrides the name stored with the embedding. |
-| description  | string | no       | Overrides the description stored with the embedding. |
-
-The handler resolves the tenant from the access token claims (`client_id`/`sub`) and rejects the request if the tenant lookup fails.
+`quantity` remains accepted as a legacy alias for `limit`.
 
 ## Response
 
-**200 OK**
 ```json
 {
-  "embedding": {
-    "entity_id": "user-456",
-    "entity_type": "User",
-    "name": "Avery",
-    "description": "VIP shopper",
-    "metadata": {
-      "team_id": "team_123"
-    }
-  },
-  "recommendations": [
+  "object": "list",
+  "url": "/v1/recommendations",
+  "data": [
     {
-      "entity_id": "item-123",
+      "id": "rec_itm_7f3a2c9e",
+      "object": "recommendation",
+      "item_id": "itm_7f3a2c9e",
+      "rank": 1,
       "score": 0.94,
-      "embedding": [0.02, 0.31, -0.11],
-      "metadata": {
-        "name": "Nike Running Shoes",
-        "brand": "Nike"
-      },
-      "group": null
+      "item": {
+        "id": "itm_7f3a2c9e",
+        "object": "item",
+        "name": "Wireless Headphones",
+        "description": "Noise-cancelling Bluetooth headphones.",
+        "metadata": {
+          "category": "electronics"
+        }
+      }
     }
   ],
-  "count": 1,
+  "has_more": false,
+  "next_cursor": null,
+  "limit": 10,
+  "request_id": "c7f0d2bb-56b1-4ca7-8f09-84d8e4ed02b4",
   "processing_time_ms": 182
 }
 ```
 
-When a `context_id` includes grouping configuration, the `recommendations` array contains grouped aggregates with representative metadata and scores. Scores are normalized to the range `0–1` (where higher is better).
+For backwards compatibility, the response also includes a `recommendations` field with the same result array. When a context enables grouping, `data` and `recommendations` contain grouped recommendation aggregates.
 
-### Error responses
+## Errors
 
-- `400 Bad Request` – Validation failed (for example, missing `user_id` or invalid `entity_type`).
-- `401 Unauthorized` – Missing/invalid access token or tenant resolution failed.
-- `500 Internal Server Error` – Unexpected errors. Transactions are rolled back and connections are closed safely in all cases.
+| Status | Scenario |
+| --- | --- |
+| `400` | Validation failed, malformed filter, or malformed pagination cursor |
+| `401` | Missing/invalid access token or tenant resolution failed |
+| `403` | Token does not include `neuronsearchlab-api/read` |
+| `500` | Unexpected recommendation, database, or model-serving failure |

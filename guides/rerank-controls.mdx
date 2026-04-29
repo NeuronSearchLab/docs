@@ -40,7 +40,7 @@ Each surface (`search`, `results`, `recommendations`) can override the global mo
 Callers can pass `surface`, `rerank_mode`, and `rerank_depth` as query parameters. The proxy validates these against allowed values and clamps depth to the configured maximum.
 
 ```bash
-curl "https://console.neuronsearchlab.com/api/recommendations?user_id=42&context_id=101&surface=search&rerank_mode=aggressive&rerank_depth=120" \
+curl "https://console.neuronsearchlab.com/api/recommendations?user_id=42&context_id=ctx_101&surface=search&rerank_mode=aggressive&rerank_depth=120" \
   -H "Authorization: Bearer nsl_..."
 ```
 
@@ -72,7 +72,7 @@ Every proxied response includes metadata about the applied controls:
   },
   "fallback_reason": null,
   "control_stage": "general",
-  "context_id": 101
+  "context_id": "ctx_101"
 }
 ```
 

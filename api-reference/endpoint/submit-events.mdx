@@ -1,47 +1,88 @@
 ---
-title: "POST /events"
+title: "POST /v1/events"
 icon: "signal"
 description: "Submit user interaction events."
-openapi: "POST /events"
+openapi: "POST /v1/events"
 ---
 
 ## Description
 
-This endpoint records user interaction events, such as views, clicks, or other custom activity signals used to train recommendation models.
+Records user behavior that powers personalization, attribution, analytics, and model training. Events use a `type` field plus a type-specific object so new event shapes can be added without changing shared fields.
+
+Common event types are `impression`, `view`, `click`, `like`, `purchase`, and `conversion`. Your console event definitions decide which types are valid for your tenant.
 
 ## Request
 
-**Endpoint:**
 ```http
-POST /events
+POST /v1/events
 ```
 
-**Headers:**
-```http
-Authorization: Bearer <token>
-Content-Type: application/json
-```
-
-**Body Example:**
 ```json
 {
-  "user_id": "user-456",
-  "event_type": "click",
-  "entity_id": "item-123",
-  "timestamp": "2025-05-10T14:00:00Z",
-  "weight": 1.0
+  "user_id": "usr_abc123",
+  "item_id": "itm_7f3a2c9e",
+  "context_id": "ctx_101",
+  "type": "purchase",
+  "occurred_at": 1777478400,
+  "purchase": {
+    "amount": 4999,
+    "currency": "usd"
+  },
+  "metadata": {
+    "surface": "home_feed"
+  }
 }
 ```
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `user_id` | string | yes | End-user identifier. |
+| `item_id` | string | yes | Prefixed item ID such as `itm_7f3a2c9e`. |
+| `context_id` | string | no | Prefixed context ID such as `ctx_101`. |
+| `type` | string | yes | Event type configured in the console. |
+| `occurred_at` | integer | no | Unix timestamp for when the action happened. Defaults to ingestion time. |
+| `<type>` | object | no | Type-specific payload. Include `{}` when there are no type-specific fields. |
+| `metadata` | object | no | Additional event context. |
+
+Legacy aliases `event_type`, `event_id`, `itemId`, `item_id`, `client_ts`, and `timestamp` are still accepted.
 
 ## Response
 
-**200 OK**
 ```json
 {
-  "message": "Event recorded successfully"
+  "object": "list",
+  "data": [
+    {
+      "id": "evt_12345",
+      "object": "event",
+      "user_id": "usr_abc123",
+      "item_id": "itm_7f3a2c9e",
+      "type": "purchase",
+      "purchase": {
+        "amount": 4999,
+        "currency": "usd"
+      },
+      "context_id": "ctx_101",
+      "metadata": {
+        "surface": "home_feed",
+        "purchase": {
+          "amount": 4999,
+          "currency": "usd"
+        }
+      },
+      "occurred_at": 1777478400,
+      "created": 1777478405
+    }
+  ],
+  "has_more": false,
+  "url": "/v1/events"
 }
 ```
 
-## Notes
-- `event_type` can be any string you've defined (e.g., `view`, `like`, `purchase`).
-- `weight` is optional and can be used to influence model training.
+## Errors
+
+| Status | Scenario |
+| --- | --- |
+| `400` | Missing required fields, invalid JSON, unknown item, or unknown event type |
+| `401` | Missing or invalid Bearer token |
+| `403` | Token does not include `neuronsearchlab-api/write` |

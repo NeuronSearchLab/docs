@@ -1,214 +1,374 @@
 {
-  "openapi" : "3.0.1",
-  "info" : {
-    "title" : "NeuronSearchLab-API",
-    "version" : "2025-04-17T14:13:22Z"
+  "openapi": "3.0.3",
+  "info": {
+    "title": "NeuronSearchLab Public API",
+    "version": "1.0.0",
+    "description": "Versioned public API for catalog items, user events, and recommendations."
   },
-  "servers" : [ {
-    "url" : "https://api.neuronsearchlab.com"
-  } ],
-  "paths" : {
-    "/items" : {
-      "post" : {
-        "security" : [ {
-          "NeuronSearchLabAppNeuronSearchLabAuthorizer5AA3A78C" : [ "neuronsearchlab-api/write" ]
-        } ]
-      },
-      "options" : {
-        "responses" : {
-          "204" : {
-            "description" : "204 response",
-            "headers" : {
-              "Access-Control-Allow-Origin" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              },
-              "Access-Control-Allow-Methods" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              },
-              "Access-Control-Allow-Headers" : {
-                "schema" : {
-                  "type" : "string"
+  "servers": [
+    {
+      "url": "https://api.neuronsearchlab.com"
+    }
+  ],
+  "paths": {
+    "/oauth2/token": {
+      "post": {
+        "summary": "Create access token",
+        "servers": [{ "url": "https://auth.neuronsearchlab.com" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": ["grant_type"],
+                "properties": {
+                  "grant_type": { "type": "string", "enum": ["client_credentials"] },
+                  "scope": { "type": "string" }
                 }
               }
-            },
-            "content" : { }
+            }
           }
+        },
+        "responses": {
+          "200": {
+            "description": "Access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["access_token", "expires_in", "token_type"],
+                  "properties": {
+                    "access_token": { "type": "string" },
+                    "expires_in": { "type": "integer" },
+                    "token_type": { "type": "string", "enum": ["Bearer"] },
+                    "scope": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Error400" },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "429": { "$ref": "#/components/responses/Error429" }
         }
       }
     },
-    "/auth" : {
-      "options" : {
-        "responses" : {
-          "204" : {
-            "description" : "204 response",
-            "headers" : {
-              "Access-Control-Allow-Origin" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              },
-              "Access-Control-Allow-Methods" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              },
-              "Access-Control-Allow-Headers" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            },
-            "content" : { }
-          }
-        }
-      }
-    },
-    "/auth/token" : {
-      "post" : {
-        "parameters" : [ {
-          "name" : "Content-Type",
-          "in" : "header",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "200 response",
-            "content" : { }
-          }
+    "/v1/items": {
+      "get": {
+        "summary": "List items",
+        "security": [{ "oauth2": ["neuronsearchlab-api/read"] }],
+        "parameters": [
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 20 } },
+          { "name": "starting_after", "in": "query", "schema": { "type": "string", "pattern": "^itm_" } },
+          { "name": "category", "in": "query", "schema": { "type": "string" } },
+          { "name": "created_after", "in": "query", "schema": { "type": "integer", "format": "int64" } },
+          { "name": "created_before", "in": "query", "schema": { "type": "integer", "format": "int64" } }
+        ],
+        "responses": {
+          "200": { "description": "Item list", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ItemList" } } } },
+          "400": { "$ref": "#/components/responses/Error400" },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "403": { "$ref": "#/components/responses/Error403" }
         }
       },
-      "options" : {
-        "responses" : {
-          "204" : {
-            "description" : "204 response",
-            "headers" : {
-              "Access-Control-Allow-Origin" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              },
-              "Access-Control-Allow-Methods" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              },
-              "Access-Control-Allow-Headers" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            },
-            "content" : { }
-          }
+      "post": {
+        "summary": "Create an item",
+        "security": [{ "oauth2": ["neuronsearchlab-api/write"] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ItemCreate" } } }
+        },
+        "responses": {
+          "200": { "description": "Created item", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Item" } } } },
+          "400": { "$ref": "#/components/responses/Error400" },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "403": { "$ref": "#/components/responses/Error403" },
+          "409": { "$ref": "#/components/responses/Error409" }
         }
-      }
-    },
-    "/recommendations" : {
-      "get" : {
-        "security" : [ {
-          "NeuronSearchLabAppNeuronSearchLabAuthorizer5AA3A78C" : [ "neuronsearchlab-api/read" ]
-        } ]
       },
-      "options" : {
-        "responses" : {
-          "204" : {
-            "description" : "204 response",
-            "headers" : {
-              "Access-Control-Allow-Origin" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              },
-              "Access-Control-Allow-Methods" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              },
-              "Access-Control-Allow-Headers" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            },
-            "content" : { }
-          }
-        }
-      }
+      "options": { "$ref": "#/components/pathItems/CorsOptions" }
     },
-    "/events" : {
-      "post" : {
-        "security" : [ {
-          "NeuronSearchLabAppNeuronSearchLabAuthorizer5AA3A78C" : [ "neuronsearchlab-api/write" ]
-        } ]
+    "/v1/items/{id}": {
+      "get": {
+        "summary": "Retrieve an item",
+        "security": [{ "oauth2": ["neuronsearchlab-api/read"] }],
+        "parameters": [{ "$ref": "#/components/parameters/ItemId" }],
+        "responses": {
+          "200": { "description": "Item", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Item" } } } },
+          "400": { "$ref": "#/components/responses/Error400" },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "403": { "$ref": "#/components/responses/Error403" },
+          "404": { "$ref": "#/components/responses/Error404" }
+        }
       },
-      "options" : {
-        "responses" : {
-          "204" : {
-            "description" : "204 response",
-            "headers" : {
-              "Access-Control-Allow-Origin" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              },
-              "Access-Control-Allow-Methods" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              },
-              "Access-Control-Allow-Headers" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            },
-            "content" : { }
-          }
+      "post": {
+        "summary": "Update an item",
+        "security": [{ "oauth2": ["neuronsearchlab-api/write"] }],
+        "parameters": [{ "$ref": "#/components/parameters/ItemId" }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ItemUpdate" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated item", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Item" } } } },
+          "400": { "$ref": "#/components/responses/Error400" },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "403": { "$ref": "#/components/responses/Error403" },
+          "404": { "$ref": "#/components/responses/Error404" }
         }
-      }
+      },
+      "delete": {
+        "summary": "Delete an item",
+        "security": [{ "oauth2": ["neuronsearchlab-api/write"] }],
+        "parameters": [{ "$ref": "#/components/parameters/ItemId" }],
+        "responses": {
+          "200": { "description": "Delete result" },
+          "400": { "$ref": "#/components/responses/Error400" },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "403": { "$ref": "#/components/responses/Error403" }
+        }
+      },
+      "options": { "$ref": "#/components/pathItems/CorsOptions" }
     },
-    "/" : {
-      "options" : {
-        "responses" : {
-          "204" : {
-            "description" : "204 response",
-            "headers" : {
-              "Access-Control-Allow-Origin" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              },
-              "Access-Control-Allow-Methods" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              },
-              "Access-Control-Allow-Headers" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            },
-            "content" : { }
-          }
+    "/v1/events": {
+      "get": {
+        "summary": "List events",
+        "security": [{ "oauth2": ["neuronsearchlab-api/read"] }],
+        "parameters": [
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 20 } },
+          { "name": "starting_after", "in": "query", "schema": { "type": "string", "pattern": "^evt_" } },
+          { "name": "user_id", "in": "query", "schema": { "type": "string" } },
+          { "name": "type", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Event list", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/EventList" } } } },
+          "400": { "$ref": "#/components/responses/Error400" },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "403": { "$ref": "#/components/responses/Error403" }
         }
-      }
+      },
+      "post": {
+        "summary": "Submit events",
+        "security": [{ "oauth2": ["neuronsearchlab-api/write"] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "oneOf": [{ "$ref": "#/components/schemas/EventCreate" }, { "type": "array", "items": { "$ref": "#/components/schemas/EventCreate" } }] } } }
+        },
+        "responses": {
+          "200": { "description": "Inserted events", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/EventList" } } } },
+          "400": { "$ref": "#/components/responses/Error400" },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "403": { "$ref": "#/components/responses/Error403" }
+        }
+      },
+      "options": { "$ref": "#/components/pathItems/CorsOptions" }
+    },
+    "/v1/events/{id}": {
+      "get": {
+        "summary": "Retrieve an event",
+        "security": [{ "oauth2": ["neuronsearchlab-api/read"] }],
+        "parameters": [{ "$ref": "#/components/parameters/EventId" }],
+        "responses": {
+          "200": { "description": "Event", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Event" } } } },
+          "400": { "$ref": "#/components/responses/Error400" },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "403": { "$ref": "#/components/responses/Error403" },
+          "404": { "$ref": "#/components/responses/Error404" }
+        }
+      },
+      "options": { "$ref": "#/components/pathItems/CorsOptions" }
+    },
+    "/v1/recommendations": {
+      "get": {
+        "summary": "Get recommendations",
+        "security": [{ "oauth2": ["neuronsearchlab-api/read"] }],
+        "parameters": [
+          { "name": "user_id", "in": "query", "schema": { "type": "string" } },
+          { "name": "context_id", "in": "query", "schema": { "type": "string", "pattern": "^ctx_" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 20 } },
+          { "name": "starting_after", "in": "query", "schema": { "type": "string" } },
+          { "name": "entity_type", "in": "query", "schema": { "type": "string", "enum": ["User", "Item"] } }
+        ],
+        "responses": {
+          "200": { "description": "Recommendation list", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RecommendationList" } } } },
+          "400": { "$ref": "#/components/responses/Error400" },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "403": { "$ref": "#/components/responses/Error403" },
+          "500": { "$ref": "#/components/responses/Error500" }
+        }
+      },
+      "options": { "$ref": "#/components/pathItems/CorsOptions" }
     }
   },
-  "components" : {
-    "securitySchemes" : {
-      "NeuronSearchLabAppNeuronSearchLabAuthorizer5AA3A78C" : {
-        "type" : "apiKey",
-        "name" : "Authorization",
-        "in" : "header",
-        "x-amazon-apigateway-authtype" : "cognito_user_pools"
+  "components": {
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://auth.neuronsearchlab.com/oauth2/token",
+            "scopes": {
+              "neuronsearchlab-api/read": "Read recommendations, items, and events",
+              "neuronsearchlab-api/write": "Create/update/delete items and submit events"
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "ItemId": { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "pattern": "^itm_" } },
+      "EventId": { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "pattern": "^evt_" } }
+    },
+    "pathItems": {
+      "CorsOptions": {
+        "responses": {
+          "204": {
+            "description": "CORS preflight response",
+            "headers": {
+              "Access-Control-Allow-Origin": { "schema": { "type": "string" } },
+              "Access-Control-Allow-Methods": { "schema": { "type": "string" } },
+              "Access-Control-Allow-Headers": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "Error400": { "description": "Invalid request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+      "Error401": { "description": "Unauthenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+      "Error403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+      "Error404": { "description": "Not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+      "Error409": { "description": "Conflict", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+      "Error429": { "description": "Rate limited", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+      "Error500": { "description": "Server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+    },
+    "schemas": {
+      "ItemCreate": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^itm_" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "metadata": { "type": "object", "additionalProperties": true }
+        }
+      },
+      "ItemUpdate": {
+        "type": "object",
+        "minProperties": 1,
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "metadata": { "type": "object", "additionalProperties": true },
+          "active": { "type": "boolean" }
+        }
+      },
+      "Item": {
+        "type": "object",
+        "required": ["id", "object", "name", "created"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^itm_" },
+          "object": { "type": "string", "enum": ["item"] },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "metadata": { "type": "object", "additionalProperties": true },
+          "active": { "type": "boolean" },
+          "created": { "type": "integer", "format": "int64" },
+          "updated_at": { "type": "integer", "format": "int64", "nullable": true }
+        }
+      },
+      "EventCreate": {
+        "type": "object",
+        "required": ["user_id", "item_id", "type"],
+        "properties": {
+          "user_id": { "type": "string" },
+          "item_id": { "type": "string", "pattern": "^itm_" },
+          "context_id": { "type": "string", "pattern": "^ctx_" },
+          "type": { "type": "string" },
+          "occurred_at": { "type": "integer", "format": "int64" },
+          "metadata": { "type": "object", "additionalProperties": true }
+        },
+        "additionalProperties": true
+      },
+      "Event": {
+        "type": "object",
+        "required": ["id", "object", "user_id", "item_id", "type", "created"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^evt_" },
+          "object": { "type": "string", "enum": ["event"] },
+          "user_id": { "type": "string" },
+          "item_id": { "type": "string", "pattern": "^itm_" },
+          "type": { "type": "string" },
+          "context_id": { "type": "string", "nullable": true },
+          "metadata": { "type": "object", "additionalProperties": true },
+          "occurred_at": { "type": "integer", "format": "int64", "nullable": true },
+          "created": { "type": "integer", "format": "int64" }
+        },
+        "additionalProperties": true
+      },
+      "Recommendation": {
+        "type": "object",
+        "required": ["id", "object", "item_id", "rank", "item"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^rec_" },
+          "object": { "type": "string", "enum": ["recommendation"] },
+          "item_id": { "type": "string", "pattern": "^itm_" },
+          "rank": { "type": "integer" },
+          "score": { "type": "number" },
+          "item": { "$ref": "#/components/schemas/Item" }
+        },
+        "additionalProperties": true
+      },
+      "ItemList": {
+        "type": "object",
+        "properties": {
+          "object": { "type": "string", "enum": ["list"] },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/Item" } },
+          "has_more": { "type": "boolean" },
+          "next_cursor": { "type": "string", "nullable": true },
+          "url": { "type": "string" }
+        }
+      },
+      "EventList": {
+        "type": "object",
+        "properties": {
+          "object": { "type": "string", "enum": ["list"] },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/Event" } },
+          "has_more": { "type": "boolean" },
+          "next_cursor": { "type": "string", "nullable": true },
+          "url": { "type": "string" }
+        }
+      },
+      "RecommendationList": {
+        "type": "object",
+        "properties": {
+          "object": { "type": "string", "enum": ["list"] },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/Recommendation" } },
+          "recommendations": { "type": "array", "items": { "$ref": "#/components/schemas/Recommendation" } },
+          "has_more": { "type": "boolean" },
+          "next_cursor": { "type": "string", "nullable": true },
+          "limit": { "type": "integer" },
+          "url": { "type": "string" },
+          "request_id": { "type": "string" },
+          "processing_time_ms": { "type": "integer" }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": ["type", "code", "message"],
+            "properties": {
+              "type": { "type": "string" },
+              "code": { "type": "string" },
+              "message": { "type": "string" },
+              "details": {}
+            }
+          }
+        }
       }
     }
   }

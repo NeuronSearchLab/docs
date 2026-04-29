@@ -1,0 +1,45 @@
+---
+title: "GET /v1/items"
+icon: "list"
+description: "List catalog items with cursor pagination."
+openapi: "GET /v1/items"
+---
+
+## Request
+
+```http
+GET /v1/items?limit=20&starting_after=itm_7f3a2c9e
+```
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `limit` | integer | no | Number of items to return. Defaults to `20`, maximum `100`. |
+| `starting_after` | string | no | Item ID cursor from a previous response. |
+| `category` | string | no | Filters by `metadata.category`. |
+| `created_after` | integer | no | Unix timestamp lower bound for `created`. |
+| `created_before` | integer | no | Unix timestamp upper bound for `created`. |
+
+## Response
+
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "itm_7f3a2c9e",
+      "object": "item",
+      "name": "Wireless Headphones",
+      "description": "Noise-cancelling Bluetooth headphones.",
+      "metadata": {
+        "category": "electronics"
+      },
+      "active": true,
+      "created": 1777478400,
+      "updated_at": 1777478400
+    }
+  ],
+  "has_more": false,
+  "next_cursor": null,
+  "url": "/v1/items"
+}
+```

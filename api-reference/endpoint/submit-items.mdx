@@ -1,50 +1,68 @@
 ---
-title: "POST /items"
+title: "POST /v1/items"
 icon: "box"
-description: "Submit or update items for recommendations."
-openapi: "POST /items"
+description: "Create catalog items for recommendation."
+openapi: "POST /v1/items"
 ---
 
 ## Description
 
-Allows you to upsert items into the system, each with metadata and optional embedding data for use in the recommendation engine.
+Creates one or more catalog items. Use `POST /v1/items/{id}` to update an existing item.
 
 ## Request
 
-**Endpoint:**
 ```http
-POST /items
+POST /v1/items
 ```
 
-**Headers:**
-```http
-Authorization: Bearer <token>
-Content-Type: application/json
-```
-
-**Body Example:**
 ```json
 {
-  "entity_id": "item-123",
-  "name": "Nike Running Shoes",
-  "description": "High-performance running shoes.",
+  "id": "itm_7f3a2c9e",
+  "name": "Wireless Headphones",
+  "description": "Noise-cancelling Bluetooth headphones.",
   "metadata": {
-    "category": "Footwear",
-    "brand": "Nike",
-    "price": 109.99
+    "category": "electronics",
+    "brand": "Acme",
+    "price": 10999,
+    "currency": "usd"
   }
 }
 ```
 
+`id` is optional. If omitted, NeuronSearchLab generates an `itm_` prefixed ID.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | string | no | Prefixed item ID such as `itm_7f3a2c9e`. |
+| `name` | string | yes | Human-readable item name. |
+| `description` | string | no | Text used for embeddings and debugging. |
+| `metadata` | object | no | JSON object with filterable catalog attributes. |
+
 ## Response
 
-**200 OK**
 ```json
 {
-  "message": "Item upserted successfully"
+  "id": "itm_7f3a2c9e",
+  "object": "item",
+  "name": "Wireless Headphones",
+  "description": "Noise-cancelling Bluetooth headphones.",
+  "metadata": {
+    "category": "electronics",
+    "brand": "Acme",
+    "price": 10999,
+    "currency": "usd"
+  },
+  "active": true,
+  "created": 1777478400,
+  "updated_at": 1777478400
 }
 ```
 
-## Notes
-- Ensure unique `entity_id` per item.
-- Metadata can include any JSON-serializable fields.
+## Errors
+
+| Status | Scenario |
+| --- | --- |
+| `400` | Missing body, invalid JSON, missing `name`, or malformed `id` |
+| `401` | Missing or invalid Bearer token |
+| `403` | Token does not include `neuronsearchlab-api/write` |
+| `409` | An item with the requested ID already exists |

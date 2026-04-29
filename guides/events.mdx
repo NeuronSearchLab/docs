@@ -19,7 +19,7 @@ The key idea is:
 
 ## Event types
 
-An event type maps a numeric ID (sent in your API or SDK calls) to a human-readable name and a weight. The weight tells the training process how much to value one signal relative to others.
+An event type maps a stable type string (sent in your API or SDK calls) to a human-readable name and a weight. The weight tells the training process how much to value one signal relative to others.
 
 ### Add an event type
 
@@ -41,13 +41,13 @@ You can adjust weights at any time. Changes take effect on the next training run
 
 ### Send events from your application
 
-Pass the numeric event ID when tracking actions via the SDK:
+Pass the event type when tracking actions via the SDK:
 
 ```ts
 await sdk.trackEvent({
-  eventId: 2,         // matches the ID shown in the console
+  type: "click",
   userId: "user-123",
-  itemId: "item-456",
+  itemId: "itm_7f3a2c9e",
   metadata: { placement: "homepage" },
 });
 ```
@@ -55,14 +55,16 @@ await sdk.trackEvent({
 Or via the REST API:
 
 ```bash
-curl -X POST https://api.neuronsearchlab.com/events \
+curl -X POST https://api.neuronsearchlab.com/v1/events \
   -H "Authorization: Bearer <access_token>" \
   -H "Content-Type: application/json" \
   -d '[{
-    "event_id": 2,
+    "type": "click",
     "user_id": "user-123",
-    "item_id": "item-456",
-    "event_ts": "2025-01-15T14:30:00Z"
+    "item_id": "itm_7f3a2c9e",
+    "context_id": "ctx_101",
+    "occurred_at": 1777478400,
+    "click": {}
   }]'
 ```
 

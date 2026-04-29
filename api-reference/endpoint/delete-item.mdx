@@ -1,0 +1,31 @@
+---
+title: "DELETE /v1/items/{id}"
+icon: "trash"
+description: "Delete a catalog item."
+openapi: "DELETE /v1/items/{id}"
+---
+
+## Request
+
+```http
+DELETE /v1/items/itm_7f3a2c9e
+```
+
+## Response
+
+```json
+{
+  "message": "Item deleted successfully",
+  "itemId": "itm_7f3a2c9e",
+  "deletedCount": 1,
+  "processing_time_ms": 42
+}
+```
+
+## Errors
+
+| Status | Scenario |
+| --- | --- |
+| `400` | Malformed item ID |
+| `401` | Missing or invalid Bearer token |
+| `403` | Token does not include `neuronsearchlab-api/write` |
