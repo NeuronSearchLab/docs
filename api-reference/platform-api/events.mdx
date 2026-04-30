@@ -5,23 +5,165 @@ description: "Configure event types, training templates, and signal weights from
 
 Use these routes to define which user behaviors count as signals, how heavily they are weighted, and which combinations train new model versions. For programmatic event ingest, use the public [`POST /v1/events`](/api-reference/endpoint/submit-events) endpoint.
 
+All routes require a Platform API key with the `events` or `admin` scope.
+
 ## Event types
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/events/event-types` | List event types |
-| `POST` | `/api/events/event-types` | Create event type |
-| `PUT` | `/api/events/event-types/{id}` | Update event type |
-| `DELETE` | `/api/events/event-types/{id}` | Delete event type |
+### List event types
+
+```http
+GET /api/events/event-types
+```
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/events/event-types" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+### Create event type
+
+```http
+POST /api/events/event-types
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://console.neuronsearchlab.com/api/events/event-types \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "purchase", "weight": 100 }'
+```
+
+</CodeGroup>
+
+### Update event type
+
+```http
+PUT /api/events/event-types/{id}
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X PUT https://console.neuronsearchlab.com/api/events/event-types/12 \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{ "weight": 50 }'
+```
+
+</CodeGroup>
+
+### Delete event type
+
+```http
+DELETE /api/events/event-types/{id}
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X DELETE https://console.neuronsearchlab.com/api/events/event-types/12 \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
 
 ## Training templates
 
 Templates capture a specific combination of event types, weights, and training thresholds. See the [Configuring Events guide](/guides/events) for end-to-end usage.
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/events/templates` | List training event templates |
-| `POST` | `/api/events/templates` | Create training event template |
-| `PUT` | `/api/events/templates/{id}` | Update training event template |
-| `DELETE` | `/api/events/templates/{id}` | Delete training event template |
-| `POST` | `/api/events/save-values` | Save event value configuration |
+### List templates
+
+```http
+GET /api/events/templates
+```
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/events/templates" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+### Create template
+
+```http
+POST /api/events/templates
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://console.neuronsearchlab.com/api/events/templates \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Default conversion template",
+    "status": "draft",
+    "event_types": [
+      { "id": 12, "weight": 100 },
+      { "id": 14, "weight": 30 }
+    ],
+    "thresholds": { "per_signal_min": 100, "total_min": 5000 }
+  }'
+```
+
+</CodeGroup>
+
+### Update template
+
+```http
+PUT /api/events/templates/{id}
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X PUT https://console.neuronsearchlab.com/api/events/templates/3 \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{ "status": "published" }'
+```
+
+</CodeGroup>
+
+### Delete template
+
+```http
+DELETE /api/events/templates/{id}
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X DELETE https://console.neuronsearchlab.com/api/events/templates/3 \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+### Save event values
+
+```http
+POST /api/events/save-values
+```
+
+Persist value (revenue / weight) configuration that the analytics layer should use when summarising event-level performance.
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://console.neuronsearchlab.com/api/events/save-values \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{ "event_id": 14, "value_field": "purchase.amount" }'
+```
+
+</CodeGroup>

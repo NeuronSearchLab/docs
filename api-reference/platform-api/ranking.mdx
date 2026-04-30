@@ -7,44 +7,343 @@ Routes that govern how candidates are retrieved, scored, and reordered before be
 
 ## Contexts
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/context` | List contexts |
-| `POST` | `/api/context/create` | Create context |
-| `PATCH` | `/api/context/{id}` | Update context |
-| `GET` | `/api/context/{id}/active-model` | Resolve active model for a context |
+### List contexts
+
+```http
+GET /api/context
+```
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/context" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+### Create context
+
+```http
+POST /api/context/create
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://console.neuronsearchlab.com/api/context/create \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Home Feed",
+    "description": "Logged-in homepage rail",
+    "json_data": { "exclude_viewed_items": true }
+  }'
+```
+
+</CodeGroup>
+
+### Update context
+
+```http
+PATCH /api/context/{id}
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X PATCH https://console.neuronsearchlab.com/api/context/101 \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{ "json_data": { "exclude_viewed_items": false } }'
+```
+
+</CodeGroup>
+
+### Resolve active model
+
+```http
+GET /api/context/{id}/active-model
+```
+
+Returns the model version currently serving traffic for this context.
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/context/101/active-model" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
 
 ## Rules engine
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/rules` | List ranking rules |
-| `POST` | `/api/rules` | Create ranking rule |
-| `PATCH` | `/api/rules/{id}` | Update ranking rule |
-| `DELETE` | `/api/rules/{id}` | Delete ranking rule |
+### List rules
+
+```http
+GET /api/rules
+```
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/rules" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+### Create rule
+
+```http
+POST /api/rules
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://console.neuronsearchlab.com/api/rules \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Boost in-stock electronics",
+    "context_id": 101,
+    "type": "boost",
+    "conditions": [{ "key": "category", "op": "eq", "value": "electronics" }],
+    "boost": 1.25
+  }'
+```
+
+</CodeGroup>
+
+### Update rule
+
+```http
+PATCH /api/rules/{id}
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X PATCH https://console.neuronsearchlab.com/api/rules/77 \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{ "boost": 1.5 }'
+```
+
+</CodeGroup>
+
+### Delete rule
+
+```http
+DELETE /api/rules/{id}
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X DELETE https://console.neuronsearchlab.com/api/rules/77 \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
 
 ## Pipelines
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/pipelines` | List ranking pipelines |
-| `POST` | `/api/pipelines` | Create ranking pipeline |
-| `PATCH` | `/api/pipelines/{id}` | Update ranking pipeline |
-| `DELETE` | `/api/pipelines/{id}` | Delete ranking pipeline |
+### List pipelines
+
+```http
+GET /api/pipelines
+```
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/pipelines" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+### Create pipeline
+
+```http
+POST /api/pipelines
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://console.neuronsearchlab.com/api/pipelines \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Home feed pipeline",
+    "context_id": 101,
+    "stages_json": [
+      { "stage": "candidate", "config": { "candidate_limit": 200 } },
+      { "stage": "rerank", "enabled": true }
+    ]
+  }'
+```
+
+</CodeGroup>
+
+### Update pipeline
+
+```http
+PATCH /api/pipelines/{id}
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X PATCH https://console.neuronsearchlab.com/api/pipelines/9 \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{ "is_active": true }'
+```
+
+</CodeGroup>
+
+### Delete pipeline
+
+```http
+DELETE /api/pipelines/{id}
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X DELETE https://console.neuronsearchlab.com/api/pipelines/9 \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
 
 ## Rerank controls
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/rerank-controls` | Read rerank controls |
-| `POST` | `/api/rerank-controls` | Save rerank controls |
+### Read rerank controls
+
+```http
+GET /api/rerank-controls
+```
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/rerank-controls" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+### Save rerank controls
+
+```http
+POST /api/rerank-controls
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://console.neuronsearchlab.com/api/rerank-controls \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "context_id": 101,
+    "diversity_weight": 0.3,
+    "freshness_weight": 0.1
+  }'
+```
+
+</CodeGroup>
 
 ## Experiments
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/experiments` | List A/B experiments |
-| `POST` | `/api/experiments` | Create A/B experiment |
-| `PATCH` | `/api/experiments/{id}` | Update A/B experiment |
-| `DELETE` | `/api/experiments/{id}` | Delete A/B experiment |
-| `GET` | `/api/experiments/{id}/metrics` | Experiment metrics |
+### List experiments
+
+```http
+GET /api/experiments
+```
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/experiments" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+### Create experiment
+
+```http
+POST /api/experiments
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://console.neuronsearchlab.com/api/experiments \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Boost vs no boost",
+    "context_id": 101,
+    "variants": [
+      { "name": "control", "weight": 50 },
+      { "name": "boost-electronics", "weight": 50, "rules": [77] }
+    ]
+  }'
+```
+
+</CodeGroup>
+
+### Update experiment
+
+```http
+PATCH /api/experiments/{id}
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X PATCH https://console.neuronsearchlab.com/api/experiments/4 \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{ "status": "running" }'
+```
+
+</CodeGroup>
+
+### Delete experiment
+
+```http
+DELETE /api/experiments/{id}
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X DELETE https://console.neuronsearchlab.com/api/experiments/4 \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+### Experiment metrics
+
+```http
+GET /api/experiments/{id}/metrics
+```
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/experiments/4/metrics" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>

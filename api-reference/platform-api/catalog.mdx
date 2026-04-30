@@ -5,22 +5,147 @@ description: "Item search, item details, and metadata key listings for console o
 
 Read and search routes for the items catalog from the console. For programmatic ingest, use the public [`POST /v1/items`](/api-reference/endpoint/submit-items) endpoint.
 
-## Routes
+All routes require either a console session cookie or a Platform API key in the `Authorization` header. The examples below use a Platform API key; substitute `nsl_<prefix>_<token>` with your real key.
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/items/search` | Search catalog items |
-| `POST` | `/api/items/search` | Advanced item search with body filters |
-| `GET` | `/api/items/{itemId}` | Retrieve item detail for the console |
-| `GET` | `/api/items/metadata-keys` | List known item metadata keys |
+## Search items
+
+```http
+GET /api/items/search
+```
+
+Search the catalog by free-text query. Supports query-string filters such as `query`, `limit`, and `cursor`.
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/items/search?query=headphones&limit=20" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+```http
+POST /api/items/search
+```
+
+Advanced search with a JSON body. Use this when filters or operators are too complex for query-string parameters.
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://console.neuronsearchlab.com/api/items/search \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "running shoes",
+    "filters": [{ "key": "category", "op": "eq", "value": "Footwear" }],
+    "limit": 20
+  }'
+```
+
+</CodeGroup>
+
+## Retrieve item
+
+```http
+GET /api/items/{itemId}
+```
+
+Returns the full item record for the console — embedding source, metadata, recent events, and timestamps.
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/items/itm_7f3a2c9e" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+## List metadata keys
+
+```http
+GET /api/items/metadata-keys
+```
+
+Returns the set of metadata keys observed across the tenant's catalog. Useful for populating filter UIs.
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/items/metadata-keys" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
 
 ## User segments
 
 Segments group users by behaviour, attributes, or item interactions, and feed into the [Rules Engine](/guides/rules-engine) and experiments.
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/segments` | List user segments |
-| `POST` | `/api/segments` | Create user segment |
-| `PATCH` | `/api/segments/{id}` | Update user segment |
-| `DELETE` | `/api/segments/{id}` | Delete user segment |
+### List segments
+
+```http
+GET /api/segments
+```
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/segments" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+### Create segment
+
+```http
+POST /api/segments
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://console.neuronsearchlab.com/api/segments \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "High-value buyers",
+    "definition": { "events": [{ "type": "purchase", "min_count": 3 }] }
+  }'
+```
+
+</CodeGroup>
+
+### Update segment
+
+```http
+PATCH /api/segments/{id}
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X PATCH https://console.neuronsearchlab.com/api/segments/42 \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "VIP buyers" }'
+```
+
+</CodeGroup>
+
+### Delete segment
+
+```http
+DELETE /api/segments/{id}
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X DELETE https://console.neuronsearchlab.com/api/segments/42 \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>

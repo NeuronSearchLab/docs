@@ -96,18 +96,39 @@
           {
             "group": "Recommendations",
             "pages": ["api-reference/endpoint/get-recommendations"]
+          }
+        ]
+      },
+      {
+        "tab": "Platform API",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["api-reference/platform-api/introduction"]
           },
           {
-            "group": "Platform API",
-            "pages": [
-              "api-reference/platform-api/introduction",
-              "api-reference/platform-api/catalog",
-              "api-reference/platform-api/events",
-              "api-reference/platform-api/ranking",
-              "api-reference/platform-api/models",
-              "api-reference/platform-api/analytics",
-              "api-reference/platform-api/administration"
-            ]
+            "group": "Catalog",
+            "pages": ["api-reference/platform-api/catalog"]
+          },
+          {
+            "group": "Events",
+            "pages": ["api-reference/platform-api/events"]
+          },
+          {
+            "group": "Ranking",
+            "pages": ["api-reference/platform-api/ranking"]
+          },
+          {
+            "group": "Models and Training",
+            "pages": ["api-reference/platform-api/models"]
+          },
+          {
+            "group": "Analytics and Insights",
+            "pages": ["api-reference/platform-api/analytics"]
+          },
+          {
+            "group": "Administration",
+            "pages": ["api-reference/platform-api/administration"]
           }
         ]
       },
