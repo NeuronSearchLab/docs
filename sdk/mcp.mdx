@@ -49,15 +49,15 @@ All configuration is done through environment variables:
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `NSL_CLIENT_ID` | Yes (public mode) | — | OAuth 2.0 client ID from Console > SDK Credentials |
-| `NSL_CLIENT_SECRET` | Yes (public mode) | — | OAuth 2.0 client secret |
+| `NSL_CLIENT_ID` | Yes (Core API mode) | — | OAuth 2.0 client ID from Console > SDK Credentials |
+| `NSL_CLIENT_SECRET` | Yes (Core API mode) | — | OAuth 2.0 client secret |
 | `NSL_PLATFORM_MODE` | No | `public` | `public` or `internal` |
 | `NSL_API_KEY` | Yes (internal mode) | — | API key with admin scope |
 | `NSL_TIMEOUT_MS` | No | `15000` | Request timeout in milliseconds |
 
-### Public mode (default)
+### Core API mode (default, `public`)
 
-Uses OAuth 2.0 client credentials to authenticate against the public API (`api.neuronsearchlab.com/v1`). This mode provides access to recommendations, catalog management, events, segments, experiments, campaigns, and analytics.
+Uses OAuth 2.0 client credentials to authenticate against the [Core API](/api-reference/introduction). This mode provides access to recommendations, catalog management, events, segments, experiments, campaigns, and analytics.
 
 ### Internal mode
 
@@ -82,7 +82,7 @@ Uses a static API key to authenticate against the console API (`console.neuronse
 
 ## Available tools
 
-### Recommendations and catalog (public mode)
+### Recommendations and catalog (Core API mode)
 
 | Tool | Description |
 |------|-------------|
@@ -95,7 +95,7 @@ Uses a static API key to authenticate against the console API (`console.neuronse
 | `delete_items` | Permanently remove items |
 | `track_event` | Record a user interaction event |
 
-### Segments (public mode)
+### Segments (Core API mode)
 
 | Tool | Description |
 |------|-------------|
@@ -106,7 +106,7 @@ Uses a static API key to authenticate against the console API (`console.neuronse
 | `delete_segment` | Remove a segment |
 | `get_segment_stats` | Get segment size and overlap stats |
 
-### Experiments (public mode)
+### Experiments (Core API mode)
 
 | Tool | Description |
 |------|-------------|
@@ -118,7 +118,7 @@ Uses a static API key to authenticate against the console API (`console.neuronse
 | `stop_experiment` | End an experiment |
 | `get_experiment_results` | Get statistical results |
 
-### Campaigns (public mode)
+### Campaigns (Core API mode)
 
 | Tool | Description |
 |------|-------------|
@@ -128,7 +128,7 @@ Uses a static API key to authenticate against the console API (`console.neuronse
 | `pause_campaign` | Pause a campaign |
 | `delete_campaign` | Remove a campaign |
 
-### Analytics (public mode)
+### Analytics (Core API mode)
 
 | Tool | Description |
 |------|-------------|

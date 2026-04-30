@@ -1,31 +1,31 @@
 ---
-title: "Introduction"
-description: "Integrate with the versioned NeuronSearchLab recommendation API."
+title: "Core API Overview"
+description: "Integrate with the NeuronSearchLab Core API."
 ---
 
-The NeuronSearchLab public API is the data-plane surface for catalog ingestion, event ingestion, and recommendation serving.
+The NeuronSearchLab Core API is the data-plane surface for catalog ingestion, event ingestion, and recommendation serving.
 
 <Info>
 Use this API when your application backend needs to create catalog items, submit user events, or fetch recommendations for your app experience. If you are looking to automate console data, tenant configuration, training, analytics, billing, or other control-plane workflows, use the [Platform API](/api-reference/platform-api/introduction) instead.
 </Info>
 
-## Public vs Platform API
+## Core API vs Platform API
 
 ```mermaid
 flowchart LR
   endUser["End user\nBrowser or mobile app"] --> appBackend["Your application backend\nServer-side only"]
-  appBackend --> publicApi["Public API\nRecommendations, catalog items, events"]
+  appBackend --> coreApi["Core API\nRecommendations, catalog items, events"]
 
   operator["Operator or internal system"] --> console["NeuronSearchLab console\nAdmin workflows"]
   operator --> internalTool["Internal automation\nServer-side tools"]
   console --> platformApi["Platform API\nConsole data and configuration"]
   internalTool --> platformApi
 
-  endUser -. "Never expose API credentials here" .-> publicApi
+  endUser -. "Never expose API credentials here" .-> coreApi
   endUser -. "Not for console automation" .-> platformApi
 ```
 
-The public API belongs behind your own server-side boundary. Do not expose OAuth client credentials, access tokens, or direct public API calls from a browser or mobile client.
+The Core API belongs behind your own server-side boundary. Do not expose OAuth client credentials, access tokens, or direct Core API calls from a browser or mobile client.
 
 ## Base URLs
 
@@ -34,7 +34,7 @@ https://api.neuronsearchlab.com
 https://auth.neuronsearchlab.com/oauth2/token
 ```
 
-Use the public API domain for resource calls and the auth domain for token exchange. The token endpoint is unauthenticated, lives on the auth subdomain, and is rate-limited independently from resource traffic.
+Use the Core API domain for resource calls and the auth domain for token exchange. The token endpoint is unauthenticated, lives on the auth subdomain, and is rate-limited independently from resource traffic.
 
 ## Authentication
 
@@ -77,7 +77,7 @@ Datetime fields are Unix timestamps in integer seconds.
 - Use `created` for resource creation time.
 - Use `<verb>ed_at` for action-derived timestamps such as `occurred_at`.
 - Use future-tense fields such as `expires_at` for future scheduled times.
-- Do not use `created_at` in public API payloads.
+- Do not use `created_at` in Core API payloads.
 
 ## Pagination
 

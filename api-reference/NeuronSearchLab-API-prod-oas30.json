@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "NeuronSearchLab Public API",
+    "title": "NeuronSearchLab Core API",
     "version": "1.0.0",
     "description": "Versioned data-plane API for OAuth token exchange, catalog item ingestion, user event ingestion, and recommendation serving.",
     "license": {
@@ -12,7 +12,7 @@
   "servers": [
     {
       "url": "https://api.neuronsearchlab.com",
-      "description": "Public API Gateway custom domain"
+      "description": "Core API Gateway custom domain"
     }
   ],
   "security": [

@@ -37,7 +37,7 @@ curl -X POST https://auth.neuronsearchlab.com/oauth2/token \
 }
 ```
 
-Use `access_token` as the Bearer token for `/v1` API calls. `expires_in` is a lifetime in seconds; compute `expires_at = now + expires_in` in your token cache and refresh before that time.
+Use `access_token` as the Bearer token for Core API resource calls. `expires_in` is a lifetime in seconds; compute `expires_at = now + expires_in` in your token cache and refresh before that time.
 
 ## Errors
 
