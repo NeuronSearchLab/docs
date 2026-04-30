@@ -1,0 +1,1469 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "NeuronSearchLab Platform API",
+    "version": "1.0.0",
+    "description": "Control-plane API for the NeuronSearchLab console: contexts, rules, pipelines, models, training, analytics, and tenant administration."
+  },
+  "servers": [
+    {
+      "url": "https://console.neuronsearchlab.com"
+    }
+  ],
+  "security": [{ "bearerAuth": [] }],
+  "tags": [
+    { "name": "Catalog", "description": "Item search, item details, and metadata key listings." },
+    { "name": "Segments", "description": "User segments." },
+    { "name": "Events", "description": "Event types, training templates, and event value configuration." },
+    { "name": "Contexts", "description": "Recommendation contexts and active model resolution." },
+    { "name": "Rules", "description": "Ranking rules engine." },
+    { "name": "Pipelines", "description": "Recommendation pipeline configuration." },
+    { "name": "Rerank Controls", "description": "Per-context rerank controls." },
+    { "name": "Experiments", "description": "A/B experiments." },
+    { "name": "Models", "description": "Model versions." },
+    { "name": "Model Families", "description": "Grouped model versions." },
+    { "name": "Serving Endpoints", "description": "Model-serving endpoint configuration." },
+    { "name": "Training", "description": "Training runs and jobs." },
+    { "name": "Dashboard", "description": "Console dashboard metrics." },
+    { "name": "Analytics", "description": "Recommendation, event, and catalog analytics." },
+    { "name": "Search", "description": "Console-wide search." },
+    { "name": "Explainability", "description": "Recommendation explanation." },
+    { "name": "Assistant", "description": "Console and Studio assistants." },
+    { "name": "API Keys", "description": "Platform API key management." },
+    { "name": "Team", "description": "Team membership." },
+    { "name": "Billing", "description": "Stripe billing portal and plan changes." },
+    { "name": "Integrations", "description": "Third-party integrations." },
+    { "name": "Catalog Ingest", "description": "Scheduled catalog feeds." }
+  ],
+  "paths": {
+    "/api/items/search": {
+      "get": {
+        "operationId": "searchItems",
+        "summary": "Search items",
+        "tags": ["Catalog"],
+        "parameters": [
+          { "name": "query", "in": "query", "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20 } },
+          { "name": "cursor", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Search results", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "post": {
+        "operationId": "advancedSearchItems",
+        "summary": "Advanced item search",
+        "tags": ["Catalog"],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SearchBody" } } }
+        },
+        "responses": {
+          "200": { "description": "Search results", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/items/{itemId}": {
+      "get": {
+        "operationId": "getItemDetail",
+        "summary": "Retrieve item",
+        "tags": ["Catalog"],
+        "parameters": [{ "$ref": "#/components/parameters/ItemId" }],
+        "responses": {
+          "200": { "description": "Item detail", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "404": { "$ref": "#/components/responses/Error404" }
+        }
+      }
+    },
+    "/api/items/metadata-keys": {
+      "get": {
+        "operationId": "listItemMetadataKeys",
+        "summary": "List metadata keys",
+        "tags": ["Catalog"],
+        "responses": {
+          "200": { "description": "Metadata key list", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/segments": {
+      "get": {
+        "operationId": "listSegments",
+        "summary": "List segments",
+        "tags": ["Segments"],
+        "responses": {
+          "200": { "description": "Segment list", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "post": {
+        "operationId": "createSegment",
+        "summary": "Create segment",
+        "tags": ["Segments"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SegmentInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Created segment", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "400": { "$ref": "#/components/responses/Error400" },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/segments/{id}": {
+      "get": {
+        "operationId": "getSegment",
+        "summary": "Retrieve segment",
+        "tags": ["Segments"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Segment", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "404": { "$ref": "#/components/responses/Error404" }
+        }
+      },
+      "patch": {
+        "operationId": "updateSegment",
+        "summary": "Update segment",
+        "tags": ["Segments"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SegmentInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated segment", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "404": { "$ref": "#/components/responses/Error404" }
+        }
+      },
+      "delete": {
+        "operationId": "deleteSegment",
+        "summary": "Delete segment",
+        "tags": ["Segments"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Deleted" },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "404": { "$ref": "#/components/responses/Error404" }
+        }
+      }
+    },
+    "/api/events/event-types": {
+      "get": {
+        "operationId": "listEventTypes",
+        "summary": "List event types",
+        "tags": ["Events"],
+        "responses": {
+          "200": { "description": "Event types", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "post": {
+        "operationId": "createEventType",
+        "summary": "Create event type",
+        "tags": ["Events"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/EventTypeInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Created event type", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "400": { "$ref": "#/components/responses/Error400" },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/events/event-types/{id}": {
+      "put": {
+        "operationId": "updateEventType",
+        "summary": "Update event type",
+        "tags": ["Events"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/EventTypeInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "delete": {
+        "operationId": "deleteEventType",
+        "summary": "Delete event type",
+        "tags": ["Events"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Deleted" },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/events/templates": {
+      "get": {
+        "operationId": "listTrainingTemplates",
+        "summary": "List training templates",
+        "tags": ["Events"],
+        "responses": {
+          "200": { "description": "Templates", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "post": {
+        "operationId": "createTrainingTemplate",
+        "summary": "Create training template",
+        "tags": ["Events"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TemplateInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Created template", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/events/templates/{id}": {
+      "put": {
+        "operationId": "updateTrainingTemplate",
+        "summary": "Update training template",
+        "tags": ["Events"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TemplateInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "delete": {
+        "operationId": "deleteTrainingTemplate",
+        "summary": "Delete training template",
+        "tags": ["Events"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Deleted" },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/events/save-values": {
+      "post": {
+        "operationId": "saveEventValues",
+        "summary": "Save event value configuration",
+        "tags": ["Events"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } }
+        },
+        "responses": {
+          "200": { "description": "Saved", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/context": {
+      "get": {
+        "operationId": "listContexts",
+        "summary": "List contexts",
+        "tags": ["Contexts"],
+        "responses": {
+          "200": { "description": "Contexts", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/context/create": {
+      "post": {
+        "operationId": "createContext",
+        "summary": "Create context",
+        "tags": ["Contexts"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ContextInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Created context", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/context/{id}": {
+      "patch": {
+        "operationId": "updateContext",
+        "summary": "Update context",
+        "tags": ["Contexts"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ContextInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated context", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "404": { "$ref": "#/components/responses/Error404" }
+        }
+      }
+    },
+    "/api/context/{id}/active-model": {
+      "get": {
+        "operationId": "getContextActiveModel",
+        "summary": "Resolve active model for context",
+        "tags": ["Contexts"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Active model info", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "404": { "$ref": "#/components/responses/Error404" }
+        }
+      }
+    },
+    "/api/rules": {
+      "get": {
+        "operationId": "listRules",
+        "summary": "List rules",
+        "tags": ["Rules"],
+        "responses": {
+          "200": { "description": "Rules", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "post": {
+        "operationId": "createRule",
+        "summary": "Create rule",
+        "tags": ["Rules"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RuleInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Created rule", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/rules/{id}": {
+      "get": {
+        "operationId": "getRule",
+        "summary": "Retrieve rule",
+        "tags": ["Rules"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Rule", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "404": { "$ref": "#/components/responses/Error404" }
+        }
+      },
+      "patch": {
+        "operationId": "updateRule",
+        "summary": "Update rule",
+        "tags": ["Rules"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RuleInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated rule", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "delete": {
+        "operationId": "deleteRule",
+        "summary": "Delete rule",
+        "tags": ["Rules"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Deleted" },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/pipelines": {
+      "get": {
+        "operationId": "listPipelines",
+        "summary": "List pipelines",
+        "tags": ["Pipelines"],
+        "responses": {
+          "200": { "description": "Pipelines", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "post": {
+        "operationId": "createPipeline",
+        "summary": "Create pipeline",
+        "tags": ["Pipelines"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PipelineInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Created pipeline", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/pipelines/{id}": {
+      "get": {
+        "operationId": "getPipeline",
+        "summary": "Retrieve pipeline",
+        "tags": ["Pipelines"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Pipeline", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "404": { "$ref": "#/components/responses/Error404" }
+        }
+      },
+      "patch": {
+        "operationId": "updatePipeline",
+        "summary": "Update pipeline",
+        "tags": ["Pipelines"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PipelineInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated pipeline", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "delete": {
+        "operationId": "deletePipeline",
+        "summary": "Delete pipeline",
+        "tags": ["Pipelines"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Deleted" },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/rerank-controls": {
+      "get": {
+        "operationId": "getRerankControls",
+        "summary": "Read rerank controls",
+        "tags": ["Rerank Controls"],
+        "parameters": [
+          { "name": "context_id", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Rerank controls", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "put": {
+        "operationId": "saveRerankControls",
+        "summary": "Save rerank controls",
+        "tags": ["Rerank Controls"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RerankControlsInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Saved", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/experiments": {
+      "get": {
+        "operationId": "listExperiments",
+        "summary": "List experiments",
+        "tags": ["Experiments"],
+        "responses": {
+          "200": { "description": "Experiments", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "post": {
+        "operationId": "createExperiment",
+        "summary": "Create experiment",
+        "tags": ["Experiments"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ExperimentInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Created experiment", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/experiments/{id}": {
+      "get": {
+        "operationId": "getExperiment",
+        "summary": "Retrieve experiment",
+        "tags": ["Experiments"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Experiment", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "404": { "$ref": "#/components/responses/Error404" }
+        }
+      },
+      "patch": {
+        "operationId": "updateExperiment",
+        "summary": "Update experiment",
+        "tags": ["Experiments"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ExperimentInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated experiment", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "delete": {
+        "operationId": "deleteExperiment",
+        "summary": "Delete experiment",
+        "tags": ["Experiments"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Deleted" },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/experiments/{id}/metrics": {
+      "post": {
+        "operationId": "refreshExperimentMetrics",
+        "summary": "Refresh experiment metrics",
+        "tags": ["Experiments"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Latest metrics", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/models": {
+      "get": {
+        "operationId": "listModels",
+        "summary": "List models",
+        "tags": ["Models"],
+        "responses": {
+          "200": { "description": "Models", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "post": {
+        "operationId": "createModel",
+        "summary": "Create model metadata",
+        "tags": ["Models"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ModelInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Created model", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/models/{id}": {
+      "get": {
+        "operationId": "getModel",
+        "summary": "Retrieve model",
+        "tags": ["Models"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Model", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "404": { "$ref": "#/components/responses/Error404" }
+        }
+      },
+      "patch": {
+        "operationId": "updateModel",
+        "summary": "Update model",
+        "tags": ["Models"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ModelInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated model", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "delete": {
+        "operationId": "deleteModel",
+        "summary": "Delete model",
+        "tags": ["Models"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Deleted" },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/model-families": {
+      "get": {
+        "operationId": "listModelFamilies",
+        "summary": "List model families",
+        "tags": ["Model Families"],
+        "responses": {
+          "200": { "description": "Families", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/model-families/{id}": {
+      "get": {
+        "operationId": "getModelFamily",
+        "summary": "Retrieve model family",
+        "tags": ["Model Families"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Family", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/model-families/lifecycle": {
+      "post": {
+        "operationId": "modelFamilyLifecycle",
+        "summary": "Family lifecycle action",
+        "description": "Promote, deprecate, or retire a model family version.",
+        "tags": ["Model Families"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ModelFamilyLifecycleInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Lifecycle result", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/model-families/deploy": {
+      "post": {
+        "operationId": "deployModelFamily",
+        "summary": "Deploy model family",
+        "tags": ["Model Families"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ModelFamilyDeployInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Deployment result", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/model-families/details": {
+      "get": {
+        "operationId": "getModelFamilyDetails",
+        "summary": "Family details",
+        "tags": ["Model Families"],
+        "parameters": [
+          { "name": "family_id", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Family details", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/model-endpoints": {
+      "get": {
+        "operationId": "listModelEndpoints",
+        "summary": "List serving endpoints",
+        "tags": ["Serving Endpoints"],
+        "responses": {
+          "200": { "description": "Endpoints", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "post": {
+        "operationId": "createModelEndpoint",
+        "summary": "Create serving endpoint",
+        "tags": ["Serving Endpoints"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ModelEndpointInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/model-endpoints/{id}": {
+      "patch": {
+        "operationId": "updateModelEndpoint",
+        "summary": "Update serving endpoint",
+        "tags": ["Serving Endpoints"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ModelEndpointInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "delete": {
+        "operationId": "deleteModelEndpoint",
+        "summary": "Delete serving endpoint",
+        "tags": ["Serving Endpoints"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Deleted" },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/training/start": {
+      "post": {
+        "operationId": "startTraining",
+        "summary": "Start training run",
+        "tags": ["Training"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TrainingStartInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Training started", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/training-jobs": {
+      "get": {
+        "operationId": "listTrainingJobs",
+        "summary": "List training jobs",
+        "tags": ["Training"],
+        "responses": {
+          "200": { "description": "Jobs", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/training-jobs/{id}": {
+      "patch": {
+        "operationId": "updateTrainingJob",
+        "summary": "Update training job",
+        "tags": ["Training"],
+        "parameters": [{ "$ref": "#/components/parameters/IdAny" }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/training-jobs/approve": {
+      "post": {
+        "operationId": "approveTrainingJob",
+        "summary": "Approve training job",
+        "tags": ["Training"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/JobNameInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Approved", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/training-jobs/promote": {
+      "post": {
+        "operationId": "promoteTrainingJob",
+        "summary": "Promote training job",
+        "tags": ["Training"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PromoteInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Promoted", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/training-jobs/stop": {
+      "post": {
+        "operationId": "stopTrainingJob",
+        "summary": "Stop training job",
+        "tags": ["Training"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/JobNameInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Stopped", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/training-jobs/endpoint": {
+      "get": {
+        "operationId": "getTrainingJobEndpoint",
+        "summary": "Resolve training job endpoint",
+        "tags": ["Training"],
+        "parameters": [
+          { "name": "job_name", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Endpoint info", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/training-jobs/metrics/{jobName}": {
+      "get": {
+        "operationId": "getTrainingJobMetrics",
+        "summary": "Training job metrics",
+        "tags": ["Training"],
+        "parameters": [{ "$ref": "#/components/parameters/JobName" }],
+        "responses": {
+          "200": { "description": "Metrics", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/training-jobs/logs/{jobName}": {
+      "get": {
+        "operationId": "getTrainingJobLogs",
+        "summary": "Training job logs",
+        "tags": ["Training"],
+        "parameters": [{ "$ref": "#/components/parameters/JobName" }],
+        "responses": {
+          "200": { "description": "Logs", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/training-jobs/logs/{jobName}/stream": {
+      "get": {
+        "operationId": "streamTrainingJobLogs",
+        "summary": "Streaming training logs",
+        "description": "Server-sent events stream of live log lines.",
+        "tags": ["Training"],
+        "parameters": [{ "$ref": "#/components/parameters/JobName" }],
+        "responses": {
+          "200": {
+            "description": "SSE stream",
+            "content": { "text/event-stream": { "schema": { "type": "string" } } }
+          },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/dashboard": {
+      "get": {
+        "operationId": "getDashboard",
+        "summary": "Dashboard metrics",
+        "tags": ["Dashboard"],
+        "responses": {
+          "200": { "description": "Dashboard", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/analytics": {
+      "get": {
+        "operationId": "getAnalytics",
+        "summary": "Recommendation, event, and catalog analytics",
+        "tags": ["Analytics"],
+        "parameters": [
+          { "name": "from", "in": "query", "schema": { "type": "string", "format": "date" } },
+          { "name": "to", "in": "query", "schema": { "type": "string", "format": "date" } },
+          { "name": "granularity", "in": "query", "schema": { "type": "string", "enum": ["hour", "day", "week"] } },
+          { "name": "context_id", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Analytics", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/analytics/top-items": {
+      "get": {
+        "operationId": "getTopItems",
+        "summary": "Top items",
+        "tags": ["Analytics"],
+        "parameters": [
+          { "name": "from", "in": "query", "schema": { "type": "string", "format": "date" } },
+          { "name": "to", "in": "query", "schema": { "type": "string", "format": "date" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20 } }
+        ],
+        "responses": {
+          "200": { "description": "Top items", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/analytics/items/{itemId}": {
+      "get": {
+        "operationId": "getItemAnalytics",
+        "summary": "Item analytics",
+        "tags": ["Analytics"],
+        "parameters": [
+          { "$ref": "#/components/parameters/ItemId" },
+          { "name": "from", "in": "query", "schema": { "type": "string", "format": "date" } },
+          { "name": "to", "in": "query", "schema": { "type": "string", "format": "date" } }
+        ],
+        "responses": {
+          "200": { "description": "Item analytics", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/analytics/users/{userId}": {
+      "get": {
+        "operationId": "getUserAnalytics",
+        "summary": "User analytics",
+        "tags": ["Analytics"],
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "from", "in": "query", "schema": { "type": "string", "format": "date" } },
+          { "name": "to", "in": "query", "schema": { "type": "string", "format": "date" } }
+        ],
+        "responses": {
+          "200": { "description": "User analytics", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/analytics/items/compare": {
+      "get": {
+        "operationId": "compareItems",
+        "summary": "Compare item performance",
+        "tags": ["Analytics"],
+        "parameters": [
+          { "name": "ids", "in": "query", "schema": { "type": "string", "description": "Comma-separated item IDs" } },
+          { "name": "from", "in": "query", "schema": { "type": "string", "format": "date" } },
+          { "name": "to", "in": "query", "schema": { "type": "string", "format": "date" } }
+        ],
+        "responses": {
+          "200": { "description": "Comparison", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/search": {
+      "get": {
+        "operationId": "consoleSearch",
+        "summary": "Console-wide search",
+        "tags": ["Search"],
+        "parameters": [
+          { "name": "query", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Search results", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/explain": {
+      "get": {
+        "operationId": "explainRecommendation",
+        "summary": "Explain a recommendation",
+        "description": "Pass either request_id (preferred) or user_id + context_id + item_id.",
+        "tags": ["Explainability"],
+        "parameters": [
+          { "name": "request_id", "in": "query", "schema": { "type": "string" } },
+          { "name": "user_id", "in": "query", "schema": { "type": "string" } },
+          { "name": "context_id", "in": "query", "schema": { "type": "integer" } },
+          { "name": "item_id", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Explanation", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/assistant/chat": {
+      "post": {
+        "operationId": "assistantChat",
+        "summary": "Console assistant chat",
+        "tags": ["Assistant"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AssistantChatInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Assistant response", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/studio/chat": {
+      "post": {
+        "operationId": "studioChat",
+        "summary": "Studio assistant chat",
+        "tags": ["Assistant"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AssistantChatInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Studio response", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/api-keys": {
+      "get": {
+        "operationId": "listApiKeys",
+        "summary": "List API keys",
+        "tags": ["API Keys"],
+        "responses": {
+          "200": { "description": "API keys", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "post": {
+        "operationId": "createApiKey",
+        "summary": "Create API key",
+        "tags": ["API Keys"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiKeyInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Created key (full token shown once)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/api-keys/{id}": {
+      "patch": {
+        "operationId": "updateApiKey",
+        "summary": "Update API key",
+        "tags": ["API Keys"],
+        "parameters": [{ "$ref": "#/components/parameters/IdAny" }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiKeyInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "delete": {
+        "operationId": "revokeApiKey",
+        "summary": "Revoke API key",
+        "tags": ["API Keys"],
+        "parameters": [{ "$ref": "#/components/parameters/IdAny" }],
+        "responses": {
+          "200": { "description": "Revoked" },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/team": {
+      "get": {
+        "operationId": "getTeam",
+        "summary": "Current team metadata",
+        "tags": ["Team"],
+        "responses": {
+          "200": { "description": "Team", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/team/invite": {
+      "post": {
+        "operationId": "inviteTeamMember",
+        "summary": "Invite team member",
+        "tags": ["Team"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TeamInviteInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Invited", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/billing/portal": {
+      "post": {
+        "operationId": "openBillingPortal",
+        "summary": "Open billing portal",
+        "description": "Creates a Stripe billing portal session and returns the redirect URL.",
+        "tags": ["Billing"],
+        "responses": {
+          "200": { "description": "Portal session", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/billing/change-plan": {
+      "post": {
+        "operationId": "changeBillingPlan",
+        "summary": "Change billing plan",
+        "tags": ["Billing"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ChangePlanInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Changed", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/integrations": {
+      "get": {
+        "operationId": "listIntegrations",
+        "summary": "List integrations",
+        "tags": ["Integrations"],
+        "responses": {
+          "200": { "description": "Integrations", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "post": {
+        "operationId": "saveIntegration",
+        "summary": "Save integration",
+        "tags": ["Integrations"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/IntegrationInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Saved", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/catalogue-ingest": {
+      "get": {
+        "operationId": "listCatalogueIngest",
+        "summary": "List ingest configs",
+        "tags": ["Catalog Ingest"],
+        "responses": {
+          "200": { "description": "Configs", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "post": {
+        "operationId": "createCatalogueIngest",
+        "summary": "Create ingest config",
+        "tags": ["Catalog Ingest"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CatalogueIngestInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/catalogue-ingest/{id}": {
+      "patch": {
+        "operationId": "updateCatalogueIngest",
+        "summary": "Update ingest config",
+        "tags": ["Catalog Ingest"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CatalogueIngestInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "delete": {
+        "operationId": "deleteCatalogueIngest",
+        "summary": "Delete ingest config",
+        "tags": ["Catalog Ingest"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Deleted" },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/catalogue-ingest/{id}/trigger": {
+      "post": {
+        "operationId": "triggerCatalogueIngest",
+        "summary": "Trigger ingest run",
+        "tags": ["Catalog Ingest"],
+        "parameters": [{ "$ref": "#/components/parameters/IdNum" }],
+        "responses": {
+          "200": { "description": "Triggered", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    },
+    "/api/catalogue-ingest/scheduler": {
+      "get": {
+        "operationId": "getCatalogueIngestScheduler",
+        "summary": "Scheduler status",
+        "tags": ["Catalog Ingest"],
+        "responses": {
+          "200": { "description": "Scheduler", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      },
+      "patch": {
+        "operationId": "updateCatalogueIngestScheduler",
+        "summary": "Update scheduler",
+        "tags": ["Catalog Ingest"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SchedulerInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Object" } } } },
+          "401": { "$ref": "#/components/responses/Error401" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Platform API key issued from Console > Platform API Keys. Format: nsl_<prefix>_<token>."
+      }
+    },
+    "parameters": {
+      "IdNum": { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } },
+      "IdAny": { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } },
+      "ItemId": { "name": "itemId", "in": "path", "required": true, "schema": { "type": "string", "pattern": "^itm_" } },
+      "JobName": { "name": "jobName", "in": "path", "required": true, "schema": { "type": "string" } }
+    },
+    "responses": {
+      "Error400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+      "Error401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+      "Error403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+      "Error404": { "description": "Not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+    },
+    "schemas": {
+      "Object": { "type": "object", "additionalProperties": true },
+      "Error": {
+        "type": "object",
+        "properties": { "error": { "type": "string" } }
+      },
+      "SearchBody": {
+        "type": "object",
+        "properties": {
+          "query": { "type": "string" },
+          "filters": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+          "limit": { "type": "integer" },
+          "cursor": { "type": "string" }
+        }
+      },
+      "SegmentInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "definition": { "type": "object", "additionalProperties": true }
+        }
+      },
+      "EventTypeInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "weight": { "type": "integer", "minimum": 1, "maximum": 100 }
+        }
+      },
+      "TemplateInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "status": { "type": "string", "enum": ["draft", "published"] },
+          "event_types": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": { "id": { "type": "integer" }, "weight": { "type": "integer" } }
+            }
+          },
+          "thresholds": {
+            "type": "object",
+            "properties": {
+              "per_signal_min": { "type": "integer" },
+              "total_min": { "type": "integer" }
+            }
+          }
+        }
+      },
+      "ContextInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "json_data": { "type": "object", "additionalProperties": true }
+        }
+      },
+      "RuleInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "context_id": { "type": "integer" },
+          "type": { "type": "string", "enum": ["boost", "bury", "pin", "filter", "cap", "dedupe", "reorder", "group"] },
+          "conditions": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+          "boost": { "type": "number" }
+        }
+      },
+      "PipelineInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "context_id": { "type": "integer", "nullable": true },
+          "stages_json": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+          "is_active": { "type": "boolean" }
+        }
+      },
+      "RerankControlsInput": {
+        "type": "object",
+        "properties": {
+          "context_id": { "type": "integer" },
+          "diversity_weight": { "type": "number" },
+          "freshness_weight": { "type": "number" }
+        }
+      },
+      "ExperimentInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "context_id": { "type": "integer" },
+          "status": { "type": "string", "enum": ["draft", "running", "paused", "completed"] },
+          "variants": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "weight": { "type": "integer" },
+                "rules": { "type": "array", "items": { "type": "integer" } }
+              }
+            }
+          }
+        }
+      },
+      "ModelInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "family_id": { "type": "integer" },
+          "label": { "type": "string" },
+          "description": { "type": "string" },
+          "approved": { "type": "boolean" }
+        }
+      },
+      "ModelFamilyLifecycleInput": {
+        "type": "object",
+        "required": ["family_id", "action"],
+        "properties": {
+          "family_id": { "type": "integer" },
+          "action": { "type": "string", "enum": ["promote", "deprecate", "retire"] },
+          "model_id": { "type": "integer" }
+        }
+      },
+      "ModelFamilyDeployInput": {
+        "type": "object",
+        "required": ["family_id", "model_id"],
+        "properties": {
+          "family_id": { "type": "integer" },
+          "model_id": { "type": "integer" },
+          "endpoint_id": { "type": "integer" }
+        }
+      },
+      "ModelEndpointInput": {
+        "type": "object",
+        "properties": {
+          "model_type": { "type": "string", "enum": ["embedder", "ranker"] },
+          "endpoint_name": { "type": "string" },
+          "is_default": { "type": "boolean" }
+        }
+      },
+      "TrainingStartInput": {
+        "type": "object",
+        "required": ["template_id"],
+        "properties": {
+          "template_id": { "type": "integer" },
+          "epochs": { "type": "integer", "default": 5 },
+          "batch_size": { "type": "integer", "enum": [64, 128, 256, 512] },
+          "learning_rate": { "type": "number", "default": 0.001 }
+        }
+      },
+      "JobNameInput": {
+        "type": "object",
+        "required": ["job_name"],
+        "properties": { "job_name": { "type": "string" } }
+      },
+      "PromoteInput": {
+        "type": "object",
+        "required": ["job_name"],
+        "properties": {
+          "job_name": { "type": "string" },
+          "endpoint_id": { "type": "integer" }
+        }
+      },
+      "AssistantChatInput": {
+        "type": "object",
+        "required": ["messages"],
+        "properties": {
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["role", "content"],
+              "properties": {
+                "role": { "type": "string", "enum": ["system", "user", "assistant"] },
+                "content": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "ApiKeyInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "scopes": { "type": "array", "items": { "type": "string", "enum": ["recommendations", "events", "items", "admin"] } },
+          "environment": { "type": "string" }
+        }
+      },
+      "TeamInviteInput": {
+        "type": "object",
+        "required": ["email"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "role": { "type": "string", "enum": ["admin", "member"] }
+        }
+      },
+      "ChangePlanInput": {
+        "type": "object",
+        "required": ["plan"],
+        "properties": { "plan": { "type": "string" } }
+      },
+      "IntegrationInput": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": { "type": "string" },
+          "config": { "type": "object", "additionalProperties": true }
+        }
+      },
+      "CatalogueIngestInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "source_url": { "type": "string", "format": "uri" },
+          "schedule": { "type": "string", "description": "Cron expression" }
+        }
+      },
+      "SchedulerInput": {
+        "type": "object",
+        "properties": { "enabled": { "type": "boolean" } }
+      }
+    }
+  }
+}
