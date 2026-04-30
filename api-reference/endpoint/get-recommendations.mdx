@@ -16,7 +16,7 @@ GET /v1/recommendations?user_id=usr_abc123&context_id=ctx_101&limit=10
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
-| `user_id` | string | yes | End-user identifier. Falls back to the token subject when omitted. |
+| `user_id` | string | no | End-user identifier. Falls back to the token subject when omitted. |
 | `context_id` | string | no | Prefixed context ID such as `ctx_101`. |
 | `limit` | integer | no | Number of recommendations to return. Defaults to `20`, maximum `100`. |
 | `starting_after` | string | no | Cursor from the previous page. Accepts a recommendation ID or item ID. |
@@ -24,6 +24,16 @@ GET /v1/recommendations?user_id=usr_abc123&context_id=ctx_101&limit=10
 | `name` | string | no | Overrides the saved embedding display name. |
 | `description` | string | no | Overrides the saved embedding description. |
 | `filter` | string | no | Metadata filter shorthand. Repeat to combine filters. |
+| `filters` | string | no | Alias for repeated `filter` query parameters. |
+| `scope` | string | no | JSON-encoded request scope, currently honoring `filters`. |
+| `mode` | string | no | `single` or `auto`. Defaults to `single`. |
+| `cursor` | string | no | Auto-mode cursor from a previous response. |
+| `window_days` | integer | no | Auto-mode recent activity lookback. Defaults to `14`. |
+| `candidate_limit` | integer | no | Auto-mode anchor candidate count. Defaults to `50`. |
+| `served_cap` | integer | no | Auto-mode served-section cursor cap. Defaults to `50`. |
+| `request_id` | string | no | Stable request ID for attribution. Prefer the `X-Request-Id` header. |
+| `session_id` | string | no | Session identifier for served-recommendation telemetry. |
+| `anonymous_id` | string | no | Anonymous identifier for served-recommendation telemetry. |
 
 `quantity` remains accepted as a legacy alias for `limit`.
 
@@ -59,7 +69,7 @@ GET /v1/recommendations?user_id=usr_abc123&context_id=ctx_101&limit=10
 }
 ```
 
-For backwards compatibility, the response also includes a `recommendations` field with the same result array. When a context enables grouping, `data` and `recommendations` contain grouped recommendation aggregates.
+For backwards compatibility, the response also includes a `recommendations` field with the same result array. When a context enables grouping, `data` and `recommendations` contain grouped recommendation aggregates. Responses also include `embedding_info`, request-level `explanation`, and per-item `explanation` fields when available.
 
 ## Errors
 

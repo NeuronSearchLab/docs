@@ -82,6 +82,7 @@
               "api-reference/endpoint/list-items",
               "api-reference/endpoint/retrieve-item",
               "api-reference/endpoint/update-item",
+              "api-reference/endpoint/patch-item",
               "api-reference/endpoint/delete-item"
             ]
           },

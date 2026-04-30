@@ -101,12 +101,13 @@ Common statuses are `400` for invalid requests, `401` for missing or invalid cre
 | --- | --- | --- |
 | `POST` | `/v1/items` | `neuronsearchlab-api/write` |
 | `GET` | `/v1/items` | `neuronsearchlab-api/read` |
-| `GET` | `/v1/items/{id}` | `neuronsearchlab-api/read` |
-| `POST` | `/v1/items/{id}` | `neuronsearchlab-api/write` |
-| `DELETE` | `/v1/items/{id}` | `neuronsearchlab-api/write` |
+| `GET` | `/v1/items/{item_id}` | `neuronsearchlab-api/read` |
+| `POST` | `/v1/items/{item_id}` | `neuronsearchlab-api/write` |
+| `PATCH` | `/v1/items/{item_id}` | `neuronsearchlab-api/write` |
+| `DELETE` | `/v1/items/{item_id}` | `neuronsearchlab-api/write` |
 | `POST` | `/v1/events` | `neuronsearchlab-api/write` |
 | `GET` | `/v1/events` | `neuronsearchlab-api/read` |
-| `GET` | `/v1/events/{id}` | `neuronsearchlab-api/read` |
+| `GET` | `/v1/events/{event_id}` | `neuronsearchlab-api/read` |
 | `GET` | `/v1/recommendations` | `neuronsearchlab-api/read` |
 
 Each endpoint supports `OPTIONS` preflight with standard CORS headers.

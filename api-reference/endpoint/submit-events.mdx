@@ -39,11 +39,14 @@ POST /v1/events
 | `item_id` | string | yes | Prefixed item ID such as `itm_7f3a2c9e`. |
 | `context_id` | string | no | Prefixed context ID such as `ctx_101`. |
 | `type` | string | yes | Event type configured in the console. |
+| `session_id` | string | no | Session identifier for attribution and analytics. |
+| `request_id` | string | no | Recommendation request ID returned by `GET /v1/recommendations`. |
+| `placement` | string | no | Surface or placement where the event occurred. |
 | `occurred_at` | integer | no | Unix timestamp for when the action happened. Defaults to ingestion time. |
 | `<type>` | object | no | Type-specific payload. Include `{}` when there are no type-specific fields. |
 | `metadata` | object | no | Additional event context. |
 
-Legacy aliases `event_type`, `event_id`, `itemId`, `item_id`, `client_ts`, and `timestamp` are still accepted.
+Legacy aliases `userId`, `itemId`, `eventType`, `event_type`, `eventId`, `event_id`, `contextId`, `sessionId`, `requestId`, `client_ts`, `clientTs`, `occurredAt`, and `timestamp` are still accepted. Event batches are capped at 200 events per request by default.
 
 ## Response
 
