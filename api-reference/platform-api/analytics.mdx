@@ -7,30 +7,172 @@ Read-only routes that power the console's reporting and debugging surfaces. See 
 
 ## Dashboard
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/dashboard` | Dashboard metrics and setup state |
+### Dashboard metrics
+
+```http
+GET /api/dashboard
+```
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/dashboard" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
 
 ## Analytics
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/analytics` | Recommendation, event, and catalog analytics |
-| `GET` | `/api/analytics/top-items` | Top item engagement summary |
-| `GET` | `/api/analytics/items/{itemId}` | Item-level analytics |
-| `GET` | `/api/analytics/users/{userId}` | User-level analytics |
-| `POST` | `/api/analytics/items/compare` | Compare item performance |
+### Recommendation, event, and catalog analytics
+
+```http
+GET /api/analytics
+```
+
+Accepts `from`, `to`, `granularity` (`hour` / `day` / `week`), and optional `context_id` query parameters.
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/analytics?from=2026-04-01&to=2026-04-29&granularity=day" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+### Top items
+
+```http
+GET /api/analytics/top-items
+```
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/analytics/top-items?from=2026-04-01&limit=20" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+### Item analytics
+
+```http
+GET /api/analytics/items/{itemId}
+```
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/analytics/items/itm_7f3a2c9e?from=2026-04-01" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+### User analytics
+
+```http
+GET /api/analytics/users/{userId}
+```
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/analytics/users/user-123?from=2026-04-01" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+### Compare items
+
+```http
+POST /api/analytics/items/compare
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://console.neuronsearchlab.com/api/analytics/items/compare \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "item_ids": ["itm_7f3a2c9e", "itm_a8d1b247"],
+    "from": "2026-04-01",
+    "to": "2026-04-29"
+  }'
+```
+
+</CodeGroup>
 
 ## Search and explainability
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/search` | Console-wide search |
-| `GET` | `/api/explain` | Explain a recommendation result |
+### Console-wide search
+
+```http
+GET /api/search
+```
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/search?query=home%20feed" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
+
+### Explain a recommendation
+
+```http
+GET /api/explain
+```
+
+Pass either `request_id` (preferred) or `user_id` + `context_id` + `item_id` to inspect why an item ranked where it did.
+
+<CodeGroup>
+
+```bash cURL
+curl "https://console.neuronsearchlab.com/api/explain?request_id=c7f0d2bb-56b1-4ca7-8f09-84d8e4ed02b4&item_id=itm_7f3a2c9e" \
+  -H "Authorization: Bearer nsl_<prefix>_<token>"
+```
+
+</CodeGroup>
 
 ## Assistant
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `POST` | `/api/assistant/chat` | Console assistant chat |
-| `POST` | `/api/studio/chat` | Studio assistant chat |
+### Console assistant chat
+
+```http
+POST /api/assistant/chat
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://console.neuronsearchlab.com/api/assistant/chat \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{ "messages": [{ "role": "user", "content": "Show me top items this week" }] }'
+```
+
+</CodeGroup>
+
+### Studio assistant chat
+
+```http
+POST /api/studio/chat
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://console.neuronsearchlab.com/api/studio/chat \
+  -H "Authorization: Bearer nsl_<prefix>_<token>" \
+  -H "Content-Type: application/json" \
+  -d '{ "messages": [{ "role": "user", "content": "Create a context for checkout upsell" }] }'
+```
+
+</CodeGroup>
