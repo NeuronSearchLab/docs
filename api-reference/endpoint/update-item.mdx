@@ -1,12 +1,14 @@
 ---
-title: "POST /v1/items/{id}"
+title: "POST /v1/items/{item_id}"
 description: "Update an existing catalog item."
-openapi: "POST /v1/items/{id}"
+openapi: "POST /v1/items/{item_id}"
 ---
 
 ## Description
 
 Updates an existing item. All body fields are optional, but at least one field must be supplied. If `name`, `description`, or `metadata` changes, the item embedding is refreshed.
+
+`PATCH /v1/items/{item_id}` is also available as a compatibility alias with the same request and response shape.
 
 ## Request
 
