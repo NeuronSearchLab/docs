@@ -6,22 +6,22 @@ description: "Authentication, scopes, and error format for the NeuronSearchLab c
 The Platform API is the control-plane surface behind the NeuronSearchLab console. Use it for tenant administration, console automation, and internal tools that need to read or mutate control-plane configuration.
 
 <Info>
-Use this API when you need console data, tenant administration, model and training workflows, analytics, billing, or internal automation. If you are looking to serve recommendations, ingest application events, or manage catalog items for your app experience, use the [Public API](/api-reference/introduction) instead.
+Use this API when you need console data, tenant administration, model and training workflows, analytics, billing, or internal automation. If you are looking to serve recommendations, ingest application events, or manage catalog items for your app experience, use the [Core API](/api-reference/introduction) instead.
 </Info>
 
-## Public vs Platform API
+## Core API vs Platform API
 
 ```mermaid
 flowchart LR
   endUser["End user\nBrowser or mobile app"] --> appBackend["Your application backend\nServer-side only"]
-  appBackend --> publicApi["Public API\nRecommendations, catalog items, events"]
+  appBackend --> coreApi["Core API\nRecommendations, catalog items, events"]
 
   operator["Operator or internal system"] --> console["NeuronSearchLab console\nAdmin workflows"]
   operator --> internalTool["Internal automation\nServer-side tools"]
   console --> platformApi["Platform API\nConsole data and configuration"]
   internalTool --> platformApi
 
-  endUser -. "Never expose API credentials here" .-> publicApi
+  endUser -. "Never expose API credentials here" .-> coreApi
   endUser -. "Not for console automation" .-> platformApi
 ```
 
@@ -70,9 +70,9 @@ Platform API errors return a simple JSON envelope:
 Common statuses are `400`, `401`, `403`, `404`, and `500`.
 
 <Note>
-The Platform API uses a different error shape than the Public API. Public API integrations should rely on the structured `error.type` / `error.code` / `error.message` envelope documented in the [Public API introduction](/api-reference/introduction).
+The Platform API uses a different error shape than the Core API. Core API integrations should rely on the structured `error.type` / `error.code` / `error.message` envelope documented in the [Core API introduction](/api-reference/introduction).
 </Note>
 
 ## When To Use Each
 
-Use the Public API for customer application traffic. Use the Platform API only for tenant administration, console automation, and internal tools that need to access console data or mutate control-plane configuration.
+Use the Core API for customer application traffic. Use the Platform API only for tenant administration, console automation, and internal tools that need to access console data or mutate control-plane configuration.

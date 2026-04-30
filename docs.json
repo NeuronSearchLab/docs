@@ -68,164 +68,163 @@
         "tab": "API Reference",
         "groups": [
           {
-            "group": "Public API",
-            "pages": ["api-reference/introduction"]
-          },
-          {
-            "group": "Authentication",
-            "pages": ["api-reference/endpoint/authenticate"]
-          },
-          {
-            "group": "Items",
-            "pages": [
-              "api-reference/endpoint/submit-items",
-              "api-reference/endpoint/list-items",
-              "api-reference/endpoint/retrieve-item",
-              "api-reference/endpoint/update-item",
-              "api-reference/endpoint/patch-item",
-              "api-reference/endpoint/delete-item"
+            "group": "Core API",
+            "pages": ["api-reference/introduction"],
+            "groups": [
+              {
+                "group": "Authentication",
+                "pages": ["api-reference/endpoint/authenticate"]
+              },
+              {
+                "group": "Items",
+                "pages": [
+                  "api-reference/endpoint/submit-items",
+                  "api-reference/endpoint/list-items",
+                  "api-reference/endpoint/retrieve-item",
+                  "api-reference/endpoint/update-item",
+                  "api-reference/endpoint/patch-item",
+                  "api-reference/endpoint/delete-item"
+                ]
+              },
+              {
+                "group": "Events",
+                "pages": [
+                  "api-reference/endpoint/submit-events",
+                  "api-reference/endpoint/list-events",
+                  "api-reference/endpoint/retrieve-event"
+                ]
+              },
+              {
+                "group": "Recommendations",
+                "pages": ["api-reference/endpoint/get-recommendations"]
+              }
             ]
           },
           {
-            "group": "Events",
-            "pages": [
-              "api-reference/endpoint/submit-events",
-              "api-reference/endpoint/list-events",
-              "api-reference/endpoint/retrieve-event"
-            ]
-          },
-          {
-            "group": "Recommendations",
-            "pages": ["api-reference/endpoint/get-recommendations"]
-          }
-        ]
-      },
-      {
-        "tab": "Platform API",
-        "groups": [
-          {
-            "group": "Overview",
-            "pages": ["api-reference/platform-api/introduction"]
-          },
-          {
-            "group": "Catalog",
-            "pages": [
-              "api-reference/platform-api/catalog/searchItems",
-              "api-reference/platform-api/catalog/advancedSearchItems",
-              "api-reference/platform-api/catalog/getItemDetail",
-              "api-reference/platform-api/catalog/listItemMetadataKeys",
-              "api-reference/platform-api/segments/listSegments",
-              "api-reference/platform-api/segments/getSegment",
-              "api-reference/platform-api/segments/createSegment",
-              "api-reference/platform-api/segments/updateSegment",
-              "api-reference/platform-api/segments/deleteSegment"
-            ]
-          },
-          {
-            "group": "Events",
-            "pages": [
-              "api-reference/platform-api/events/listEventTypes",
-              "api-reference/platform-api/events/createEventType",
-              "api-reference/platform-api/events/updateEventType",
-              "api-reference/platform-api/events/deleteEventType",
-              "api-reference/platform-api/events/listTrainingTemplates",
-              "api-reference/platform-api/events/createTrainingTemplate",
-              "api-reference/platform-api/events/updateTrainingTemplate",
-              "api-reference/platform-api/events/deleteTrainingTemplate",
-              "api-reference/platform-api/events/saveEventValues"
-            ]
-          },
-          {
-            "group": "Ranking",
-            "pages": [
-              "api-reference/platform-api/contexts/listContexts",
-              "api-reference/platform-api/contexts/createContext",
-              "api-reference/platform-api/contexts/updateContext",
-              "api-reference/platform-api/contexts/getContextActiveModel",
-              "api-reference/platform-api/rules/listRules",
-              "api-reference/platform-api/rules/getRule",
-              "api-reference/platform-api/rules/createRule",
-              "api-reference/platform-api/rules/updateRule",
-              "api-reference/platform-api/rules/deleteRule",
-              "api-reference/platform-api/pipelines/listPipelines",
-              "api-reference/platform-api/pipelines/getPipeline",
-              "api-reference/platform-api/pipelines/createPipeline",
-              "api-reference/platform-api/pipelines/updatePipeline",
-              "api-reference/platform-api/pipelines/deletePipeline",
-              "api-reference/platform-api/rerank-controls/getRerankControls",
-              "api-reference/platform-api/rerank-controls/saveRerankControls",
-              "api-reference/platform-api/experiments/listExperiments",
-              "api-reference/platform-api/experiments/getExperiment",
-              "api-reference/platform-api/experiments/createExperiment",
-              "api-reference/platform-api/experiments/updateExperiment",
-              "api-reference/platform-api/experiments/deleteExperiment",
-              "api-reference/platform-api/experiments/refreshExperimentMetrics"
-            ]
-          },
-          {
-            "group": "Models and Training",
-            "pages": [
-              "api-reference/platform-api/models/listModels",
-              "api-reference/platform-api/models/getModel",
-              "api-reference/platform-api/models/createModel",
-              "api-reference/platform-api/models/updateModel",
-              "api-reference/platform-api/models/deleteModel",
-              "api-reference/platform-api/model-families/listModelFamilies",
-              "api-reference/platform-api/model-families/getModelFamily",
-              "api-reference/platform-api/model-families/getModelFamilyDetails",
-              "api-reference/platform-api/model-families/modelFamilyLifecycle",
-              "api-reference/platform-api/model-families/deployModelFamily",
-              "api-reference/platform-api/serving-endpoints/listModelEndpoints",
-              "api-reference/platform-api/serving-endpoints/createModelEndpoint",
-              "api-reference/platform-api/serving-endpoints/updateModelEndpoint",
-              "api-reference/platform-api/serving-endpoints/deleteModelEndpoint",
-              "api-reference/platform-api/training/startTraining",
-              "api-reference/platform-api/training/listTrainingJobs",
-              "api-reference/platform-api/training/updateTrainingJob",
-              "api-reference/platform-api/training/approveTrainingJob",
-              "api-reference/platform-api/training/promoteTrainingJob",
-              "api-reference/platform-api/training/stopTrainingJob",
-              "api-reference/platform-api/training/getTrainingJobEndpoint",
-              "api-reference/platform-api/training/getTrainingJobMetrics",
-              "api-reference/platform-api/training/getTrainingJobLogs",
-              "api-reference/platform-api/training/streamTrainingJobLogs"
-            ]
-          },
-          {
-            "group": "Analytics and Insights",
-            "pages": [
-              "api-reference/platform-api/dashboard/getDashboard",
-              "api-reference/platform-api/analytics/getAnalytics",
-              "api-reference/platform-api/analytics/getTopItems",
-              "api-reference/platform-api/analytics/getItemAnalytics",
-              "api-reference/platform-api/analytics/getUserAnalytics",
-              "api-reference/platform-api/analytics/compareItems",
-              "api-reference/platform-api/search/consoleSearch",
-              "api-reference/platform-api/explainability/explainRecommendation",
-              "api-reference/platform-api/assistant/assistantChat",
-              "api-reference/platform-api/assistant/studioChat"
-            ]
-          },
-          {
-            "group": "Administration",
-            "pages": [
-              "api-reference/platform-api/api-keys/listApiKeys",
-              "api-reference/platform-api/api-keys/createApiKey",
-              "api-reference/platform-api/api-keys/updateApiKey",
-              "api-reference/platform-api/api-keys/revokeApiKey",
-              "api-reference/platform-api/team/getTeam",
-              "api-reference/platform-api/team/inviteTeamMember",
-              "api-reference/platform-api/billing/openBillingPortal",
-              "api-reference/platform-api/billing/changeBillingPlan",
-              "api-reference/platform-api/integrations/listIntegrations",
-              "api-reference/platform-api/integrations/saveIntegration",
-              "api-reference/platform-api/catalog-ingest/listCatalogueIngest",
-              "api-reference/platform-api/catalog-ingest/createCatalogueIngest",
-              "api-reference/platform-api/catalog-ingest/updateCatalogueIngest",
-              "api-reference/platform-api/catalog-ingest/deleteCatalogueIngest",
-              "api-reference/platform-api/catalog-ingest/triggerCatalogueIngest",
-              "api-reference/platform-api/catalog-ingest/getCatalogueIngestScheduler",
-              "api-reference/platform-api/catalog-ingest/updateCatalogueIngestScheduler"
+            "group": "Platform API",
+            "pages": ["api-reference/platform-api/introduction"],
+            "groups": [
+              {
+                "group": "Catalog",
+                "pages": [
+                  "api-reference/platform-api/catalog/searchItems",
+                  "api-reference/platform-api/catalog/advancedSearchItems",
+                  "api-reference/platform-api/catalog/getItemDetail",
+                  "api-reference/platform-api/catalog/listItemMetadataKeys",
+                  "api-reference/platform-api/segments/listSegments",
+                  "api-reference/platform-api/segments/getSegment",
+                  "api-reference/platform-api/segments/createSegment",
+                  "api-reference/platform-api/segments/updateSegment",
+                  "api-reference/platform-api/segments/deleteSegment"
+                ]
+              },
+              {
+                "group": "Events",
+                "pages": [
+                  "api-reference/platform-api/events/listEventTypes",
+                  "api-reference/platform-api/events/createEventType",
+                  "api-reference/platform-api/events/updateEventType",
+                  "api-reference/platform-api/events/deleteEventType",
+                  "api-reference/platform-api/events/listTrainingTemplates",
+                  "api-reference/platform-api/events/createTrainingTemplate",
+                  "api-reference/platform-api/events/updateTrainingTemplate",
+                  "api-reference/platform-api/events/deleteTrainingTemplate",
+                  "api-reference/platform-api/events/saveEventValues"
+                ]
+              },
+              {
+                "group": "Ranking",
+                "pages": [
+                  "api-reference/platform-api/contexts/listContexts",
+                  "api-reference/platform-api/contexts/createContext",
+                  "api-reference/platform-api/contexts/updateContext",
+                  "api-reference/platform-api/contexts/getContextActiveModel",
+                  "api-reference/platform-api/rules/listRules",
+                  "api-reference/platform-api/rules/getRule",
+                  "api-reference/platform-api/rules/createRule",
+                  "api-reference/platform-api/rules/updateRule",
+                  "api-reference/platform-api/rules/deleteRule",
+                  "api-reference/platform-api/pipelines/listPipelines",
+                  "api-reference/platform-api/pipelines/getPipeline",
+                  "api-reference/platform-api/pipelines/createPipeline",
+                  "api-reference/platform-api/pipelines/updatePipeline",
+                  "api-reference/platform-api/pipelines/deletePipeline",
+                  "api-reference/platform-api/rerank-controls/getRerankControls",
+                  "api-reference/platform-api/rerank-controls/saveRerankControls",
+                  "api-reference/platform-api/experiments/listExperiments",
+                  "api-reference/platform-api/experiments/getExperiment",
+                  "api-reference/platform-api/experiments/createExperiment",
+                  "api-reference/platform-api/experiments/updateExperiment",
+                  "api-reference/platform-api/experiments/deleteExperiment",
+                  "api-reference/platform-api/experiments/refreshExperimentMetrics"
+                ]
+              },
+              {
+                "group": "Models and Training",
+                "pages": [
+                  "api-reference/platform-api/models/listModels",
+                  "api-reference/platform-api/models/getModel",
+                  "api-reference/platform-api/models/createModel",
+                  "api-reference/platform-api/models/updateModel",
+                  "api-reference/platform-api/models/deleteModel",
+                  "api-reference/platform-api/model-families/listModelFamilies",
+                  "api-reference/platform-api/model-families/getModelFamily",
+                  "api-reference/platform-api/model-families/getModelFamilyDetails",
+                  "api-reference/platform-api/model-families/modelFamilyLifecycle",
+                  "api-reference/platform-api/model-families/deployModelFamily",
+                  "api-reference/platform-api/serving-endpoints/listModelEndpoints",
+                  "api-reference/platform-api/serving-endpoints/createModelEndpoint",
+                  "api-reference/platform-api/serving-endpoints/updateModelEndpoint",
+                  "api-reference/platform-api/serving-endpoints/deleteModelEndpoint",
+                  "api-reference/platform-api/training/startTraining",
+                  "api-reference/platform-api/training/listTrainingJobs",
+                  "api-reference/platform-api/training/updateTrainingJob",
+                  "api-reference/platform-api/training/approveTrainingJob",
+                  "api-reference/platform-api/training/promoteTrainingJob",
+                  "api-reference/platform-api/training/stopTrainingJob",
+                  "api-reference/platform-api/training/getTrainingJobEndpoint",
+                  "api-reference/platform-api/training/getTrainingJobMetrics",
+                  "api-reference/platform-api/training/getTrainingJobLogs",
+                  "api-reference/platform-api/training/streamTrainingJobLogs"
+                ]
+              },
+              {
+                "group": "Analytics and Insights",
+                "pages": [
+                  "api-reference/platform-api/dashboard/getDashboard",
+                  "api-reference/platform-api/analytics/getAnalytics",
+                  "api-reference/platform-api/analytics/getTopItems",
+                  "api-reference/platform-api/analytics/getItemAnalytics",
+                  "api-reference/platform-api/analytics/getUserAnalytics",
+                  "api-reference/platform-api/analytics/compareItems",
+                  "api-reference/platform-api/search/consoleSearch",
+                  "api-reference/platform-api/explainability/explainRecommendation",
+                  "api-reference/platform-api/assistant/assistantChat",
+                  "api-reference/platform-api/assistant/studioChat"
+                ]
+              },
+              {
+                "group": "Administration",
+                "pages": [
+                  "api-reference/platform-api/api-keys/listApiKeys",
+                  "api-reference/platform-api/api-keys/createApiKey",
+                  "api-reference/platform-api/api-keys/updateApiKey",
+                  "api-reference/platform-api/api-keys/revokeApiKey",
+                  "api-reference/platform-api/team/getTeam",
+                  "api-reference/platform-api/team/inviteTeamMember",
+                  "api-reference/platform-api/billing/openBillingPortal",
+                  "api-reference/platform-api/billing/changeBillingPlan",
+                  "api-reference/platform-api/integrations/listIntegrations",
+                  "api-reference/platform-api/integrations/saveIntegration",
+                  "api-reference/platform-api/catalog-ingest/listCatalogueIngest",
+                  "api-reference/platform-api/catalog-ingest/createCatalogueIngest",
+                  "api-reference/platform-api/catalog-ingest/updateCatalogueIngest",
+                  "api-reference/platform-api/catalog-ingest/deleteCatalogueIngest",
+                  "api-reference/platform-api/catalog-ingest/triggerCatalogueIngest",
+                  "api-reference/platform-api/catalog-ingest/getCatalogueIngestScheduler",
+                  "api-reference/platform-api/catalog-ingest/updateCatalogueIngestScheduler"
+                ]
+              }
             ]
           }
         ]
