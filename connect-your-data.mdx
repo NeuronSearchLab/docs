@@ -22,9 +22,9 @@ Your catalog describes every item that may be recommended. Each record should in
 
 Contexts capture where recommendations appear in your product experience—home feed, detail page, email digest, and more. Provide enough information to personalize each surface.
 
-1. Create a prefixed context ID for each surface, such as `ctx_101`, and document the desired business logic.
-2. Configure default filters, ranking modifiers, and fallbacks inside the console under **Contexts**.
-3. Reference the prefixed context ID in every recommendation request to ensure consistent behavior.
+1. Create a context for each surface and record the numeric console ID, such as `101`.
+2. Configure the model family and pre-query filters inside the console under **Contexts**.
+3. Reference that context ID in recommendation requests to ensure consistent behavior.
 
 Learn more about advanced configuration in the [Contexts guide](/contexts).
 

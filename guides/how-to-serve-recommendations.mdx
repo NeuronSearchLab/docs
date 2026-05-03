@@ -24,7 +24,7 @@ curl -X POST https://auth.neuronsearchlab.com/oauth2/token \
 ### Request recommendations for a known user
 
 ```bash
-curl -X GET "https://api.neuronsearchlab.com/v1/recommendations?user_id=user-123&context_id=ctx_101&limit=8" \
+curl -X GET "https://api.neuronsearchlab.com/v1/recommendations?user_id=user-123&context_id=101&limit=8" \
   -H "Authorization: Bearer <access_token>"
 ```
 
@@ -34,12 +34,12 @@ Use a temporary user identifier (for example a session-scoped UUID) in `user_id`
 
 ### Roll out by surface using context IDs
 
-Create separate context IDs for each surface (`ctx_101`, `ctx_205`, `ctx_309`) and pass the right `context_id` per request so ranking logic stays predictable.
+Create separate context IDs for each surface (`101`, `205`, `309`) and pass the right `context_id` per request so ranking logic stays predictable.
 
 ## Example app journey: Home feed rollout
 
-1. Product team defines context `ctx_101` for Home Feed in Console.
-2. Backend calls `GET /v1/recommendations` with `user_id`, `context_id=ctx_101`, and `limit=8`.
+1. Product team defines context `101` for Home Feed in Console.
+2. Backend calls `GET /v1/recommendations` with `user_id`, `context_id=101`, and `limit=8`.
 3. Frontend renders the top recommendations in a hero rail.
 4. Click/view events are submitted to `/v1/events` to close the feedback loop.
 5. Analytics is reviewed daily for serve volume and engagement lift.

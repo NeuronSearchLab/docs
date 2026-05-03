@@ -20,7 +20,7 @@ POST /v1/events
 {
   "user_id": "usr_abc123",
   "item_id": "itm_7f3a2c9e",
-  "context_id": "ctx_101",
+  "context_id": "101",
   "type": "purchase",
   "occurred_at": 1777478400,
   "purchase": {
@@ -37,7 +37,7 @@ POST /v1/events
 | --- | --- | --- | --- |
 | `user_id` | string | yes | End-user identifier. |
 | `item_id` | string | yes | Prefixed item ID such as `itm_7f3a2c9e`. |
-| `context_id` | string | no | Prefixed context ID such as `ctx_101`. |
+| `context_id` | string | no | Optional context identifier for analytics and attribution. Use the same context ID convention as your recommendation request, for example `101`. |
 | `type` | string | yes | Event type configured in the console. |
 | `session_id` | string | no | Session identifier for attribution and analytics. |
 | `request_id` | string | no | Recommendation request ID returned by `GET /v1/recommendations`. |
@@ -66,10 +66,11 @@ Legacy aliases `userId`, `itemId`, `eventType`, `event_type`, `eventId`, `event_
       },
       "session_id": null,
       "request_id": null,
-      "context_id": "ctx_101",
+      "context_id": "101",
       "placement": null,
       "metadata": {
         "surface": "home_feed",
+        "context_id": "101",
         "purchase": {
           "amount": 4999,
           "currency": "usd"
