@@ -5,16 +5,16 @@ description: "NeuronSearchLab is your engine for fast, flexible, and intelligent
 ---
 
 <img
-  className="rounded-md"
-  src="/images/console-dashboard-full.png"
+  className="rounded-md border border-gray-200"
+  src="/images/console-dashboard-2026-04-21.png"
   alt="NeuronSearchLab admin console dashboard"
 />
 
 ## Welcome to NeuronSearchLab
 
-NeuronSearchLab is a modern, developer-first recommendation engine that helps you deliver intelligent, personalized content to your users - at scale.
+NeuronSearchLab is a hosted recommendation platform for teams that need personalization, ranking control, and analytics without building the full retrieval stack themselves.
 
-It is a fully managed service - not something you deploy yourself - and it integrates easily with your existing backend or frontend using our API, SDK, and web console. Whether you are recommending content, products, videos, or anything else, NeuronSearchLab adapts to your data and business goals.
+Use the Core API or official SDKs from your backend to send catalog data, track events, and fetch recommendations. Use the console to configure contexts, rules, pipelines, model families, experiments, and analytics for the operators who own recommendation quality.
 
 ### Why teams choose NeuronSearchLab
 
@@ -26,10 +26,10 @@ It is a fully managed service - not something you deploy yourself - and it integ
 
 ### How the platform fits together
 
-1. **Model your catalog** - Send descriptive metadata and optional embeddings for every item you want to recommend.
-2. **Capture real-world signals** - Stream events from your applications so the service can learn what resonates.
-3. **Request recommendations** - Query the API or SDK for tailored content that respects your contexts and filters.
-4. **Monitor and iterate** - Use dashboards, alerts, and analytics to tune performance over time.
+1. **Connect your catalog** - Send item names, descriptions, metadata, and stable `itm_` IDs, or let the API generate IDs for new items.
+2. **Capture real-world signals** - Stream event types you define in the console, including clicks, views, purchases, and custom actions.
+3. **Serve recommendations** - Call `/v1/recommendations` with a user and optional context ID for the surface you are rendering.
+4. **Tune the system** - Use contexts, rules, pipelines, model families, experiments, and analytics to improve recommendation quality over time.
 
 ---
 

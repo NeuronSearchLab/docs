@@ -6,18 +6,18 @@ openapi: "GET /v1/recommendations"
 
 ## Description
 
-Returns ranked recommendation objects for a user or item. Context IDs are prefixed strings such as `ctx_101`.
+Returns ranked recommendation objects for a user or item. Pass `context_id` when the request should use a context configured in the console.
 
 ## Request
 
 ```http
-GET /v1/recommendations?user_id=usr_abc123&context_id=ctx_101&limit=10
+GET /v1/recommendations?user_id=usr_abc123&context_id=101&limit=10
 ```
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
 | `user_id` | string | no | End-user identifier. Falls back to the token subject when omitted. |
-| `context_id` | string | no | Prefixed context ID such as `ctx_101`. |
+| `context_id` | string | no | Numeric console context ID such as `101`. Legacy `ctx_` aliases such as `ctx_101` are also accepted. |
 | `limit` | integer | no | Number of recommendations to return. Defaults to `20`, maximum `100`. |
 | `starting_after` | string | no | Cursor from the previous page. Accepts a recommendation ID or item ID. |
 | `entity_type` | string | no | `User` or `Item`. Defaults to `User`. |

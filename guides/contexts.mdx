@@ -4,7 +4,7 @@ icon: 'sliders'
 description: 'Define retrieval defaults and pre-query filters for each recommendation surface.'
 ---
 
-A context is a named configuration that shapes what the recommendation engine retrieves for a specific surface. Create one context per placement, such as a homepage feed, product detail page, or email digest, and reference its prefixed ID in every API call for that surface.
+A context is a named configuration that shapes what the recommendation engine retrieves for a specific surface. Create one context per placement, such as a homepage feed, product detail page, or email digest, and reference its numeric console ID in recommendation calls for that surface.
 
 This guide covers the controls that belong in the current context editor.
 
@@ -14,12 +14,8 @@ This guide covers the controls that belong in the current context editor.
 2. Give it a descriptive name such as "Homepage Feed" or "Post-purchase Sidebar".
 3. Add an optional description so teammates understand its purpose.
 4. Select the model this context draws recommendations from.
-5. Choose the recommendation type:
-   - **Item to User** returns items relevant to a given user.
-   - **User to Item** returns users similar to a given item.
-   - **Item to Item** returns items similar to a given item.
-   - **User to User** returns users similar to a given user.
-6. Save the context and note its public ID, such as `ctx_101`. Your engineering team will pass this ID in `context_id` on every recommendation request.
+5. Choose the recommendation type / model family, such as **General**, **Similar Items**, **Watch Next**, **Trending**, or **Email Digest**, depending on which model families are enabled for your tenant.
+6. Save the context and note its ID, such as `101`. Your engineering team will pass this ID in `context_id` on recommendation requests.
 
 ---
 

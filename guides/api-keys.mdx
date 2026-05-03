@@ -4,7 +4,7 @@ icon: 'key'
 description: 'Create Bearer tokens for programmatic access to the NeuronSearchLab console API.'
 ---
 
-API keys provide a simple way to authenticate programmatic requests against the NeuronSearchLab console API. Unlike [SDK Credentials](/authentication) (OAuth client credentials for the Core API), API keys are Bearer tokens that authenticate through the console proxy and benefit from features like [rerank controls](/guides/rerank-controls).
+API keys provide a simple way to authenticate programmatic requests against the NeuronSearchLab Platform API. Unlike [SDK Credentials](/authentication), which issue OAuth access tokens for the Core API, API keys are Bearer tokens for server-side console automation.
 
 ## When to use API keys vs SDK credentials
 
@@ -12,8 +12,8 @@ API keys provide a simple way to authenticate programmatic requests against the 
 | --- | --- | --- |
 | **Auth method** | Bearer token (`nsl_...`) | OAuth 2.0 client credentials |
 | **Endpoint** | [Platform API](/api-reference/platform-api/introduction) | [Core API](/api-reference/introduction) |
-| **Rerank controls** | Applied automatically | Not available |
-| **Use case** | Testing, internal tools, proxy-based integrations | Production SDK integration |
+| **Rerank controls** | Read and update configuration | Used only when serving code calls the Core API |
+| **Use case** | Internal tools and console automation | Production recommendation, event, and catalog integration |
 
 ## Create an API key
 
@@ -31,9 +31,11 @@ The full key is displayed once. Copy it immediately and store it securely.
 Include your API key as a Bearer token in the `Authorization` header:
 
 ```bash
-curl "https://console.neuronsearchlab.com/api/recommendations?user_id=42&context_id=ctx_101" \
+curl "https://console.neuronsearchlab.com/api/rerank-controls?contextId=101" \
   -H "Authorization: Bearer nsl_abc12345_..."
 ```
+
+For recommendation serving, use SDK Credentials with the Core API instead of API keys.
 
 ## Key format
 
@@ -49,12 +51,12 @@ Each key is restricted to specific API scopes:
 
 | Scope | Grants access to |
 | --- | --- |
-| `recommendations` | `GET /api/recommendations` |
-| `events` | Event configuration and event automation routes |
-| `items` | Catalog item automation routes |
-| `admin` | Full Platform API access |
+| `recommendations` | Reserved for recommendation-related internal tools. Current documented Platform API routes use `admin` unless stated otherwise. |
+| `events` | Event configuration routes that explicitly allow the `events` scope. |
+| `items` | Reserved for catalog automation routes that explicitly allow the `items` scope. |
+| `admin` | Full Platform API access. |
 
-If a key lacks the required scope, the proxy returns `403 Forbidden`.
+If a key lacks the required scope, the Platform API returns `403 Forbidden`.
 
 ## Revoke a key
 

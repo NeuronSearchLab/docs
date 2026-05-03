@@ -68,7 +68,7 @@ Every resource response includes a read-only `object` discriminator.
 | `recommendation` | `rec_itm_7f3a2c9e` | Ranked recommendation result |
 | `list` | n/a | Cursor-paginated list envelope |
 
-Resource IDs use short prefixes so logs and payloads are easier to scan. Context IDs passed to recommendation requests use the `ctx_` prefix, for example `ctx_101`.
+Resource IDs use short prefixes so logs and payloads are easier to scan. Contexts are console configuration records, not Core API resources; pass the numeric console context ID, for example `101`, when a recommendation request should use one. The Core API also accepts legacy `ctx_` aliases such as `ctx_101` and normalizes them in recommendation explanations and served-recommendation telemetry.
 
 ## Timestamps
 

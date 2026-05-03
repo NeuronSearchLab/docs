@@ -10,7 +10,7 @@ Use this guide when launching recommendations into a new surface (for example ho
 
 1. Define the business goal for the new surface (CTR, conversion, AOV, retention).
 2. Create a dedicated context in Console -> Contexts.
-3. Configure context-level defaults (quantity, filters, boosts).
+3. Configure the model family and any pre-query filters for that context.
 
 ## Common workflows
 
@@ -33,8 +33,8 @@ For each context, maintain a short owner note with purpose, constraints, and KPI
 ## Example app journey: Checkout upsell launch
 
 1. Merchandising defines checkout upsell objectives.
-2. Team creates context `ctx_205` with checkout-safe filters.
-3. Backend requests recommendations using `context_id=ctx_205` during checkout.
+2. Team creates context `205` with checkout-safe filters.
+3. Backend requests recommendations using `context_id=205` during checkout.
 4. Events are tagged from checkout interactions and posted to `/v1/events`.
 5. Analytics is filtered by the checkout context to evaluate lift.
 

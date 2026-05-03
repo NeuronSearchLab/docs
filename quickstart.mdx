@@ -49,14 +49,14 @@ curl -X POST https://auth.neuronsearchlab.com/oauth2/token \
 
 ## Make your first API call
 
-With an access token you can request recommendations immediately. The following example retrieves homepage content for a known user using context ID `ctx_101`:
+With an access token you can request recommendations immediately. The following example retrieves homepage content for a known user using context ID `101`:
 
 ```bash
-curl -X GET "https://api.neuronsearchlab.com/v1/recommendations?user_id=user-123&context_id=ctx_101&limit=10" \
+curl -X GET "https://api.neuronsearchlab.com/v1/recommendations?user_id=user-123&context_id=101&limit=10" \
   -H "Authorization: Bearer <your_access_token>"
 ```
 
-Send optional query parameters such as `limit`, `filters`, or `boosts` to tailor the response. Responses include ranked items with associated metadata so you can render UI components quickly.
+Send optional query parameters such as `limit`, `filter`, or `scope` to tailor the response. Responses include ranked items with associated metadata so you can render UI components quickly.
 
 If you prefer higher level abstractions, use one of the official SDKs from your backend:
 
@@ -132,6 +132,6 @@ NeuronSearchLab supports rich documentation and examples to help you integrate q
   </Card>
 
   <Card title="Get Recommendations" icon="sparkles" href="/api-reference/endpoint/get-recommendations">
-    Retrieve personalized results that respect context, filters, and boosts.
+    Retrieve personalized results that respect context filters and ranking rules.
   </Card>
 </CardGroup>
