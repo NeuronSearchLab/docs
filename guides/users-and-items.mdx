@@ -77,6 +77,6 @@ This is useful for verifying that your SDK integration is sending events correct
 
 Each user and item has a vector embedding stored in the platform. These embeddings are the numerical representations the engine uses to measure similarity. When a recommendation is requested for a user, the engine finds items whose embeddings are closest to the user's embedding in the vector space.
 
-Embeddings are updated each time a model training run completes. The **Last modified** date in the detail panel shows when the current embedding was written.
+Embeddings are managed by the platform. Item embeddings are refreshed when catalog records change, and user embeddings are refreshed from behavior signals as events arrive. The **Last modified** date in the detail panel shows when the current representation was written.
 
-The embedding model name and version fields record which training run produced the current embedding, letting you trace exactly which model version is responsible for a user or item's current representation.
+The embedding model name and version fields record the model version associated with the current embedding when that metadata is available.

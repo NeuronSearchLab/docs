@@ -8,7 +8,7 @@ Use this guide when you need to keep item data current and user behavior signals
 
 ## Setup
 
-1. Define canonical prefixed item identifiers (`id`, for example `itm_7f3a2c9e`) in your source catalog.
+1. Decide whether your source catalog will provide stable item IDs or let NeuronSearchLab generate them.
 2. Map source fields to `/v1/items` payloads (`name`, `description`, `metadata`).
 3. Emit user events to `/v1/events` from all recommendation surfaces.
 
@@ -53,7 +53,7 @@ curl -X POST https://api.neuronsearchlab.com/v1/events \
 ## Example app journey: Daily sync + real-time feedback
 
 1. Nightly job creates new catalog items using `/v1/items` and updates existing records with `/v1/items/{id}`.
-2. App session requests recommendations from `/v1/recommendations`.
+2. App session requests recommendations from the Core API recommendation endpoint.
 3. Frontend interaction events are forwarded to backend.
 4. Backend publishes click/purchase events to `/v1/events` in near real time.
 5. Team reviews Analytics to confirm engagement trends are improving.

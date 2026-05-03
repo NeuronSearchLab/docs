@@ -18,18 +18,18 @@ Use the Core API or official SDKs from your backend to send catalog data, track 
 
 ### Why teams choose NeuronSearchLab
 
-- **Real-time recommendations** - Low latency vector search tuned for personalization use cases.
-- **Contextual intelligence** - Dynamically filter and boost results using metadata, rules, and user behavior.
-- **Secure access** - Built-in authentication, scoped API keys, and multi-tenant controls to keep data safe.
-- **Embeddings on demand** - Generate, store, and upsert embeddings through a single pipeline.
-- **Event-driven learning** - Capture clicks, views, and conversions to continuously improve ranking quality.
+- **Recommendations without the infrastructure rebuild** - Hosted indexing, retrieval, ranking, and analytics in one platform.
+- **Control for every surface** - Configure contexts, filters, rules, model families, and experiments for different pages, campaigns, and user journeys.
+- **Developer-friendly integration** - Send catalog and event data from your backend, then serve recommendations through the Core API or official SDKs.
+- **Operational visibility** - Use the console to inspect items, users, events, ranking behavior, and performance trends.
+- **Secure by design** - Keep tenant data isolated and manage access with product authentication and server-side credentials.
 
 ### How the platform fits together
 
-1. **Connect your catalog** - Send item names, descriptions, metadata, and stable `itm_` IDs, or let the API generate IDs for new items.
-2. **Capture real-world signals** - Stream event types you define in the console, including clicks, views, purchases, and custom actions.
-3. **Serve recommendations** - Call `/v1/recommendations` with a user and optional context ID for the surface you are rendering.
-4. **Tune the system** - Use contexts, rules, pipelines, model families, experiments, and analytics to improve recommendation quality over time.
+1. **Connect your catalog** - Send the item fields your app already knows, such as names, descriptions, and metadata.
+2. **Capture real-world signals** - Track views, clicks, purchases, and custom events so recommendations can reflect real user behavior.
+3. **Serve recommendations** - Ask for recommendations from your backend using the SDKs or Core API for the surface you are rendering.
+4. **Tune quality over time** - Use contexts, rules, pipelines, model families, experiments, and analytics to improve the experience without changing your app every time.
 
 ---
 

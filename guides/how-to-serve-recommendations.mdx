@@ -10,7 +10,7 @@ Use this guide to ship personalized recommendations in production surfaces such 
 
 1. Create an API client in Console > SDK Credentials.
 2. Exchange client credentials for an access token.
-3. Store the token in your backend service and call `/v1/recommendations` from server-side code.
+3. Store the token in your backend service and request recommendations from server-side code through the SDKs or Core API.
 
 ```bash
 curl -X POST https://auth.neuronsearchlab.com/oauth2/token \
@@ -39,7 +39,7 @@ Create separate context IDs for each surface (`101`, `205`, `309`) and pass the 
 ## Example app journey: Home feed rollout
 
 1. Product team defines context `101` for Home Feed in Console.
-2. Backend calls `GET /v1/recommendations` with `user_id`, `context_id=101`, and `limit=8`.
+2. Backend requests recommendations with `user_id`, `context_id=101`, and `limit=8`.
 3. Frontend renders the top recommendations in a hero rail.
 4. Click/view events are submitted to `/v1/events` to close the feedback loop.
 5. Analytics is reviewed daily for serve volume and engagement lift.
@@ -48,4 +48,4 @@ Create separate context IDs for each surface (`101`, `205`, `309`) and pass the 
 
 - [How-To: Connect Catalog and Events](./how-to-connect-catalog-and-events)
 - [How-To: Launch a New Context](./how-to-launch-a-new-context)
-- [GET /v1/recommendations reference](/api-reference/endpoint/get-recommendations)
+- [Recommendation endpoint reference](/api-reference/endpoint/get-recommendations)

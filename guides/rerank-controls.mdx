@@ -13,7 +13,7 @@ The current product surface works like this:
 1. Rerank controls are stored on the context record under `json_data.rerank_controls`.
 2. The console reads and saves them through `GET /api/rerank-controls` and `PUT /api/rerank-controls`.
 3. Feature flags such as `RERANK_CONTROLS_STAGE`, `RERANK_KILL_SWITCH`, and `RERANK_MAX_DEPTH` control rollout state in the console and resolver helper.
-4. Recommendation serving still goes through the Core API at `https://api.neuronsearchlab.com/v1/recommendations`. There is no documented `GET /api/recommendations` Platform API route.
+4. Recommendation serving still goes through the Core API recommendation endpoint. There is no documented `GET /api/recommendations` Platform API route.
 
 ## Configure in the console
 
