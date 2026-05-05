@@ -252,7 +252,6 @@
       },
       {
         "tab": "Changelog",
-        "icon": "clock-rotate-left",
         "menu": [
           {
             "item": "All changes",
