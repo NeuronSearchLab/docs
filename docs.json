@@ -22,7 +22,8 @@
               "connect-your-data",
               "generate-recommendations",
               "contexts",
-              "authentication"
+              "authentication",
+              "changelog"
             ]
           },
           {

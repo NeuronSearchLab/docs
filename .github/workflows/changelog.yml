@@ -1,0 +1,62 @@
+name: Refresh changelog
+
+on:
+  schedule:
+    - cron: "24 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out docs
+        uses: actions/checkout@v4
+        with:
+          path: docs
+
+      - name: Check out admin console
+        uses: actions/checkout@v4
+        with:
+          repository: NeuronSearchLab/nsl_admin_console_next
+          path: nsl_admin_console_next
+          token: ${{ secrets.NSL_CHANGELOG_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Check out TypeScript SDK
+        uses: actions/checkout@v4
+        with:
+          repository: NeuronSearchLab/neuronsearchlab-sdk
+          path: neuronsearchlab-sdk
+          token: ${{ secrets.NSL_CHANGELOG_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Check out PHP SDK
+        uses: actions/checkout@v4
+        with:
+          repository: NeuronSearchLab/neuronsearchlab-sdk-php
+          path: neuronsearchlab-php-sdk
+          token: ${{ secrets.NSL_CHANGELOG_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Check out MCP server
+        uses: actions/checkout@v4
+        with:
+          repository: NeuronSearchLab/mcp
+          path: neuronsearchlab-mcp
+          token: ${{ secrets.NSL_CHANGELOG_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Regenerate changelog
+        run: node scripts/generate-changelog.mjs
+        working-directory: docs
+
+      - name: Commit changelog update
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          repository: docs
+          commit_message: "docs: refresh changelog"
+          file_pattern: "changelog.mdx"
