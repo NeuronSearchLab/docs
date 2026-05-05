@@ -171,19 +171,10 @@ function commitLabel(count) {
   return `${count} ${count === 1 ? "commit" : "commits"}`;
 }
 
-function sourceTag(source) {
-  if (source.id === "console") return "Console";
-  if (source.id === "mcp") return "MCP";
-  return "SDK";
-}
-
-function monthKey(date) {
-  return date.slice(0, 7);
-}
-
-function monthLabel(key) {
-  const [year, month] = key.split("-").map(Number);
-  return new Date(Date.UTC(year, month - 1, 1)).toLocaleString("en-US", {
+function dateLabel(key) {
+  const [year, month, day] = key.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day)).toLocaleString("en-US", {
+    day: "numeric",
     month: "long",
     year: "numeric",
     timeZone: "UTC",
@@ -246,24 +237,22 @@ ${bugSection}`;
 function updateEntry(group) {
   const sourceIds = [...new Set(group.records.map((record) => record.source.id))];
   const monthSources = sources.filter((source) => sourceIds.includes(source.id));
-  const tags = [...new Set(monthSources.flatMap((source) => [source.label, sourceTag(source)]))];
   const descriptionSources = monthSources.map((source) => source.label).join(", ");
-  const tagsProp = JSON.stringify(tags);
-  const rss = `${monthLabel(group.key)}: ${descriptionSources}.`;
+  const rss = `${dateLabel(group.key)}: ${descriptionSources}.`;
   const body = monthSources
     .map((source) => sourceLine(source, group.records.filter((record) => record.source.id === source.id)))
     .join("\n\n");
 
-  return `<Update label="${monthLabel(group.key)}" description="${descriptionSources}" tags={${tagsProp}} rss="${mdEscape(rss)}">
+  return `<Update label="${dateLabel(group.key)}" description="${descriptionSources}" rss="${mdEscape(rss)}">
 
 ${body}
 
 </Update>`;
 }
 
-function monthGroupsFor(nextRecords) {
+function dateGroupsFor(nextRecords) {
   return [...nextRecords.reduce((groups, record) => {
-    const key = monthKey(record.date);
+    const key = record.date;
     const group = groups.get(key) ?? {key, records: []};
     group.records.push(record);
     groups.set(key, group);
@@ -272,7 +261,7 @@ function monthGroupsFor(nextRecords) {
 }
 
 function renderPage({title, description, icon, outputPath, pageRecords, links = ""}) {
-  const updates = monthGroupsFor(pageRecords).map(updateEntry).join("\n\n");
+  const updates = dateGroupsFor(pageRecords).map(updateEntry).join("\n\n");
   const body = [links, updates].filter(Boolean).join("\n\n");
   const mdx = `---
 title: ${JSON.stringify(title)}
