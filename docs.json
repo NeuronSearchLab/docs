@@ -9,6 +9,7 @@
   },
   "favicon": "/favicon.ico",
   "contextual": {
+    "display": "header",
     "options": [
       "copy",
       "view",
