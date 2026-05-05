@@ -1,15 +1,9 @@
 ---
 title: "Changelog"
 icon: "clock-rotate-left"
-description: "Generated release history for the NeuronSearchLab console, SDKs, and MCP server."
+description: "Release history for the NeuronSearchLab console, SDKs, and MCP server."
 rss: true
 ---
-
-This master changelog is generated from the full git history of the admin console, TypeScript SDK, PHP SDK, and MCP server. The marketing website repository is excluded from the source history.
-
-<Info>
-Generated on 2026-05-05 from 420 commits scanned across 4 repositories, with 391 commits summarized as product changes. Coverage: 2025-04-12 to 2026-05-04. Use the tag filters or the Changelog navigation dropdown to switch between Console, SDK, and MCP updates.
-</Info>
 
 <CardGroup cols={3}>
   <Card title="Console changes" icon="browser" href="/changelog/console">
@@ -23,132 +17,155 @@ Generated on 2026-05-05 from 420 commits scanned across 4 repositories, with 391
   </Card>
 </CardGroup>
 
-<Update label="May 2026" description="5 commits across Admin console" tags={["Admin console","Console"]} rss="May 2026: 5 commits across Admin console.">
+<Update label="May 2026" description="Admin console" tags={["Admin console","Console"]} rss="May 2026: Admin console.">
 
 ### Admin console
 
-Platform UI, tenant operations, ranking workflows, billing, analytics, and model lifecycle controls.
+#### Features
 
-- **Volume:** 5 commits
-- **Primary areas:** Catalog, users, and events (4 commits), Model lifecycle (1 commit)
-- **Representative changes:** [fix embeddings ordering](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/f177104ade7d81086015433f0c14ddbe50d47890); [Fix catalog intelligence build target](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/c63c9b1fa61c70a54c6d24fad79db7c7bdf62298); [Add context catalog intelligence](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/eed83cffd81fe41ad8ae6d8e71784017a66f18f8); [Polish user event history and trim item slideover](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/ffa47fce8dd40cfa855d928bf844d7cc82d6f20a); [Fix explore/users tables, simplify users columns, refine event timeline](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/5ac74d764b2a8ac9761c897bfd4c061a057f9cbc).
+- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+
+#### Bug fixes
+
+- Fix explore/users tables, simplify users columns, refine event timeline
+- Fix catalog intelligence build target
+- Fix embeddings ordering
 
 </Update>
 
-<Update label="April 2026" description="195 commits across Admin console, TypeScript SDK, PHP SDK, MCP server" tags={["Admin console","Console","TypeScript SDK","SDK","PHP SDK","MCP server","MCP"]} rss="April 2026: 195 commits across Admin console, TypeScript SDK, PHP SDK, MCP server.">
+<Update label="April 2026" description="Admin console, TypeScript SDK, PHP SDK, MCP server" tags={["Admin console","Console","TypeScript SDK","SDK","PHP SDK","MCP server","MCP"]} rss="April 2026: Admin console, TypeScript SDK, PHP SDK, MCP server.">
 
 ### Admin console
 
-Platform UI, tenant operations, ranking workflows, billing, analytics, and model lifecycle controls.
+#### Features
 
-- **Volume:** 176 commits
-- **Primary areas:** Ranking controls (48 commits), Model lifecycle (41 commits), Platform foundation (20 commits), Reliability and CI (18 commits)
-- **Representative changes:** [Fix public API contract](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/ff2834f4cdf6a3139b975191575da748760035a2); [Fix recommendation Lambda build](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/9197f73b24a680275325148cf2d4d925b3b46abb); [Add item-level recommendation explanations](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/a076b1c579eaaa4bab92aedc43f00c473aae790a); [Batch item embeddings and backfill comments](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/9dd7e441f95d580514bcbce06a39c55b9b159486); [Support shorthand recommendation filters](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/72c2ecb87aaefe6ae1429ef549c622b6b72464f2).
+- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
+- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
+- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
+
+#### Bug fixes
+
+- Replace migration API route with SQL file
+- Fix Pipeline Config: mobile layout, dot color bug, rename title
+- Fix integrations upsert syntax, explainability type error, pipeline dots, and reorder sidebar
+- Fix migration: add missing config_json column to team_integrations
+- Fix timestamp cast error, add typeHint support, unify pipeline dots
 
 ### TypeScript SDK
 
-Browser and server JavaScript client for recommendations, events, catalog items, and API contract updates.
+#### Features
 
-- **Volume:** 4 commits
-- **Primary areas:** SDK distribution (2 commits), SDK API contract (2 commits)
-- **Representative changes:** [Allow raw Neuron item identifiers](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/e541097e451e16c7eeb2ff46c31185597cd2eb4d); [add .gitignore, untrack node_modules/dist, patch security alerts](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/fb2f998ce01b8a2dd70ce111f38f44786741d629); [Update SDK for v1 API contract](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/4ec4d8a64bef76186afe0934e7c8bf6d7ef8b3d4); [Prepare @neuronsearchlab/sdk 1.18.1 release](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/b81cf2d5450206823dc00bc7fb19291c8ceae07b).
+- Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
+- Expanded SDK calls around recommendation contexts, event payloads, item identifiers, item deletion, request/session metadata, and the v1 API contract.
+
 
 ### PHP SDK
 
-PHP client library and release flow for backend recommendation integrations.
+#### Features
 
-- **Volume:** 3 commits
-- **Primary areas:** SDK distribution (2 commits), SDK API contract (1 commit)
-- **Representative changes:** [Update SDK for v1 API contract](https://github.com/NeuronSearchLab/neuronsearchlab-sdk-php/commit/e2f97f08d068d57404053c9ac5c886ca0f4e3e96); [Align PHP SDK behavior and release flow](https://github.com/NeuronSearchLab/neuronsearchlab-sdk-php/commit/79a141e6ce7cdc015b2c6a66a04aeddeb7d58b98); [Initial PHP SDK release](https://github.com/NeuronSearchLab/neuronsearchlab-sdk-php/commit/e866ed2d5f343320ccc600bb5979b6ba3076aedd).
+- Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
+- Expanded SDK calls around recommendation contexts, event payloads, item identifiers, item deletion, request/session metadata, and the v1 API contract.
+
 
 ### MCP server
 
-Model Context Protocol tools for assistant-led platform management and analytics.
+#### Features
 
-- **Volume:** 12 commits
-- **Primary areas:** MCP tools (10 commits), SDK distribution (2 commits)
-- **Representative changes:** [Improve MCP API error handling](https://github.com/NeuronSearchLab/mcp/commit/5885888d481b0e61d598ccc43bda266c91e56cfa); [Add event type management MCP tools](https://github.com/NeuronSearchLab/mcp/commit/9b2d47f8f365646473fdfd5bc2b2e1a57a6e198c); [Include dist in repo for GitHub dependency installs](https://github.com/NeuronSearchLab/mcp/commit/1c144d4069874ffb2d377829f9344e49904cd0a9); [Add prepare script to build on GitHub install](https://github.com/NeuronSearchLab/mcp/commit/085a3393cfc86bf9e1c9b6543a052ad771194808); [Add ./server subpath export](https://github.com/NeuronSearchLab/mcp/commit/2649ac52d3077699093ac7a51f1be8fd25c8671b).
+- Expanded MCP coverage from the first server release into contexts, pipelines, rules, event types, analytics, install paths, and clearer API error handling.
+- Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
+
+#### Bug fixes
+
+- Improve MCP API error handling
 
 </Update>
 
-<Update label="March 2026" description="147 commits across Admin console" tags={["Admin console","Console"]} rss="March 2026: 147 commits across Admin console.">
+<Update label="March 2026" description="Admin console" tags={["Admin console","Console"]} rss="March 2026: Admin console.">
 
 ### Admin console
 
-Platform UI, tenant operations, ranking workflows, billing, analytics, and model lifecycle controls.
+#### Features
 
-- **Volume:** 147 commits
-- **Primary areas:** Access and billing (38 commits), Platform foundation (29 commits), Reliability and CI (27 commits), Catalog, users, and events (23 commits)
-- **Representative changes:** [Add ranking platform workstreams: Rules Engine, Pipeline Builder, Segmentation, A/B Testing, Explainability](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/13d03e40bc1f1e950f5c4363f6d56f752bbfc33d); [Port Laravel training jobs table design + add SSE log streaming](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/e80a7cb4f7bfbdb516d9c3d77456181351ff79f2); [Remove Start Training button from training-jobs page; fix infra tsconfig exclusion](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/2ebdbe6f9205048f825c9eacc9fe62c034412647); [Exclude infra tests from vitest](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/667e16476708beea4e07e0fcea6661f525439460); [Add infra directory from Laravel app](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/e344bd55bfd32330b632675b5f4c3e2cfe4bf3bb).
+- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
+- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- Added period-aware dashboards, usage gauges, KPI cards, multi-series charts, saved analytic views, and production data refresh paths.
+- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
+
+#### Bug fixes
+
+- Normalise PHP $2y$ bcrypt prefix to $2b$ for bcryptjs compatibility
+- Use numeric teamId for embeddings tenant_id, fix entity_type casing (Item/User)
+- Embeddings tenant_id is text type, use stringValue not longValue
+- Panel portals for overflow-hidden clip, tab indicator color, mobile table improvements
+- Use tenant_id (not team_id) for user_events queries, order by created_at
 
 </Update>
 
-<Update label="January 2026" description="5 commits across TypeScript SDK" tags={["TypeScript SDK","SDK"]} rss="January 2026: 5 commits across TypeScript SDK.">
+<Update label="January 2026" description="TypeScript SDK" tags={["TypeScript SDK","SDK"]} rss="January 2026: TypeScript SDK.">
 
 ### TypeScript SDK
 
-Browser and server JavaScript client for recommendations, events, catalog items, and API contract updates.
+#### Features
 
-- **Volume:** 5 commits
-- **Primary areas:** Other changes (3 commits), SDK API contract (1 commit), SDK distribution (1 commit)
-- **Representative changes:** [1.18.0](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/a2570510089d087de75245fe9ad42531be923a2d); [1.17.0](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/f3f275bc62585ffe7b3b05ea10be652d7c4298c2); [generating build](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/3ede5fb7fdee0e1d3c9a6aff1bba3e896c78348b); [1.16.0](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/a0b3ac240f4b385ed179314b2cadbd9a9faf0309); [updating to include request/session](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/831dd04f5dc86f36005247441667f49fb5bac083).
+- Expanded SDK calls around recommendation contexts, event payloads, item identifiers, item deletion, request/session metadata, and the v1 API contract.
+- Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
+
 
 </Update>
 
-<Update label="December 2025" description="8 commits across TypeScript SDK" tags={["TypeScript SDK","SDK"]} rss="December 2025: 8 commits across TypeScript SDK.">
+<Update label="December 2025" description="TypeScript SDK" tags={["TypeScript SDK","SDK"]} rss="December 2025: TypeScript SDK.">
 
 ### TypeScript SDK
 
-Browser and server JavaScript client for recommendations, events, catalog items, and API contract updates.
+#### Features
 
-- **Volume:** 8 commits
-- **Primary areas:** Other changes (7 commits), SDK API contract (1 commit)
-- **Representative changes:** [1.15.0](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/32d4ab235eb966d94f95597f6eda8dc58d2a8fde); [new updates with patch](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/4a2d0671a8cbfe106cb639a71516b99be82ecc31); [1.14.0](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/6fe05630041165778114e10310f366f9fb0ce773); [adding auto scroll behaviour](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/85c53eb8670e3c7cbc0c6131d6d75265e27d26a2); [1.13.0](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/e752d87c7ed82bee79804b7f4b7a2dc6f5909f4d).
+- Expanded SDK calls around recommendation contexts, event payloads, item identifiers, item deletion, request/session metadata, and the v1 API contract.
+
 
 </Update>
 
-<Update label="November 2025" description="17 commits across TypeScript SDK" tags={["TypeScript SDK","SDK"]} rss="November 2025: 17 commits across TypeScript SDK.">
+<Update label="November 2025" description="TypeScript SDK" tags={["TypeScript SDK","SDK"]} rss="November 2025: TypeScript SDK.">
 
 ### TypeScript SDK
 
-Browser and server JavaScript client for recommendations, events, catalog items, and API contract updates.
+#### Features
 
-- **Volume:** 17 commits
-- **Primary areas:** Other changes (8 commits), SDK distribution (5 commits), SDK API contract (4 commits)
-- **Representative changes:** [1.10.1](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/a7e6fbb25d0461651f4a4b6752ec065ab10064ad); [1.10.0](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/df8570b69ed151fad26ec5224024932e1c7c7663); [Update release workflow](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/a4192668c6109ae203b37ddcaf7692c285e37b69); [1.9.0](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/a0544eb08b55fdf1b7b615fac3bf1f796d527d7f); [Bump version to 1.8.1 and update exports configuration](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/ab05dffb1d85f0fd973e514b54acaf71043f0351).
+- Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
+- Expanded SDK calls around recommendation contexts, event payloads, item identifiers, item deletion, request/session metadata, and the v1 API contract.
+
+#### Bug fixes
+
+- Fix release workflow order
 
 </Update>
 
-<Update label="October 2025" description="4 commits across TypeScript SDK" tags={["TypeScript SDK","SDK"]} rss="October 2025: 4 commits across TypeScript SDK.">
+<Update label="October 2025" description="TypeScript SDK" tags={["TypeScript SDK","SDK"]} rss="October 2025: TypeScript SDK.">
 
 ### TypeScript SDK
 
-Browser and server JavaScript client for recommendations, events, catalog items, and API contract updates.
+#### Features
 
-- **Volume:** 4 commits
-- **Primary areas:** Other changes (3 commits), SDK distribution (1 commit)
-- **Representative changes:** [1.3.0](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/78e69b90b6943b3a18a3f1278567eef3a157eca9); [Remove internal publishing instructions from README](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/6085674767accaa058b92a649f3727b0317b2b87); [1.2.0](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/bf0772c5e9df9c87ba35f9c41b1b552594d4849b); [1.1.0](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/2337af421ce2439a647d92e2e0119c6935fcc96b).
+- Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
+
 
 </Update>
 
-<Update label="April 2025" description="10 commits across TypeScript SDK" tags={["TypeScript SDK","SDK"]} rss="April 2025: 10 commits across TypeScript SDK.">
+<Update label="April 2025" description="TypeScript SDK" tags={["TypeScript SDK","SDK"]} rss="April 2025: TypeScript SDK.">
 
 ### TypeScript SDK
 
-Browser and server JavaScript client for recommendations, events, catalog items, and API contract updates.
+#### Features
 
-- **Volume:** 10 commits
-- **Primary areas:** SDK distribution (8 commits), Other changes (1 commit), SDK API contract (1 commit)
-- **Representative changes:** [Update version to 1.0.2 and enhance getRecommendations method to accept optional context ID](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/362bb036b7e93a1e5e3b0d8efc9fa500040c06f4); [Bump version to 1.0.1 in package.json](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/caa4131e5efb08dc2d2f1ba952a7ca005d531b09); [Fix formatting in package.json for publishConfig access option](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/27047496dcd72188208195bebed4096efd1baebd); [Fix package name formatting in package.json](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/66b6736ffb6c77c1d19a023b4cb1219279495a60); [Fix typo in release workflow step name](https://github.com/NeuronSearchLab/neuronsearchlab-sdk/commit/c788267ac7b17be49d86b1ae4c0264af19a346ea).
+- Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
+- Expanded SDK calls around recommendation contexts, event payloads, item identifiers, item deletion, request/session metadata, and the v1 API contract.
+
+#### Bug fixes
+
+- Fix package name formatting in package.json
+- Fix typo in release workflow step name
+- Fix formatting in package.json for publishConfig access option
 
 </Update>
-
-## Automation
-
-The changelog is refreshed by `.github/workflows/changelog.yml` every Monday at 07:24 UTC and can also be regenerated manually with:
-
-```bash
-node scripts/generate-changelog.mjs
-```
-
-Override the default sibling repository paths with `NSL_CONSOLE_REPO`, `NSL_TYPESCRIPT_SDK_REPO`, `NSL_PHP_SDK_REPO`, or `NSL_MCP_REPO`.

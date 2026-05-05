@@ -4,15 +4,12 @@ import path from "node:path";
 import {fileURLToPath} from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const GENERATED_AT = new Date().toISOString().slice(0, 10);
-
 const sources = [
   {
     id: "console",
     label: "Admin console",
     env: "NSL_CONSOLE_REPO",
     defaultPath: "../nsl_admin_console_next",
-    repo: "NeuronSearchLab/nsl_admin_console_next",
     description: "Platform UI, tenant operations, ranking workflows, billing, analytics, and model lifecycle controls.",
   },
   {
@@ -20,7 +17,6 @@ const sources = [
     label: "TypeScript SDK",
     env: "NSL_TYPESCRIPT_SDK_REPO",
     defaultPath: "../neuronsearchlab-sdk",
-    repo: "NeuronSearchLab/neuronsearchlab-sdk",
     description: "Browser and server JavaScript client for recommendations, events, catalog items, and API contract updates.",
   },
   {
@@ -28,7 +24,6 @@ const sources = [
     label: "PHP SDK",
     env: "NSL_PHP_SDK_REPO",
     defaultPath: "../neuronsearchlab-php-sdk",
-    repo: "NeuronSearchLab/neuronsearchlab-sdk-php",
     description: "PHP client library and release flow for backend recommendation integrations.",
   },
   {
@@ -36,7 +31,6 @@ const sources = [
     label: "MCP server",
     env: "NSL_MCP_REPO",
     defaultPath: "../neuronsearchlab-mcp",
-    repo: "NeuronSearchLab/mcp",
     description: "Model Context Protocol tools for assistant-led platform management and analytics.",
   },
 ];
@@ -173,21 +167,6 @@ function mdEscape(value) {
   return String(value).replaceAll("|", "\\|").replaceAll("\n", " ");
 }
 
-function commitUrl(source, commit) {
-  return `https://github.com/${source.repo}/commit/${commit.sha}`;
-}
-
-function versionList(commits) {
-  return commits
-    .filter((commit) => /^v?\d+\.\d+\.\d+$/.test(commit.subject.trim()) || /bump version|update version|prepare .* release/i.test(commit.subject))
-    .map((commit) =>
-      normalizeSubject(commit.subject)
-        .replace(/^Bump version to /i, "")
-        .replace(/^Update version to /i, ""),
-    )
-    .slice(-8);
-}
-
 function commitLabel(count) {
   return `${count} ${count === 1 ? "commit" : "commits"}`;
 }
@@ -218,32 +197,50 @@ function topicFor(source, commit) {
     .find((topic) => topic?.match.test(commit.subject));
 }
 
-function sourceLine(source, records) {
-  const topicCounts = new Map();
-  for (const record of records) {
-    const label = record.topic?.label ?? "Other changes";
-    topicCounts.set(label, (topicCounts.get(label) ?? 0) + 1);
+function changeTypeFor(record) {
+  if (record.topic?.id === "reliability" || /^fix\b|fix|error|bug|compat|harden|stabilize/i.test(record.rawSubject)) {
+    return "Bug fixes";
   }
 
-  const topicsText = [...topicCounts.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 4)
-    .map(([label, count]) => `${label} (${commitLabel(count)})`)
-    .join(", ");
+  if (/^(chore|ci|test|docs|refactor|rename)\b/i.test(record.rawSubject)) {
+    return "Maintenance";
+  }
 
-  const examples = records
-    .slice(-5)
-    .reverse()
-    .map((record) => `[${mdEscape(record.title)}](${record.url})`)
-    .join("; ");
+  return "Features";
+}
+
+function summarizeChanges(records, type) {
+  const items = records
+    .filter((record) => changeTypeFor(record) === type)
+    .map((record) => (type === "Bug fixes" ? sentenceCase(record.title) : record.topic?.summary))
+    .filter(Boolean);
+  const unique = [...new Set(items)];
+  return unique.slice(0, 5);
+}
+
+function sentenceCase(value) {
+  return value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
+}
+
+function sourceLine(source, records) {
+  const features = summarizeChanges(records, "Features");
+  const bugs = summarizeChanges(records, "Bug fixes");
+  const featureLines = features.length
+    ? features.map((item) => `- ${mdEscape(item)}`).join("\n")
+    : "- No major feature changes in this period.";
+  const bugSection = bugs.length
+    ? `
+#### Bug fixes
+
+${bugs.map((item) => `- ${mdEscape(item)}`).join("\n")}`
+    : "";
 
   return `### ${source.label}
 
-${source.description}
+#### Features
 
-- **Volume:** ${commitLabel(records.length)}
-- **Primary areas:** ${topicsText || "General maintenance"}
-- **Representative changes:** ${examples}.`;
+${featureLines}
+${bugSection}`;
 }
 
 function updateEntry(group) {
@@ -252,12 +249,12 @@ function updateEntry(group) {
   const tags = [...new Set(monthSources.flatMap((source) => [source.label, sourceTag(source)]))];
   const descriptionSources = monthSources.map((source) => source.label).join(", ");
   const tagsProp = JSON.stringify(tags);
-  const rss = `${monthLabel(group.key)}: ${commitLabel(group.records.length)} across ${descriptionSources}.`;
+  const rss = `${monthLabel(group.key)}: ${descriptionSources}.`;
   const body = monthSources
     .map((source) => sourceLine(source, group.records.filter((record) => record.source.id === source.id)))
     .join("\n\n");
 
-  return `<Update label="${monthLabel(group.key)}" description="${commitLabel(group.records.length)} across ${descriptionSources}" tags={${tagsProp}} rss="${mdEscape(rss)}">
+  return `<Update label="${monthLabel(group.key)}" description="${descriptionSources}" tags={${tagsProp}} rss="${mdEscape(rss)}">
 
 ${body}
 
@@ -274,29 +271,9 @@ function monthGroupsFor(nextRecords) {
   }, new Map()).values()].sort((a, b) => b.key.localeCompare(a.key));
 }
 
-function dateRangeFor(nextRecords) {
-  const dates = nextRecords.map((record) => record.date).sort();
-  return dates.length ? `${dates[0]} to ${dates.at(-1)}` : "No changes";
-}
-
-function generatedInfo(nextRecords, sourceCount, scannedCount, extra = "") {
-  return `Generated on ${GENERATED_AT} from ${commitLabel(scannedCount)} scanned across ${sourceCount} ${sourceCount === 1 ? "repository" : "repositories"}, with ${commitLabel(nextRecords.length)} summarized as product changes. Coverage: ${dateRangeFor(nextRecords)}.${extra}`;
-}
-
-function automationSection() {
-  return `## Automation
-
-The changelog is refreshed by \`.github/workflows/changelog.yml\` every Monday at 07:24 UTC and can also be regenerated manually with:
-
-\`\`\`bash
-node scripts/generate-changelog.mjs
-\`\`\`
-
-Override the default sibling repository paths with \`NSL_CONSOLE_REPO\`, \`NSL_TYPESCRIPT_SDK_REPO\`, \`NSL_PHP_SDK_REPO\`, or \`NSL_MCP_REPO\`.`;
-}
-
-function renderPage({title, description, intro, outputPath, pageRecords, sourceCount, scannedCount, extraInfo = "", links = ""}) {
+function renderPage({title, description, outputPath, pageRecords, links = ""}) {
   const updates = monthGroupsFor(pageRecords).map(updateEntry).join("\n\n");
+  const body = [links, updates].filter(Boolean).join("\n\n");
   const mdx = `---
 title: ${JSON.stringify(title)}
 icon: "clock-rotate-left"
@@ -304,17 +281,7 @@ description: ${JSON.stringify(description)}
 rss: true
 ---
 
-${intro}
-
-<Info>
-${generatedInfo(pageRecords, sourceCount, scannedCount, extraInfo)}
-</Info>
-
-${links}
-
-${updates}
-
-${automationSection()}
+${body}
 `;
 
   const fullPath = path.join(ROOT, outputPath);
@@ -327,20 +294,14 @@ const sourceCommits = sources.map((source) => {
   return {source, commits};
 });
 
-function scannedCountFor(sourceIds) {
-  return sourceCommits
-    .filter(({source}) => sourceIds.includes(source.id))
-    .reduce((sum, item) => sum + item.commits.length, 0);
-}
-
 const records = sourceCommits.flatMap(({source, commits}) =>
   commits
     .filter((commit) => !isNoise(commit.subject))
     .map((commit) => ({
       source,
       date: commit.date,
+      rawSubject: commit.subject,
       title: normalizeSubject(commit.subject),
-      url: commitUrl(source, commit),
       topic: topicFor(source, commit),
     })),
 );
@@ -359,45 +320,31 @@ const sourceLinks = `<CardGroup cols={3}>
 
 renderPage({
   title: "Changelog",
-  description: "Generated release history for the NeuronSearchLab console, SDKs, and MCP server.",
-  intro:
-    "This master changelog is generated from the full git history of the admin console, TypeScript SDK, PHP SDK, and MCP server. The marketing website repository is excluded from the source history.",
+  description: "Release history for the NeuronSearchLab console, SDKs, and MCP server.",
   outputPath: "changelog.mdx",
   pageRecords: records,
-  sourceCount: sources.length,
-  scannedCount: sourceCommits.reduce((sum, item) => sum + item.commits.length, 0),
-  extraInfo: " Use the tag filters or the Changelog navigation dropdown to switch between Console, SDK, and MCP updates.",
   links: sourceLinks,
 });
 
 renderPage({
   title: "Console Changelog",
-  description: "Generated release history for the NeuronSearchLab admin console.",
-  intro: "Console-only changelog entries for platform UI, ranking operations, analytics, billing, and model lifecycle work.",
+  description: "Release history for the NeuronSearchLab admin console.",
   outputPath: "changelog/console.mdx",
   pageRecords: records.filter((record) => record.source.id === "console"),
-  sourceCount: 1,
-  scannedCount: scannedCountFor(["console"]),
 });
 
 renderPage({
   title: "SDK Changelog",
-  description: "Generated release history for the NeuronSearchLab TypeScript and PHP SDKs.",
-  intro: "SDK-only changelog entries for the TypeScript and PHP clients, API contract changes, and release packaging.",
+  description: "Release history for the NeuronSearchLab TypeScript and PHP SDKs.",
   outputPath: "changelog/sdk.mdx",
   pageRecords: records.filter((record) => record.source.id === "typescript-sdk" || record.source.id === "php-sdk"),
-  sourceCount: 2,
-  scannedCount: scannedCountFor(["typescript-sdk", "php-sdk"]),
 });
 
 renderPage({
   title: "MCP Changelog",
-  description: "Generated release history for the NeuronSearchLab MCP server.",
-  intro: "MCP-only changelog entries for assistant tooling, platform automation, and server distribution.",
+  description: "Release history for the NeuronSearchLab MCP server.",
   outputPath: "changelog/mcp.mdx",
   pageRecords: records.filter((record) => record.source.id === "mcp"),
-  sourceCount: 1,
-  scannedCount: scannedCountFor(["mcp"]),
 });
 
 console.log(`Generated changelog pages from ${commitLabel(records.length)} summarized product changes across ${sources.length} repositories.`);
