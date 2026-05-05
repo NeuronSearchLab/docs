@@ -22,8 +22,7 @@
               "connect-your-data",
               "generate-recommendations",
               "contexts",
-              "authentication",
-              "changelog"
+              "authentication"
             ]
           },
           {
@@ -248,6 +247,26 @@
             "group": "MCP Integration",
             "icon": "robot",
             "pages": ["sdk/mcp"]
+          }
+        ]
+      },
+      {
+        "tab": "Changelog",
+        "icon": "clock-rotate-left",
+        "menu": [
+          {
+            "item": "All changes",
+            "icon": "list",
+            "pages": ["changelog"]
+          },
+          {
+            "item": "By source",
+            "icon": "filter",
+            "pages": [
+              "changelog/console",
+              "changelog/sdk",
+              "changelog/mcp"
+            ]
           }
         ]
       }

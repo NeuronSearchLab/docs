@@ -264,14 +264,74 @@ ${body}
 </Update>`;
 }
 
+function monthGroupsFor(nextRecords) {
+  return [...nextRecords.reduce((groups, record) => {
+    const key = monthKey(record.date);
+    const group = groups.get(key) ?? {key, records: []};
+    group.records.push(record);
+    groups.set(key, group);
+    return groups;
+  }, new Map()).values()].sort((a, b) => b.key.localeCompare(a.key));
+}
+
+function dateRangeFor(nextRecords) {
+  const dates = nextRecords.map((record) => record.date).sort();
+  return dates.length ? `${dates[0]} to ${dates.at(-1)}` : "No changes";
+}
+
+function generatedInfo(nextRecords, sourceCount, scannedCount, extra = "") {
+  return `Generated on ${GENERATED_AT} from ${commitLabel(scannedCount)} scanned across ${sourceCount} ${sourceCount === 1 ? "repository" : "repositories"}, with ${commitLabel(nextRecords.length)} summarized as product changes. Coverage: ${dateRangeFor(nextRecords)}.${extra}`;
+}
+
+function automationSection() {
+  return `## Automation
+
+The changelog is refreshed by \`.github/workflows/changelog.yml\` every Monday at 07:24 UTC and can also be regenerated manually with:
+
+\`\`\`bash
+node scripts/generate-changelog.mjs
+\`\`\`
+
+Override the default sibling repository paths with \`NSL_CONSOLE_REPO\`, \`NSL_TYPESCRIPT_SDK_REPO\`, \`NSL_PHP_SDK_REPO\`, or \`NSL_MCP_REPO\`.`;
+}
+
+function renderPage({title, description, intro, outputPath, pageRecords, sourceCount, scannedCount, extraInfo = "", links = ""}) {
+  const updates = monthGroupsFor(pageRecords).map(updateEntry).join("\n\n");
+  const mdx = `---
+title: ${JSON.stringify(title)}
+icon: "clock-rotate-left"
+description: ${JSON.stringify(description)}
+rss: true
+---
+
+${intro}
+
+<Info>
+${generatedInfo(pageRecords, sourceCount, scannedCount, extraInfo)}
+</Info>
+
+${links}
+
+${updates}
+
+${automationSection()}
+`;
+
+  const fullPath = path.join(ROOT, outputPath);
+  mkdirSync(path.dirname(fullPath), {recursive: true});
+  writeFileSync(fullPath, mdx);
+}
+
 const sourceCommits = sources.map((source) => {
   const commits = gitLog(source);
   return {source, commits};
 });
 
-const totalCommits = sourceCommits.reduce((sum, item) => sum + item.commits.length, 0);
-const allDates = sourceCommits.flatMap((item) => item.commits.map((commit) => commit.date)).sort();
-const dateRange = `${allDates[0]} to ${allDates.at(-1)}`;
+function scannedCountFor(sourceIds) {
+  return sourceCommits
+    .filter(({source}) => sourceIds.includes(source.id))
+    .reduce((sum, item) => sum + item.commits.length, 0);
+}
 
 const records = sourceCommits.flatMap(({source, commits}) =>
   commits
@@ -285,40 +345,59 @@ const records = sourceCommits.flatMap(({source, commits}) =>
     })),
 );
 
-const monthGroups = [...records.reduce((groups, record) => {
-  const key = monthKey(record.date);
-  const group = groups.get(key) ?? {key, records: []};
-  group.records.push(record);
-  groups.set(key, group);
-  return groups;
-}, new Map()).values()].sort((a, b) => b.key.localeCompare(a.key));
+const sourceLinks = `<CardGroup cols={3}>
+  <Card title="Console changes" icon="browser" href="/changelog/console">
+    Admin console, ranking controls, analytics, billing, and model lifecycle updates.
+  </Card>
+  <Card title="SDK changes" icon="code" href="/changelog/sdk">
+    TypeScript and PHP SDK updates, API contract changes, and release packaging.
+  </Card>
+  <Card title="MCP changes" icon="robot" href="/changelog/mcp">
+    MCP server tools, platform automation, and assistant integration changes.
+  </Card>
+</CardGroup>`;
 
-const mdx = `---
-title: Changelog
-icon: "clock-rotate-left"
-description: "Generated release history for the NeuronSearchLab console, SDKs, and MCP server."
-rss: true
----
+renderPage({
+  title: "Changelog",
+  description: "Generated release history for the NeuronSearchLab console, SDKs, and MCP server.",
+  intro:
+    "This master changelog is generated from the full git history of the admin console, TypeScript SDK, PHP SDK, and MCP server. The marketing website repository is excluded from the source history.",
+  outputPath: "changelog.mdx",
+  pageRecords: records,
+  sourceCount: sources.length,
+  scannedCount: sourceCommits.reduce((sum, item) => sum + item.commits.length, 0),
+  extraInfo: " Use the tag filters or the Changelog navigation dropdown to switch between Console, SDK, and MCP updates.",
+  links: sourceLinks,
+});
 
-This changelog is generated from the full git history of the admin console, TypeScript SDK, PHP SDK, and MCP server. The marketing website repository is excluded from the source history.
+renderPage({
+  title: "Console Changelog",
+  description: "Generated release history for the NeuronSearchLab admin console.",
+  intro: "Console-only changelog entries for platform UI, ranking operations, analytics, billing, and model lifecycle work.",
+  outputPath: "changelog/console.mdx",
+  pageRecords: records.filter((record) => record.source.id === "console"),
+  sourceCount: 1,
+  scannedCount: scannedCountFor(["console"]),
+});
 
-<Info>
-Generated on ${GENERATED_AT} from ${totalCommits} commits across ${sources.length} repositories. Coverage: ${dateRange}. Use the tag filters to switch between Console, SDK, and MCP updates.
-</Info>
+renderPage({
+  title: "SDK Changelog",
+  description: "Generated release history for the NeuronSearchLab TypeScript and PHP SDKs.",
+  intro: "SDK-only changelog entries for the TypeScript and PHP clients, API contract changes, and release packaging.",
+  outputPath: "changelog/sdk.mdx",
+  pageRecords: records.filter((record) => record.source.id === "typescript-sdk" || record.source.id === "php-sdk"),
+  sourceCount: 2,
+  scannedCount: scannedCountFor(["typescript-sdk", "php-sdk"]),
+});
 
-${monthGroups.map(updateEntry).join("\n\n")}
+renderPage({
+  title: "MCP Changelog",
+  description: "Generated release history for the NeuronSearchLab MCP server.",
+  intro: "MCP-only changelog entries for assistant tooling, platform automation, and server distribution.",
+  outputPath: "changelog/mcp.mdx",
+  pageRecords: records.filter((record) => record.source.id === "mcp"),
+  sourceCount: 1,
+  scannedCount: scannedCountFor(["mcp"]),
+});
 
-## Automation
-
-The changelog is refreshed by \`.github/workflows/changelog.yml\` every Monday at 07:24 UTC and can also be regenerated manually with:
-
-\`\`\`bash
-node scripts/generate-changelog.mjs
-\`\`\`
-
-Override the default sibling repository paths with \`NSL_CONSOLE_REPO\`, \`NSL_TYPESCRIPT_SDK_REPO\`, \`NSL_PHP_SDK_REPO\`, or \`NSL_MCP_REPO\`.
-`;
-
-mkdirSync(ROOT, {recursive: true});
-writeFileSync(path.join(ROOT, "changelog.mdx"), mdx);
-console.log(`Generated changelog.mdx from ${totalCommits} commits across ${sources.length} repositories.`);
+console.log(`Generated changelog pages from ${commitLabel(records.length)} summarized product changes across ${sources.length} repositories.`);
