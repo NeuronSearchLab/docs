@@ -8,9 +8,17 @@ Use this guide to ship personalized recommendations in production surfaces such 
 
 ## Setup
 
-1. Create an API client in Console > SDK Credentials.
-2. Exchange client credentials for an access token.
-3. Store the token in your backend service and request recommendations from server-side code through the SDKs or Core API.
+<Steps>
+  <Step title="Create an API client">
+    Create an API client in Console > SDK Credentials.
+  </Step>
+  <Step title="Exchange credentials">
+    Exchange client credentials for an access token.
+  </Step>
+  <Step title="Serve from the backend">
+    Store the token in your backend service and request recommendations from server-side code through the SDKs or Core API.
+  </Step>
+</Steps>
 
 ```bash
 curl -X POST https://auth.neuronsearchlab.com/oauth2/token \
@@ -38,11 +46,23 @@ Create separate context IDs for each surface (`101`, `205`, `309`) and pass the 
 
 ## Example app journey: Home feed rollout
 
-1. Product team defines context `101` for Home Feed in Console.
-2. Backend requests recommendations with `user_id`, `context_id=101`, and `limit=8`.
-3. Frontend renders the top recommendations in a hero rail.
-4. Click/view events are submitted to `/v1/events` to close the feedback loop.
-5. Analytics is reviewed daily for serve volume and engagement lift.
+<Steps>
+  <Step title="Define the home feed context">
+    Product team defines context `101` for Home Feed in Console.
+  </Step>
+  <Step title="Request recommendations">
+    Backend requests recommendations with `user_id`, `context_id=101`, and `limit=8`.
+  </Step>
+  <Step title="Render the rail">
+    Frontend renders the top recommendations in a hero rail.
+  </Step>
+  <Step title="Submit feedback events">
+    Click/view events are submitted to `/v1/events` to close the feedback loop.
+  </Step>
+  <Step title="Review engagement">
+    Analytics is reviewed daily for serve volume and engagement lift.
+  </Step>
+</Steps>
 
 ## Next steps
 

@@ -23,10 +23,20 @@ An event type maps a stable type string (sent in your API or SDK calls) to a hum
 
 ### Add an event type
 
-1. Open [Console > Events](https://console.neuronsearchlab.com/events).
-2. Enter a name in the **Event name** field, for example `click`, `purchase`, or `video_complete`.
-3. Set a weight between 1 and 100. Higher weight means the training process treats that signal as more informative.
-4. Click **Add event**.
+<Steps>
+  <Step title="Open Events">
+    Open [Console > Events](https://console.neuronsearchlab.com/events).
+  </Step>
+  <Step title="Name the event">
+    Enter a name in the **Event name** field, for example `click`, `purchase`, or `video_complete`.
+  </Step>
+  <Step title="Set a signal weight">
+    Set a weight between 1 and 100. Higher weight means the training process treats that signal as more informative.
+  </Step>
+  <Step title="Add the event">
+    Click **Add event**.
+  </Step>
+</Steps>
 
 A common starting point:
 
@@ -76,10 +86,20 @@ A template captures a specific combination of event types, weights, and training
 
 ### Create a template
 
-1. On the Events page, configure your event types and set the thresholds described below.
-2. Enter a name in the **Template name** field.
-3. Set the status to **Draft** (not yet used for training) or **Published** (ready to train from).
-4. Click **Save template**.
+<Steps>
+  <Step title="Configure event signals">
+    On the Events page, configure your event types and set the thresholds described below.
+  </Step>
+  <Step title="Name the template">
+    Enter a name in the **Template name** field.
+  </Step>
+  <Step title="Choose a status">
+    Set the status to **Draft** (not yet used for training) or **Published** (ready to train from).
+  </Step>
+  <Step title="Save the template">
+    Click **Save template**.
+  </Step>
+</Steps>
 
 ### Training thresholds
 
@@ -90,12 +110,21 @@ Two thresholds control when a model is trained:
 
 ### Train from a template
 
-1. Select a saved template from the template list.
-2. Configure the training options:
-   - **Epochs**: how many passes through the training data (default 5, range 1-50).
-   - **Batch size**: number of events processed together (64, 128, 256, or 512).
-   - **Learning rate**: step size for gradient updates (default 0.001).
-3. Click **Start training**. The console will create a new trained version from that template and show the run status as training progresses.
+<Steps>
+  <Step title="Select a template">
+    Select a saved template from the template list.
+  </Step>
+  <Step title="Configure training options">
+    Configure the training options:
+
+    - **Epochs**: how many passes through the training data (default 5, range 1-50).
+    - **Batch size**: number of events processed together (64, 128, 256, or 512).
+    - **Learning rate**: step size for gradient updates (default 0.001).
+  </Step>
+  <Step title="Start training">
+    Click **Start training**. The console will create a new trained version from that template and show the run status as training progresses.
+  </Step>
+</Steps>
 
 This step does **not** require you to already have a model record. New accounts can train immediately.
 

@@ -12,32 +12,26 @@ These walkthroughs show how the ranking platform features work together to solve
 
 **Goal:** Pin a closures guide to slot 2 on the homepage during a live weather event.
 
-### Step 1: create the rule
+<Steps>
+  <Step title="Create the rule">
+    Open **Console > Rules Engine**, click **New Rule**, and create a `pin` rule named `Pin school closures guide to slot 2`.
 
-1. Open **Console > Rules Engine**.
-2. Click **New Rule**.
-3. Create a `pin` rule named `Pin school closures guide to slot 2`.
-4. Add a condition:
-   - field: `entity_id`
-   - operator: `equals`
-   - value: `itm_school_closures_live`
-5. Set the action to pin the item to position `2`.
-6. Scope the rule to your homepage context.
-7. Save the rule as active.
+    - Condition field: `entity_id`
+    - Operator: `equals`
+    - Value: `itm_school_closures_live`
+    - Action: pin the item to position `2`
+    - Scope: homepage context
+    - Status: active
+  </Step>
+  <Step title="Verify with Explainability">
+    Open **Console > Explainability**, enter a reader ID and the item ID `itm_school_closures_live`, then click **Explain**.
 
-### Step 2: verify with Explainability
-
-1. Open **Console > Explainability**.
-2. Enter a reader ID and the item ID `itm_school_closures_live`.
-3. Click **Explain**.
-
-**Pass condition:** Explainability shows the rule `Pin school closures guide to slot 2` matched the item.
-
-### Step 3: confirm pipeline includes rules stage
-
-1. Open **Console > Pipeline Config**.
-2. Confirm the active pipeline for the homepage context has the **Rules** stage enabled.
-3. Confirm no experiment is excluding the rule.
+    **Pass condition:** Explainability shows the rule `Pin school closures guide to slot 2` matched the item.
+  </Step>
+  <Step title="Confirm the pipeline">
+    Open **Console > Pipeline Config** and confirm the active pipeline for the homepage context has the **Rules** stage enabled. Also confirm no experiment is excluding the rule.
+  </Step>
+</Steps>
 
 This scenario is a good operational test because only one valid result exists. If the item is not in slot `2`, the change failed.
 
@@ -47,61 +41,58 @@ This scenario is a good operational test because only one valid result exists. I
 
 **Goal:** Promote a new series for two weeks, targeting users who haven't watched it yet, while running an A/B test to measure the impact.
 
-### Step 1: Define the audience
+<Steps>
+  <Step title="Define the audience">
+    Create two segments in **Console > User Segments** to separate users who have and have not engaged with the series.
 
-Create two segments to separate users who have and haven't engaged with the series.
+    **Segment: "Hasn't watched Series X"**
 
-**Segment: "Hasn't watched Series X"**
-1. Go to **Console > User Segments** and click **New Segment**.
-2. Add a condition:
-   - Type: `item_interaction`
-   - Item ID: the series item ID (e.g. `itm_series_x_ep1`)
-   - Operator: `interactions <`
-   - Value: `1`
-3. Name it "Hasn't watched Series X" and save.
+    - Type: `item_interaction`
+    - Item ID: the series item ID, for example `itm_series_x_ep1`
+    - Operator: `interactions <`
+    - Value: `1`
+    - Name: "Hasn't watched Series X"
 
-**Segment: "Started but didn't finish Series X"**
-1. Create another segment.
-2. Add two conditions (AND logic):
-   - Type: `item_interaction`, Item ID: `series_x_ep1`, Operator: `interactions >`, Value: `0`
-   - Type: `item_interaction`, Item ID: `series_x_ep10` (finale), Operator: `interactions <`, Value: `1`
-3. Name it "Started not finished Series X" and save.
+    **Segment: "Started but didn't finish Series X"**
 
-### Step 2: Create the rules
+    - Condition 1: Type `item_interaction`, Item ID `series_x_ep1`, Operator `interactions >`, Value `0`
+    - Condition 2: Type `item_interaction`, Item ID `series_x_ep10`, Operator `interactions <`, Value `1`
+    - Logic: AND
+    - Name: "Started not finished Series X"
+  </Step>
+  <Step title="Create the rules">
+    Create two scheduled rules in **Console > Rules Engine**.
 
-**Rule: "Pin Series X for new viewers"**
-1. Go to **Console > Rules Engine** and click **New Rule**.
-2. Type: `pin`. Priority: `80`.
-3. Add a condition: field = `segment_id`, select "Hasn't watched Series X".
-4. Action: pin the series into top 3 positions.
-5. Schedule: set start date to the campaign launch and end date to two weeks later.
-6. Save.
+    **Rule: "Pin Series X for new viewers"**
 
-**Rule: "Boost continuation for partial viewers"**
-1. Create another rule.
-2. Type: `boost`. Priority: `70`.
-3. Add a condition: field = `segment_id`, select "Started not finished Series X".
-4. Action: boost the series episodes with a high factor.
-5. Same schedule as above.
-6. Save.
+    - Type: `pin`
+    - Priority: `80`
+    - Condition: `segment_id` equals "Hasn't watched Series X"
+    - Action: pin the series into the top 3 positions
+    - Schedule: campaign launch through two weeks later
 
-### Step 3: Run an A/B test
+    **Rule: "Boost continuation for partial viewers"**
 
-1. Go to **Console > A/B Testing** and click **New Experiment**.
-2. Name: "Series X launch campaign".
-3. Description: "Hypothesis: pinning Series X for non-viewers increases completion rate."
-4. Variants:
-   - **Control** (50%): no config overrides (standard recommendations).
-   - **Treatment** (50%): config overrides with `include_rule_ids` set to the IDs of the two rules above.
-5. Create the experiment and set status to **Running** on launch day.
+    - Type: `boost`
+    - Priority: `70`
+    - Condition: `segment_id` equals "Started not finished Series X"
+    - Action: boost the series episodes with a high factor
+    - Schedule: same campaign window
+  </Step>
+  <Step title="Run an A/B test">
+    Go to **Console > A/B Testing**, click **New Experiment**, and create "Series X launch campaign".
 
-### Step 4: Measure results
+    - Description: "Hypothesis: pinning Series X for non-viewers increases completion rate."
+    - **Control** (50%): no config overrides; standard recommendations
+    - **Treatment** (50%): config overrides with `include_rule_ids` set to the two rule IDs above
+    - Status: **Running** on launch day
+  </Step>
+  <Step title="Measure results">
+    During the campaign, open the experiment's **Results** tab and click **Refresh metrics** periodically. Compare CTR and conversion rate between Control and Treatment, then check lift percentage.
 
-1. During the campaign, go to the experiment's **Results** tab.
-2. Click **Refresh metrics** periodically.
-3. Compare CTR and conversion rate between Control and Treatment.
-4. Check the lift percentage to see if the campaign is working.
-5. After two weeks, set the experiment status to **Completed**. The rules auto-deactivate via their schedule.
+    After two weeks, set the experiment status to **Completed**. The rules auto-deactivate via their schedule.
+  </Step>
+</Steps>
 
 ---
 
@@ -109,58 +100,57 @@ Create two segments to separate users who have and haven't engaged with the seri
 
 **Goal:** Boost sale items for a weekend, show premium items to high-value customers, suppress out-of-stock products, and test whether manual merchandising rules outperform pure ML.
 
-### Step 1: Create the high-value customer segment
+<Steps>
+  <Step title="Create the high-value customer segment">
+    Go to **Console > User Segments**, click **New Segment**, and create "High-value customers".
 
-1. Go to **Console > User Segments** and click **New Segment**.
-2. Add a condition:
-   - Type: `computed`
-   - Field: `total_events`
-   - Operator: `greater_than`
-   - Value: `100`
-3. Name it "High-value customers" and save.
+    - Type: `computed`
+    - Field: `total_events`
+    - Operator: `greater_than`
+    - Value: `100`
+  </Step>
+  <Step title="Create the sale rules">
+    Create the merchandising rules in **Console > Rules Engine**.
 
-### Step 2: Create the rules
+    **Rule: "Flash sale boost"**
 
-**Rule: "Flash sale boost"**
-1. Go to **Console > Rules Engine** and click **New Rule**.
-2. Type: `boost`. Priority: `60`.
-3. Add a condition: field = `category`, operator = `equals`, value = `sale`.
-4. Action: boost with a high factor.
-5. Schedule: Friday 18:00 to Sunday 23:59.
+    - Type: `boost`
+    - Priority: `60`
+    - Condition: `category` equals `sale`
+    - Action: boost with a high factor
+    - Schedule: Friday 18:00 to Sunday 23:59
 
-**Rule: "VIP exclusive items"**
-1. Create another rule.
-2. Type: `boost`. Priority: `80` (higher than the sale boost so it takes precedence).
-3. Add conditions:
-   - field = `segment_id`, select "High-value customers"
-   - field = `tier`, operator = `equals`, value = `premium`
-4. Action: boost premium items strongly.
-5. Same weekend schedule.
+    **Rule: "VIP exclusive items"**
 
-**Rule: "Suppress out-of-stock"**
-1. Create a third rule.
-2. Type: `filter`. Priority: `100` (highest — always applies first).
-3. Add a condition: field = `stock_status`, operator = `equals`, value = `out_of_stock`.
-4. Action: exclude matching items.
-5. No schedule (always active).
+    - Type: `boost`
+    - Priority: `80`
+    - Conditions: `segment_id` equals "High-value customers" and `tier` equals `premium`
+    - Action: boost premium items strongly
+    - Schedule: same weekend window
 
-### Step 3: Set up the pure ML experiment
+    **Rule: "Suppress out-of-stock"**
 
-1. Go to **Console > Pipeline Config**.
-2. Create or note your default pipeline (all stages enabled).
-3. Consider creating a second pipeline with the **rules stage disabled** for pure ML ranking.
-4. Go to **Console > A/B Testing** and create an experiment:
-   - **Control** (50%): default pipeline.
-   - **Treatment** (50%): pipeline with rules stage disabled.
-5. Set to **Running** on Friday.
+    - Type: `filter`
+    - Priority: `100`
+    - Condition: `stock_status` equals `out_of_stock`
+    - Action: exclude matching items
+    - Schedule: none; always active
+  </Step>
+  <Step title="Set up the pure ML experiment">
+    Go to **Console > Pipeline Config**, create or note your default pipeline, and consider creating a second pipeline with the **rules stage disabled** for pure ML ranking.
 
-### Step 4: Monitor the sale
+    Then create an experiment in **Console > A/B Testing**:
 
-1. Open **Console > Analytics** and watch served volume.
-2. Filter by user ID to spot-check that VIP users see premium items.
-3. Refresh experiment metrics throughout the weekend.
-4. After the sale, complete the experiment and compare conversion rates.
-5. The sale rules auto-deactivate after Sunday — no cleanup needed.
+    - **Control** (50%): default pipeline
+    - **Treatment** (50%): pipeline with rules stage disabled
+    - Status: **Running** on Friday
+  </Step>
+  <Step title="Monitor the sale">
+    Open **Console > Analytics** and watch served volume. Filter by user ID to spot-check that VIP users see premium items, and refresh experiment metrics throughout the weekend.
+
+    After the sale, complete the experiment and compare conversion rates. The sale rules auto-deactivate after Sunday, so no cleanup is needed.
+  </Step>
+</Steps>
 
 ---
 
@@ -168,26 +158,32 @@ Create two segments to separate users who have and haven't engaged with the seri
 
 **Goal:** Ensure recommendations always include recent content and don't over-represent a single category.
 
-### Step 1: Create rules
+<Steps>
+  <Step title="Create freshness and diversity rules">
+    Create both rules in **Console > Rules Engine**.
 
-**Rule: "Boost new content"**
-1. Type: `boost`. Priority: `50`.
-2. Condition: field = `published_days_ago`, operator = `less_than`, value = `7`.
-3. Action: boost by a moderate factor.
-4. No schedule (always active).
+    **Rule: "Boost new content"**
 
-**Rule: "Diversify by category"**
-1. Type: `diversify`. Priority: `40`.
-2. No conditions (applies to all results).
-3. Action: limit to maximum 3 items per `category` value.
-4. No schedule (always active).
+    - Type: `boost`
+    - Priority: `50`
+    - Condition: `published_days_ago` is less than `7`
+    - Action: boost by a moderate factor
+    - Schedule: none; always active
 
-### Step 2: Verify with Explainability
+    **Rule: "Diversify by category"**
 
-1. Go to **Console > Explainability**.
-2. Enter a test user ID and an item ID for a recently published item.
-3. Confirm the "Boost new content" rule shows **matched**.
-4. Try an older item and confirm it shows **no match**.
+    - Type: `diversify`
+    - Priority: `40`
+    - Conditions: none; applies to all results
+    - Action: limit to maximum 3 items per `category` value
+    - Schedule: none; always active
+  </Step>
+  <Step title="Verify with Explainability">
+    Go to **Console > Explainability**, enter a test user ID and an item ID for a recently published item, and confirm the "Boost new content" rule shows **matched**.
+
+    Try an older item and confirm it shows **no match**.
+  </Step>
+</Steps>
 
 ---
 
@@ -195,23 +191,23 @@ Create two segments to separate users who have and haven't engaged with the seri
 
 **Goal:** Roll out a new set of ranking rules to 10% of users first, then expand.
 
-### Step 1: Deploy rules as inactive
+<Steps>
+  <Step title="Deploy rules as inactive">
+    Create your new rules but leave them **inactive** with the toggle off. Note their rule IDs.
+  </Step>
+  <Step title="Create a staged experiment">
+    Go to **Console > A/B Testing** and create an experiment:
 
-1. Create your new rules but leave them **inactive** (toggle off).
-2. Note their rule IDs.
+    - **Control** (90%): no config overrides
+    - **Treatment** (10%): config overrides with `include_rule_ids` set to the new rule IDs
+    - Status: **Running**
+  </Step>
+  <Step title="Monitor and expand">
+    Check experiment metrics after a few days. If metrics look good, edit the experiment and adjust traffic to Control 50% and Treatment 50%.
 
-### Step 2: Create a staged experiment
-
-1. Go to **Console > A/B Testing** and create an experiment:
-   - **Control** (90%): no config overrides.
-   - **Treatment** (10%): config overrides with `include_rule_ids` set to the new rule IDs.
-2. Set to **Running**.
-
-### Step 3: Monitor and expand
-
-1. Check experiment metrics after a few days.
-2. If metrics look good, edit the experiment and adjust traffic: Control 50%, Treatment 50%.
-3. Continue monitoring. When confident, set the experiment to **Completed**, activate the rules for everyone, and delete the experiment.
+    Continue monitoring. When confident, set the experiment to **Completed**, activate the rules for everyone, and delete the experiment.
+  </Step>
+</Steps>
 
 ---
 

@@ -104,11 +104,23 @@ $sdk->trackEvent([
 
 ### How batching works in PHP
 
-1. Events are buffered with a timestamp that maps to `occurred_at` in the API.
-2. The buffer flushes when it reaches `maxBatchSize`.
-3. You can force delivery with `flushEvents()` or by calling `->wait()` on the returned `PendingResult`.
-4. Remaining buffered events are flushed during PHP shutdown.
-5. Failed sends are retried with exponential backoff.
+<Steps>
+  <Step title="Buffer events">
+    Events are buffered with a timestamp that maps to `occurred_at` in the API.
+  </Step>
+  <Step title="Flush at max batch size">
+    The buffer flushes when it reaches `maxBatchSize`.
+  </Step>
+  <Step title="Force delivery when needed">
+    You can force delivery with `flushEvents()` or by calling `->wait()` on the returned `PendingResult`.
+  </Step>
+  <Step title="Flush during shutdown">
+    Remaining buffered events are flushed during PHP shutdown.
+  </Step>
+  <Step title="Retry failed sends">
+    Failed sends are retried with exponential backoff.
+  </Step>
+</Steps>
 
 ```php
 $pending = $sdk->trackEvent([

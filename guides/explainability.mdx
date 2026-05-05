@@ -10,9 +10,17 @@ The Explainability page lets you trace exactly why an item appeared (or did not 
 
 ## Running an explanation
 
-1. Navigate to **Console > Explainability**.
-2. Enter a **User ID** and **Item ID**.
-3. Click **Explain**.
+<Steps>
+  <Step title="Open Explainability">
+    Navigate to **Console > Explainability**.
+  </Step>
+  <Step title="Enter IDs">
+    Enter a **User ID** and **Item ID**.
+  </Step>
+  <Step title="Run the explanation">
+    Click **Explain**.
+  </Step>
+</Steps>
 
 The system queries real data and returns a breakdown of the recommendation decision.
 
@@ -55,22 +63,48 @@ A breakdown of what signals contributed to the final score — the embedding sim
 
 ### "Why is this item ranked so low?"
 
-1. Check the similarity score. If it is low, the user's behaviour does not strongly align with this item's embedding.
-2. Check for `bury` or `filter` rules that matched. A bury rule reduces the score; a filter rule removes the item entirely.
-3. Check if a higher-priority `pin` rule placed another item in the position you expected this one to occupy.
+<Steps>
+  <Step title="Check similarity">
+    Check the similarity score. If it is low, the user's behaviour does not strongly align with this item's embedding.
+  </Step>
+  <Step title="Check suppressing rules">
+    Check for `bury` or `filter` rules that matched. A bury rule reduces the score; a filter rule removes the item entirely.
+  </Step>
+  <Step title="Check higher-priority pins">
+    Check if a higher-priority `pin` rule placed another item in the position you expected this one to occupy.
+  </Step>
+</Steps>
 
 ### "Why is this item appearing when it shouldn't?"
 
-1. Look for `boost` or `pin` rules that matched unexpectedly. The rule's conditions may be broader than intended.
-2. Check whether the user belongs to a segment that triggers a promotional rule.
-3. Verify the item's metadata — the rule may be matching on stale or incorrect data.
+<Steps>
+  <Step title="Look for unexpected rules">
+    Look for `boost` or `pin` rules that matched unexpectedly. The rule's conditions may be broader than intended.
+  </Step>
+  <Step title="Check segment membership">
+    Check whether the user belongs to a segment that triggers a promotional rule.
+  </Step>
+  <Step title="Verify item metadata">
+    Verify the item's metadata, because the rule may be matching on stale or incorrect data.
+  </Step>
+</Steps>
 
 ### "Why are rules not applying?"
 
-1. Check the rule's **Active** toggle — it may be inactive.
-2. Check the **schedule** — the rule may have a start date in the future or an end date in the past.
-3. Check the **segment condition** — the user may not belong to the target segment. Create a segment with broader conditions to verify.
-4. Check the pipeline config — if the **rules stage** is disabled, no rules will apply regardless of their configuration.
+<Steps>
+  <Step title="Check active status">
+    Check the rule's **Active** toggle; it may be inactive.
+  </Step>
+  <Step title="Check the schedule">
+    Check the **schedule**; the rule may have a start date in the future or an end date in the past.
+  </Step>
+  <Step title="Check the segment condition">
+    Check the **segment condition**. The user may not belong to the target segment, so create a segment with broader conditions to verify.
+  </Step>
+  <Step title="Check pipeline configuration">
+    Check the pipeline config. If the **rules stage** is disabled, no rules will apply regardless of their configuration.
+  </Step>
+</Steps>
 
 ---
 

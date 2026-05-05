@@ -8,6 +8,43 @@
     "dark": "#6366f1"
   },
   "favicon": "/favicon.ico",
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "assistant",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "grok",
+      "aistudio",
+      "devin",
+      "windsurf",
+      "mcp",
+      "add-mcp",
+      "cursor",
+      "vscode",
+      "devin-mcp",
+      {
+        "title": "Open Console",
+        "description": "Sign in to manage contexts, rules, models, and analytics.",
+        "icon": "arrow-up-right",
+        "href": "https://console.neuronsearchlab.com/login"
+      },
+      {
+        "title": "MCP setup",
+        "description": "Connect NeuronSearchLab to AI assistants through MCP.",
+        "icon": "robot",
+        "href": "/sdk/mcp"
+      },
+      {
+        "title": "Contact support",
+        "description": "Ask the NeuronSearchLab team for integration help.",
+        "icon": "headset",
+        "href": "mailto:contact@neuronsearchlab.com"
+      }
+    ]
+  },
   "navigation": {
     "tabs": [
       {

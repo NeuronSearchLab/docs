@@ -8,21 +8,21 @@ description: 'Start building with NeuronSearchLab in just a few minutes'
 
 NeuronSearchLab is a hosted API service that provides real-time personalized recommendations through an API, SDK, and a web console. You do not need to deploy or install anything - just sign up and generate your API credentials.
 
-### 1. Register or log in
+<Steps>
+  <Step title="Register or log in">
+    Go to [console.neuronsearchlab.com/signup](https://console.neuronsearchlab.com/signup) or [login](https://console.neuronsearchlab.com/login) to create an account. You can invite teammates later from the **User Management** page in Settings.
+  </Step>
+  <Step title="Generate client credentials">
+    Once logged in, open **SDK Credentials** in Settings and create a new client. Copy the **Client ID** and **Client Secret**. They are required to authenticate your backend services.
 
-Go to [console.neuronsearchlab.com/signup](https://console.neuronsearchlab.com/signup) or [login](https://console.neuronsearchlab.com/login) to create an account. You can invite teammates later from the **User Management** page in Settings.
-
-### 2. Generate client credentials
-
-Once logged in, open **SDK Credentials** in Settings and create a new client. Copy the **Client ID** and **Client Secret**. They are required to authenticate your backend services.
-
-<Warning>
-  **Never expose the Client Secret in browser code or mobile apps.** Store it in your server-side environment variables or a secrets manager.
-</Warning>
-
-### 3. Add your first dataset
-
-Navigate to **Items** in the Explore section and use the upload flow to add a handful of representative items. Include metadata such as category, price, tags, and thumbnails to improve downstream recommendations.
+    <Warning>
+      **Never expose the Client Secret in browser code or mobile apps.** Store it in your server-side environment variables or a secrets manager.
+    </Warning>
+  </Step>
+  <Step title="Add your first dataset">
+    Navigate to **Items** in the Explore section and use the upload flow to add a handful of representative items. Include metadata such as category, price, tags, and thumbnails to improve downstream recommendations.
+  </Step>
+</Steps>
 
 ---
 
@@ -37,9 +37,17 @@ curl -X POST https://auth.neuronsearchlab.com/oauth2/token \
   -d "grant_type=client_credentials"
 ```
 
-1. Call the auth token endpoint from a trusted server environment.
-2. Cache the resulting access token until it expires (tokens default to 60 minutes).
-3. Forward the token to your frontend or edge workers via secure headers.
+<Steps>
+  <Step title="Call the token endpoint">
+    Call the auth token endpoint from a trusted server environment.
+  </Step>
+  <Step title="Cache the access token">
+    Cache the resulting access token until it expires. Tokens default to 60 minutes.
+  </Step>
+  <Step title="Forward the token securely">
+    Forward the token to your frontend or edge workers via secure headers.
+  </Step>
+</Steps>
 
 <Tip>
   Rotate credentials regularly and prefer one client per application so you can revoke access without downtime.
@@ -83,12 +91,26 @@ In addition to the API and SDK, you can manage your data and monitor performance
 
 When you are ready to train your first recommendation version:
 
-1. Define event signals and save a template in **Events**
-2. Start a training run from that template
-3. Review the resulting trained version in **Models**
-4. Add an optional label and description for your team
-5. Approve it
-6. Promote it to a serving target when you are ready to make it live
+<Steps>
+  <Step title="Define event signals">
+    Define event signals and save a template in **Events**.
+  </Step>
+  <Step title="Start a training run">
+    Start a training run from that template.
+  </Step>
+  <Step title="Review the trained version">
+    Review the resulting trained version in **Models**.
+  </Step>
+  <Step title="Add team context">
+    Add an optional label and description for your team.
+  </Step>
+  <Step title="Approve the version">
+    Approve the trained version when it is ready.
+  </Step>
+  <Step title="Promote to serving">
+    Promote it to a serving target when you are ready to make it live.
+  </Step>
+</Steps>
 
 This keeps training inputs, version review, and live rollout decisions clearly separated.
 

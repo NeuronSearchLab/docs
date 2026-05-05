@@ -17,12 +17,26 @@ API keys provide a simple way to authenticate programmatic requests against the 
 
 ## Create an API key
 
-1. Navigate to **Console > API Keys**.
-2. Click **New API Key**.
-3. Enter a descriptive name (e.g. "Staging Backend", "Internal Dashboard").
-4. Select an environment tag for organisational purposes.
-5. Choose which scopes the key can access — `recommendations`, `events`, or `items`.
-6. Click **Create Key**.
+<Steps>
+  <Step title="Open API Keys">
+    Navigate to **Console > API Keys**.
+  </Step>
+  <Step title="Start a new key">
+    Click **New API Key**.
+  </Step>
+  <Step title="Name the key">
+    Enter a descriptive name, for example "Staging Backend" or "Internal Dashboard".
+  </Step>
+  <Step title="Tag the environment">
+    Select an environment tag for organisational purposes.
+  </Step>
+  <Step title="Choose scopes">
+    Choose which scopes the key can access: `recommendations`, `events`, or `items`.
+  </Step>
+  <Step title="Create the key">
+    Click **Create Key**.
+  </Step>
+</Steps>
 
 The full key is displayed once. Copy it immediately and store it securely.
 
@@ -60,8 +74,14 @@ If a key lacks the required scope, the Platform API returns `403 Forbidden`.
 
 ## Revoke a key
 
-1. Navigate to **Console > API Keys**.
-2. Click **Revoke** on the key you want to deactivate.
+<Steps>
+  <Step title="Open API Keys">
+    Navigate to **Console > API Keys**.
+  </Step>
+  <Step title="Revoke the key">
+    Click **Revoke** on the key you want to deactivate.
+  </Step>
+</Steps>
 
 Revocation is immediate and permanent. Create a new key if you need to restore access.
 

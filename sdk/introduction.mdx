@@ -103,10 +103,20 @@ await sdk.trackEvent({
 
 ### How batching works
 
-1. Events are buffered with a timestamp that maps to `occurred_at` in the API.
-2. The buffer flushes when the collate window elapses (default 3s) or the buffer reaches `maxBatchSize`.
-3. On page unload (`beforeunload`, `pagehide`), remaining events are flushed automatically.
-4. Failed sends are retried with exponential backoff.
+<Steps>
+  <Step title="Buffer events">
+    Events are buffered with a timestamp that maps to `occurred_at` in the API.
+  </Step>
+  <Step title="Flush on window or batch size">
+    The buffer flushes when the collate window elapses (default 3s) or the buffer reaches `maxBatchSize`.
+  </Step>
+  <Step title="Flush during page unload">
+    On page unload (`beforeunload`, `pagehide`), remaining events are flushed automatically.
+  </Step>
+  <Step title="Retry failed sends">
+    Failed sends are retried with exponential backoff.
+  </Step>
+</Steps>
 
 You can flush manually at any time:
 
