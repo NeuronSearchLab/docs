@@ -10,15 +10,29 @@ A/B testing lets you split live traffic between different ranking configurations
 
 ## Creating an experiment
 
-1. Navigate to **Console > A/B Testing**.
-2. Click **New Experiment**.
-3. Enter a name and description. The description should capture your hypothesis — for example, "Pinning new releases to top 3 will increase click-through rate by 15%."
-4. Switch to the **Variants** tab.
-5. Configure at least two variants:
-   - **Control** — the baseline experience (typically your current configuration).
-   - **Treatment** — the change you want to test.
-6. Set **traffic fractions** using the sliders. They should sum to 100%.
-7. Click **Create Experiment**.
+<Steps>
+  <Step title="Open A/B Testing">
+    Navigate to **Console > A/B Testing**.
+  </Step>
+  <Step title="Start a new experiment">
+    Click **New Experiment**.
+  </Step>
+  <Step title="Name the hypothesis">
+    Enter a name and description. The description should capture your hypothesis, for example "Pinning new releases to top 3 will increase click-through rate by 15%."
+  </Step>
+  <Step title="Configure variants">
+    Switch to the **Variants** tab and configure at least two variants:
+
+    - **Control** - the baseline experience (typically your current configuration).
+    - **Treatment** - the change you want to test.
+  </Step>
+  <Step title="Set traffic fractions">
+    Set **traffic fractions** using the sliders. They should sum to 100%.
+  </Step>
+  <Step title="Create the experiment">
+    Click **Create Experiment**.
+  </Step>
+</Steps>
 
 The experiment starts in **draft** status and does not affect live traffic until you move it to **running**.
 
@@ -58,9 +72,17 @@ This is how you test the impact of a specific rule or set of rules against a con
 
 Assignment is **deterministic and consistent**:
 
-1. For each request, the engine computes `hash(user_id + experiment_id) mod 1000`.
-2. The result is matched against cumulative traffic fraction buckets.
-3. The same user always gets the same variant for a given experiment.
+<Steps>
+  <Step title="Hash the request identity">
+    For each request, the engine computes `hash(user_id + experiment_id) mod 1000`.
+  </Step>
+  <Step title="Match the traffic bucket">
+    The result is matched against cumulative traffic fraction buckets.
+  </Step>
+  <Step title="Reuse the same assignment">
+    The same user always gets the same variant for a given experiment.
+  </Step>
+</Steps>
 
 This means:
 - No cookies or session storage required.
@@ -106,9 +128,17 @@ For each treatment variant, the Results tab shows **lift vs. control**:
 
 Click **Refresh metrics** to recompute from the latest data. Metrics are computed by:
 
-1. Querying all users who were served recommendations during the experiment window.
-2. Deterministically re-assigning each to a variant using the same hash as the live engine.
-3. Aggregating served impressions and user events per variant.
+<Steps>
+  <Step title="Query served users">
+    Query all users who were served recommendations during the experiment window.
+  </Step>
+  <Step title="Reassign variants">
+    Deterministically re-assign each user to a variant using the same hash as the live engine.
+  </Step>
+  <Step title="Aggregate metrics">
+    Aggregate served impressions and user events per variant.
+  </Step>
+</Steps>
 
 Refresh as often as you need — each click pulls the latest data.
 
@@ -121,4 +151,3 @@ Refresh as often as you need — each click pulls the latest data.
 - **Use meaningful sample sizes.** If one variant has very few users, the metrics will be noisy. Ensure traffic fractions give each variant enough volume.
 - **Document your hypothesis** in the experiment description so you can review what you were testing months later.
 - **Complete experiments** when done. This sets the end date and freezes the measurement window.
-

@@ -10,9 +10,17 @@ NeuronSearchLab works best when it understands the structure and behavior of you
 
 Your catalog describes every item that may be recommended. Each record should include a stable identifier and useful metadata so the platform can learn how to rank items.
 
-1. Gather key attributes such as title, description, price, category, tags, and thumbnail URLs.
-2. Map your data fields to the attributes accepted by the [`POST /v1/items` endpoint](/api-reference/endpoint/submit-items).
-3. Use the [console Items page](https://console.neuronsearchlab.com/explore) for small batches or the API for automated pipelines.
+<Steps>
+  <Step title="Gather item attributes">
+    Gather key attributes such as title, description, price, category, tags, and thumbnail URLs.
+  </Step>
+  <Step title="Map fields to the API">
+    Map your data fields to the attributes accepted by the [`POST /v1/items` endpoint](/api-reference/endpoint/submit-items).
+  </Step>
+  <Step title="Choose an ingestion path">
+    Use the [console Items page](https://console.neuronsearchlab.com/explore) for small batches or the API for automated pipelines.
+  </Step>
+</Steps>
 
 <Info>
   The more descriptive your metadata, the easier it is to tune filters, boosts, and personalization rules later.
@@ -22,9 +30,17 @@ Your catalog describes every item that may be recommended. Each record should in
 
 Contexts capture where recommendations appear in your product experience—home feed, detail page, email digest, and more. Provide enough information to personalize each surface.
 
-1. Create a context for each surface and record the numeric console ID, such as `101`.
-2. Configure the model family and pre-query filters inside the console under **Contexts**.
-3. Reference that context ID in recommendation requests to ensure consistent behavior.
+<Steps>
+  <Step title="Create contexts by surface">
+    Create a context for each surface and record the numeric console ID, such as `101`.
+  </Step>
+  <Step title="Configure retrieval behavior">
+    Configure the model family and pre-query filters inside the console under **Contexts**.
+  </Step>
+  <Step title="Reference context IDs">
+    Reference that context ID in recommendation requests to ensure consistent behavior.
+  </Step>
+</Steps>
 
 Learn more about advanced configuration in the [Contexts guide](/contexts).
 
@@ -32,8 +48,16 @@ Learn more about advanced configuration in the [Contexts guide](/contexts).
 
 Engagement events help the service understand what resonates with your users.
 
-1. Send impressions, clicks, conversions, and other behavioral events using the [`POST /v1/events` endpoint](/api-reference/endpoint/submit-events).
-2. Include user identifiers, item identifiers, context IDs, and timestamps in each payload.
-3. Validate event delivery with the live stream viewer in the console.
+<Steps>
+  <Step title="Send engagement events">
+    Send impressions, clicks, conversions, and other behavioral events using the [`POST /v1/events` endpoint](/api-reference/endpoint/submit-events).
+  </Step>
+  <Step title="Include event context">
+    Include user identifiers, item identifiers, context IDs, and timestamps in each payload.
+  </Step>
+  <Step title="Validate delivery">
+    Validate event delivery with the live stream viewer in the console.
+  </Step>
+</Steps>
 
 When your catalog, contexts, and events stay in sync, NeuronSearchLab can adapt to changing inventory and user behavior almost immediately.

@@ -19,17 +19,34 @@ Use rules when you need to:
 
 ## Creating a rule
 
-1. Navigate to **Console > Rules Engine**.
-2. Click **New Rule**.
-3. Fill in the required fields:
-   - **Name** — a descriptive label such as "Boost new arrivals" or "Cap sponsored items".
-   - **Type** — the action the rule performs.
-   - **Priority** — higher numbers execute first.
-   - **Active** — toggle on to make the rule live.
-4. Add one or more conditions to control when the rule applies.
-5. Configure the action parameters for the selected rule type.
-6. Optionally set a schedule (start and end dates).
-7. Click **Create Rule**.
+<Steps>
+  <Step title="Open Rules Engine">
+    Navigate to **Console > Rules Engine**.
+  </Step>
+  <Step title="Start a new rule">
+    Click **New Rule**.
+  </Step>
+  <Step title="Fill in the required fields">
+    Fill in the required fields:
+
+    - **Name** - a descriptive label such as "Boost new arrivals" or "Cap sponsored items".
+    - **Type** - the action the rule performs.
+    - **Priority** - higher numbers execute first.
+    - **Active** - toggle on to make the rule live.
+  </Step>
+  <Step title="Add conditions">
+    Add one or more conditions to control when the rule applies.
+  </Step>
+  <Step title="Configure the action">
+    Configure the action parameters for the selected rule type.
+  </Step>
+  <Step title="Set an optional schedule">
+    Optionally set a schedule with start and end dates.
+  </Step>
+  <Step title="Create the rule">
+    Click **Create Rule**.
+  </Step>
+</Steps>
 
 ---
 
@@ -101,9 +118,17 @@ Match against fields in the item's metadata:
 
 Target a rule to users in a specific segment:
 
-1. Add a condition and set the field to `segment_id`.
-2. A dropdown appears listing all available segments.
-3. Select the segment. The rule now only applies to users who belong to that segment.
+<Steps>
+  <Step title="Add a segment condition">
+    Add a condition and set the field to `segment_id`.
+  </Step>
+  <Step title="Choose from the dropdown">
+    A dropdown appears listing all available segments.
+  </Step>
+  <Step title="Select the segment">
+    Select the segment. The rule now only applies to users who belong to that segment.
+  </Step>
+</Steps>
 
 This is how you build targeted campaigns, such as boosting a new series only for users who have not yet watched it.
 
@@ -174,9 +199,17 @@ Rules support time-based activation via start and end dates.
 
 ### Setting a schedule
 
-1. In the rule editor, use the **Start date** and **End date** datetime pickers.
-2. Rules with a schedule show a **scheduled** badge in the table view.
-3. Click **Clear schedule** to remove dates and make the rule always active.
+<Steps>
+  <Step title="Choose dates">
+    In the rule editor, use the **Start date** and **End date** datetime pickers.
+  </Step>
+  <Step title="Check the scheduled badge">
+    Rules with a schedule show a **scheduled** badge in the table view.
+  </Step>
+  <Step title="Clear dates when needed">
+    Click **Clear schedule** to remove dates and make the rule always active.
+  </Step>
+</Steps>
 
 Scheduling is enforced at the database level, so time-zone handling stays consistent regardless of where the request originates.
 

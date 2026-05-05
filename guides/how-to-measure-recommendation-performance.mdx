@@ -8,9 +8,17 @@ Use this guide to move from shipping recommendations to continuously improving t
 
 ## Setup
 
-1. Open Analytics in Console.
-2. Select a time range (for example last 7 days).
-3. Set granularity appropriate to traffic volume.
+<Steps>
+  <Step title="Open Analytics">
+    Open Analytics in Console.
+  </Step>
+  <Step title="Select a time range">
+    Select a time range, for example last 7 days.
+  </Step>
+  <Step title="Set granularity">
+    Set granularity appropriate to traffic volume.
+  </Step>
+</Steps>
 
 ## Common workflows
 
@@ -29,17 +37,37 @@ Use context and advanced filters (`request_id`, `session_id`, `user_id`) to debu
 
 ### Build an optimization loop
 
-1. Change one variable at a time, such as a context filter, model family, pipeline setting, or ranking rule.
-2. Observe engagement deltas over a fixed window.
-3. Keep changes that improve KPI targets; revert those that regress.
+<Steps>
+  <Step title="Change one variable">
+    Change one variable at a time, such as a context filter, model family, pipeline setting, or ranking rule.
+  </Step>
+  <Step title="Observe engagement deltas">
+    Observe engagement deltas over a fixed window.
+  </Step>
+  <Step title="Keep the winners">
+    Keep changes that improve KPI targets; revert those that regress.
+  </Step>
+</Steps>
 
 ## Example app journey: Improve homepage CTR
 
-1. Baseline homepage context metrics are captured for 14 days.
-2. Team adjusts homepage context filters to remove low-engagement categories.
-3. New settings roll out to 25% of traffic.
-4. CTR and downstream purchase events are compared versus baseline.
-5. Winning configuration is rolled out to 100% traffic.
+<Steps>
+  <Step title="Capture a baseline">
+    Baseline homepage context metrics are captured for 14 days.
+  </Step>
+  <Step title="Adjust context filters">
+    Team adjusts homepage context filters to remove low-engagement categories.
+  </Step>
+  <Step title="Roll out to a sample">
+    New settings roll out to 25% of traffic.
+  </Step>
+  <Step title="Compare against baseline">
+    CTR and downstream purchase events are compared versus baseline.
+  </Step>
+  <Step title="Expand the winning configuration">
+    Winning configuration is rolled out to 100% traffic.
+  </Step>
+</Steps>
 
 ## Next steps
 

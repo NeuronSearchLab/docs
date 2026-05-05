@@ -8,9 +8,17 @@ Use this guide when launching recommendations into a new surface (for example ho
 
 ## Setup
 
-1. Define the business goal for the new surface (CTR, conversion, AOV, retention).
-2. Create a dedicated context in Console -> Contexts.
-3. Configure the model family and any pre-query filters for that context.
+<Steps>
+  <Step title="Define the business goal">
+    Define the business goal for the new surface (CTR, conversion, AOV, retention).
+  </Step>
+  <Step title="Create a dedicated context">
+    Create a dedicated context in Console -> Contexts.
+  </Step>
+  <Step title="Configure retrieval controls">
+    Configure the model family and any pre-query filters for that context.
+  </Step>
+</Steps>
 
 ## Common workflows
 
@@ -32,11 +40,23 @@ For each context, maintain a short owner note with purpose, constraints, and KPI
 
 ## Example app journey: Checkout upsell launch
 
-1. Merchandising defines checkout upsell objectives.
-2. Team creates context `205` with checkout-safe filters.
-3. Backend requests recommendations using `context_id=205` during checkout.
-4. Events are tagged from checkout interactions and posted to `/v1/events`.
-5. Analytics is filtered by the checkout context to evaluate lift.
+<Steps>
+  <Step title="Define upsell objectives">
+    Merchandising defines checkout upsell objectives.
+  </Step>
+  <Step title="Create the checkout context">
+    Team creates context `205` with checkout-safe filters.
+  </Step>
+  <Step title="Request checkout recommendations">
+    Backend requests recommendations using `context_id=205` during checkout.
+  </Step>
+  <Step title="Tag checkout events">
+    Events are tagged from checkout interactions and posted to `/v1/events`.
+  </Step>
+  <Step title="Evaluate lift">
+    Analytics is filtered by the checkout context to evaluate lift.
+  </Step>
+</Steps>
 
 ## Next steps
 

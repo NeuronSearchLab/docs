@@ -44,11 +44,23 @@ If no credentials are configured, the assistant will prompt you to set them up f
 
 A typical workflow looks like this:
 
-1. Ask the assistant to get recommendations for a user.
-2. Review the ranked results it returns.
-3. Ask it to explain why a specific item ranked where it did.
-4. If the ranking is wrong, ask it to create or adjust a rule.
-5. Get recommendations again to verify the change took effect.
+<Steps>
+  <Step title="Request recommendations">
+    Ask the assistant to get recommendations for a user.
+  </Step>
+  <Step title="Review ranked results">
+    Review the ranked results it returns.
+  </Step>
+  <Step title="Explain a ranking">
+    Ask it to explain why a specific item ranked where it did.
+  </Step>
+  <Step title="Adjust a rule">
+    If the ranking is wrong, ask it to create or adjust a rule.
+  </Step>
+  <Step title="Verify the change">
+    Get recommendations again to verify the change took effect.
+  </Step>
+</Steps>
 
 This replaces the need to switch between the Explainability, Rules, and Context pages for quick investigations.
 

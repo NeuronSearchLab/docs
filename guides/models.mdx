@@ -20,14 +20,32 @@ The important mental model is:
 
 Users should think about training and retraining as a versioning workflow, not as editing one monolithic model in place.
 
-1. Create or update a signal template on the **Events** page.
-2. Start a training run from that template.
-3. Let the platform create a **new trained version**.
-4. Review the result on the **Models** page.
-5. Optionally add a human-friendly label and description.
-6. Approve the trained version when it is ready.
-7. Promote it to a serving target when you want it live.
-8. Repeat the same flow whenever you retrain.
+<Steps>
+  <Step title="Create or update signals">
+    Create or update a signal template on the **Events** page.
+  </Step>
+  <Step title="Start training">
+    Start a training run from that template.
+  </Step>
+  <Step title="Create a trained version">
+    Let the platform create a **new trained version**.
+  </Step>
+  <Step title="Review the result">
+    Review the result on the **Models** page.
+  </Step>
+  <Step title="Add a label">
+    Optionally add a human-friendly label and description.
+  </Step>
+  <Step title="Approve the version">
+    Approve the trained version when it is ready.
+  </Step>
+  <Step title="Promote to serving">
+    Promote it to a serving target when you want it live.
+  </Step>
+  <Step title="Repeat when retraining">
+    Repeat the same flow whenever you retrain.
+  </Step>
+</Steps>
 
 That means retraining does **not** overwrite the previous result. It creates another version you can compare, approve, reject, or promote.
 
@@ -96,9 +114,17 @@ This lets you operate even if you are a brand-new account with no pre-existing m
 
 After a training run completes successfully, the new trained version has a status of **Pending**. You must approve it before it can be promoted.
 
-1. Open [Console > Training Jobs](https://console.neuronsearchlab.com/training-jobs) or [Console > Models](https://console.neuronsearchlab.com/models).
-2. Find the completed version and click **Approve**.
-3. The version status updates to **Approved**.
+<Steps>
+  <Step title="Open training or models">
+    Open [Console > Training Jobs](https://console.neuronsearchlab.com/training-jobs) or [Console > Models](https://console.neuronsearchlab.com/models).
+  </Step>
+  <Step title="Approve the completed version">
+    Find the completed version and click **Approve**.
+  </Step>
+  <Step title="Confirm approved status">
+    The version status updates to **Approved**.
+  </Step>
+</Steps>
 
 Approving a version does not automatically change what is served. It makes that version eligible for promotion.
 
@@ -108,11 +134,23 @@ Approving a version does not automatically change what is served. It makes that 
 
 Once approved, you can promote a version to replace what is currently live on a serving target.
 
-1. Find the approved trained version.
-2. Click **Promote to production**.
-3. Choose the serving target you want to update.
-4. The console will show the target status updating.
-5. Once the target returns to a healthy state, the promoted version is live and subsequent recommendation requests use it.
+<Steps>
+  <Step title="Find the approved version">
+    Find the approved trained version.
+  </Step>
+  <Step title="Start promotion">
+    Click **Promote to production**.
+  </Step>
+  <Step title="Choose a serving target">
+    Choose the serving target you want to update.
+  </Step>
+  <Step title="Watch target status">
+    The console will show the target status updating.
+  </Step>
+  <Step title="Confirm production traffic">
+    Once the target returns to a healthy state, the promoted version is live and subsequent recommendation requests use it.
+  </Step>
+</Steps>
 
 You can promote a previous version at any time if you need to roll back.
 

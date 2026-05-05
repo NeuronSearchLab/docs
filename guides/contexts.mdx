@@ -10,12 +10,26 @@ This guide covers the controls that belong in the current context editor.
 
 ## Create a context
 
-1. Open [Console > Contexts](https://console.neuronsearchlab.com/contexts) and click **New context**.
-2. Give it a descriptive name such as "Homepage Feed" or "Post-purchase Sidebar".
-3. Add an optional description so teammates understand its purpose.
-4. Select the model this context draws recommendations from.
-5. Choose the recommendation type / model family, such as **General**, **Similar Items**, **Watch Next**, **Trending**, or **Email Digest**, depending on which model families are enabled for your tenant.
-6. Save the context and note its ID, such as `101`. Your engineering team will pass this ID in `context_id` on recommendation requests.
+<Steps>
+  <Step title="Open the context editor">
+    Open [Console > Contexts](https://console.neuronsearchlab.com/contexts) and click **New context**.
+  </Step>
+  <Step title="Name the context">
+    Give it a descriptive name such as "Homepage Feed" or "Post-purchase Sidebar".
+  </Step>
+  <Step title="Document its purpose">
+    Add an optional description so teammates understand its purpose.
+  </Step>
+  <Step title="Select the model">
+    Select the model this context draws recommendations from.
+  </Step>
+  <Step title="Choose the model family">
+    Choose the recommendation type / model family, such as **General**, **Similar Items**, **Watch Next**, **Trending**, or **Email Digest**, depending on which model families are enabled for your tenant.
+  </Step>
+  <Step title="Save and record the ID">
+    Save the context and note its ID, such as `101`. Your engineering team will pass this ID in `context_id` on recommendation requests.
+  </Step>
+</Steps>
 
 ---
 
@@ -37,11 +51,23 @@ Filters restrict which items are eligible before scoring. Only items that pass t
 
 To add a filter:
 
-1. In the **Advanced** tab, click **Add Filter**.
-2. Select a metadata field from your catalog, such as `category`, `in_stock`, or `price`.
-3. Choose an operator: `=`, `!=`, `LIKE`, `NOT LIKE`, `>`, `<`, `>=`, `<=`, `IN`, `NOT IN`.
-4. Enter the value to compare against.
-5. Add more conditions and combine them with `AND` or `OR` as needed.
+<Steps>
+  <Step title="Add a filter">
+    In the **Advanced** tab, click **Add Filter**.
+  </Step>
+  <Step title="Select a metadata field">
+    Select a metadata field from your catalog, such as `category`, `in_stock`, or `price`.
+  </Step>
+  <Step title="Choose an operator">
+    Choose an operator: `=`, `!=`, `LIKE`, `NOT LIKE`, `>`, `<`, `>=`, `<=`, `IN`, `NOT IN`.
+  </Step>
+  <Step title="Enter a comparison value">
+    Enter the value to compare against.
+  </Step>
+  <Step title="Combine conditions">
+    Add more conditions and combine them with `AND` or `OR` as needed.
+  </Step>
+</Steps>
 
 **Example:** Restrict a context to in-stock items in the Electronics category:
 

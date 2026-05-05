@@ -18,15 +18,26 @@ Start with a handful of high-impact contexts, then expand as you identify more n
 
 ## Configure contexts in the console
 
-1. Navigate to [Console → Contexts](https://console.neuronsearchlab.com/contexts).
-2. Click **New context** and note the numeric **Context ID** shown in the table, for example `101`.
-3. Fill in the modal to define how the context should behave:
-   - **Context Name** and **Description** document the placement.
-   - Select the **Recommendation Type** / model family that should serve this surface.
-   - Configure **Filters** and optional combinations (AND/OR) to enforce inventory and eligibility rules.
-   - Use the context to decide what gets retrieved before scoring.
-   - Use the **Rules Engine** for post-scoring controls such as boost, bury, pin, dedupe, reorder, or grouping.
-4. Save the configuration and share the context ID with your engineering team.
+<Steps>
+  <Step title="Open Contexts">
+    Navigate to [Console -> Contexts](https://console.neuronsearchlab.com/contexts).
+  </Step>
+  <Step title="Create a context">
+    Click **New context** and note the numeric **Context ID** shown in the table, for example `101`.
+  </Step>
+  <Step title="Define the context behavior">
+    Fill in the modal to define how the context should behave:
+
+    - **Context Name** and **Description** document the placement.
+    - Select the **Recommendation Type** / model family that should serve this surface.
+    - Configure **Filters** and optional combinations (AND/OR) to enforce inventory and eligibility rules.
+    - Use the context to decide what gets retrieved before scoring.
+    - Use the **Rules Engine** for post-scoring controls such as boost, bury, pin, dedupe, reorder, or grouping.
+  </Step>
+  <Step title="Share the context ID">
+    Save the configuration and share the context ID with your engineering team.
+  </Step>
+</Steps>
 
 ## Reference contexts in API calls
 
