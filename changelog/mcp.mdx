@@ -1,36 +1,21 @@
 ---
 title: "MCP Changelog"
 icon: "clock-rotate-left"
-description: "Generated release history for the NeuronSearchLab MCP server."
+description: "Release history for the NeuronSearchLab MCP server."
 rss: true
 ---
 
-MCP-only changelog entries for assistant tooling, platform automation, and server distribution.
-
-<Info>
-Generated on 2026-05-05 from 12 commits scanned across 1 repository, with 12 commits summarized as product changes. Coverage: 2026-04-03 to 2026-04-07.
-</Info>
-
-
-
-<Update label="April 2026" description="12 commits across MCP server" tags={["MCP server","MCP"]} rss="April 2026: 12 commits across MCP server.">
+<Update label="April 2026" description="MCP server" tags={["MCP server","MCP"]} rss="April 2026: MCP server.">
 
 ### MCP server
 
-Model Context Protocol tools for assistant-led platform management and analytics.
+#### Features
 
-- **Volume:** 12 commits
-- **Primary areas:** MCP tools (10 commits), SDK distribution (2 commits)
-- **Representative changes:** [Improve MCP API error handling](https://github.com/NeuronSearchLab/mcp/commit/5885888d481b0e61d598ccc43bda266c91e56cfa); [Add event type management MCP tools](https://github.com/NeuronSearchLab/mcp/commit/9b2d47f8f365646473fdfd5bc2b2e1a57a6e198c); [Include dist in repo for GitHub dependency installs](https://github.com/NeuronSearchLab/mcp/commit/1c144d4069874ffb2d377829f9344e49904cd0a9); [Add prepare script to build on GitHub install](https://github.com/NeuronSearchLab/mcp/commit/085a3393cfc86bf9e1c9b6543a052ad771194808); [Add ./server subpath export](https://github.com/NeuronSearchLab/mcp/commit/2649ac52d3077699093ac7a51f1be8fd25c8671b).
+- Expanded MCP coverage from the first server release into contexts, pipelines, rules, event types, analytics, install paths, and clearer API error handling.
+- Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
+
+#### Bug fixes
+
+- Improve MCP API error handling
 
 </Update>
-
-## Automation
-
-The changelog is refreshed by `.github/workflows/changelog.yml` every Monday at 07:24 UTC and can also be regenerated manually with:
-
-```bash
-node scripts/generate-changelog.mjs
-```
-
-Override the default sibling repository paths with `NSL_CONSOLE_REPO`, `NSL_TYPESCRIPT_SDK_REPO`, `NSL_PHP_SDK_REPO`, or `NSL_MCP_REPO`.
