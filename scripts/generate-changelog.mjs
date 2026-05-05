@@ -164,7 +164,15 @@ function normalizeSubject(subject) {
 }
 
 function mdEscape(value) {
-  return String(value).replaceAll("|", "\\|").replaceAll("\n", " ");
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll("{", "&#123;")
+    .replaceAll("}", "&#125;")
+    .replaceAll("$", "&#36;")
+    .replaceAll("|", "\\|")
+    .replaceAll("\n", " ");
 }
 
 function commitLabel(count) {
