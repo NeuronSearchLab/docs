@@ -271,12 +271,12 @@ function monthGroupsFor(nextRecords) {
   }, new Map()).values()].sort((a, b) => b.key.localeCompare(a.key));
 }
 
-function renderPage({title, description, outputPath, pageRecords, links = ""}) {
+function renderPage({title, description, icon, outputPath, pageRecords, links = ""}) {
   const updates = monthGroupsFor(pageRecords).map(updateEntry).join("\n\n");
   const body = [links, updates].filter(Boolean).join("\n\n");
   const mdx = `---
 title: ${JSON.stringify(title)}
-icon: "clock-rotate-left"
+icon: ${JSON.stringify(icon)}
 description: ${JSON.stringify(description)}
 rss: true
 ---
@@ -320,6 +320,7 @@ const sourceLinks = `<CardGroup cols={3}>
 
 renderPage({
   title: "Changelog",
+  icon: "list",
   description: "Release history for the NeuronSearchLab console, SDKs, and MCP server.",
   outputPath: "changelog.mdx",
   pageRecords: records,
@@ -328,6 +329,7 @@ renderPage({
 
 renderPage({
   title: "Console Changelog",
+  icon: "browser",
   description: "Release history for the NeuronSearchLab admin console.",
   outputPath: "changelog/console.mdx",
   pageRecords: records.filter((record) => record.source.id === "console"),
@@ -335,6 +337,7 @@ renderPage({
 
 renderPage({
   title: "SDK Changelog",
+  icon: "code",
   description: "Release history for the NeuronSearchLab TypeScript and PHP SDKs.",
   outputPath: "changelog/sdk.mdx",
   pageRecords: records.filter((record) => record.source.id === "typescript-sdk" || record.source.id === "php-sdk"),
@@ -342,6 +345,7 @@ renderPage({
 
 renderPage({
   title: "MCP Changelog",
+  icon: "robot",
   description: "Release history for the NeuronSearchLab MCP server.",
   outputPath: "changelog/mcp.mdx",
   pageRecords: records.filter((record) => record.source.id === "mcp"),
