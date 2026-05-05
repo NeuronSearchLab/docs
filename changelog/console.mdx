@@ -1,0 +1,60 @@
+---
+title: "Console Changelog"
+icon: "clock-rotate-left"
+description: "Generated release history for the NeuronSearchLab admin console."
+rss: true
+---
+
+Console-only changelog entries for platform UI, ranking operations, analytics, billing, and model lifecycle work.
+
+<Info>
+Generated on 2026-05-05 from 336 commits scanned across 1 repository, with 328 commits summarized as product changes. Coverage: 2026-03-14 to 2026-05-04.
+</Info>
+
+
+
+<Update label="May 2026" description="5 commits across Admin console" tags={["Admin console","Console"]} rss="May 2026: 5 commits across Admin console.">
+
+### Admin console
+
+Platform UI, tenant operations, ranking workflows, billing, analytics, and model lifecycle controls.
+
+- **Volume:** 5 commits
+- **Primary areas:** Catalog, users, and events (4 commits), Model lifecycle (1 commit)
+- **Representative changes:** [fix embeddings ordering](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/f177104ade7d81086015433f0c14ddbe50d47890); [Fix catalog intelligence build target](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/c63c9b1fa61c70a54c6d24fad79db7c7bdf62298); [Add context catalog intelligence](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/eed83cffd81fe41ad8ae6d8e71784017a66f18f8); [Polish user event history and trim item slideover](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/ffa47fce8dd40cfa855d928bf844d7cc82d6f20a); [Fix explore/users tables, simplify users columns, refine event timeline](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/5ac74d764b2a8ac9761c897bfd4c061a057f9cbc).
+
+</Update>
+
+<Update label="April 2026" description="176 commits across Admin console" tags={["Admin console","Console"]} rss="April 2026: 176 commits across Admin console.">
+
+### Admin console
+
+Platform UI, tenant operations, ranking workflows, billing, analytics, and model lifecycle controls.
+
+- **Volume:** 176 commits
+- **Primary areas:** Ranking controls (48 commits), Model lifecycle (41 commits), Platform foundation (20 commits), Reliability and CI (18 commits)
+- **Representative changes:** [Fix public API contract](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/ff2834f4cdf6a3139b975191575da748760035a2); [Fix recommendation Lambda build](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/9197f73b24a680275325148cf2d4d925b3b46abb); [Add item-level recommendation explanations](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/a076b1c579eaaa4bab92aedc43f00c473aae790a); [Batch item embeddings and backfill comments](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/9dd7e441f95d580514bcbce06a39c55b9b159486); [Support shorthand recommendation filters](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/72c2ecb87aaefe6ae1429ef549c622b6b72464f2).
+
+</Update>
+
+<Update label="March 2026" description="147 commits across Admin console" tags={["Admin console","Console"]} rss="March 2026: 147 commits across Admin console.">
+
+### Admin console
+
+Platform UI, tenant operations, ranking workflows, billing, analytics, and model lifecycle controls.
+
+- **Volume:** 147 commits
+- **Primary areas:** Access and billing (38 commits), Platform foundation (29 commits), Reliability and CI (27 commits), Catalog, users, and events (23 commits)
+- **Representative changes:** [Add ranking platform workstreams: Rules Engine, Pipeline Builder, Segmentation, A/B Testing, Explainability](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/13d03e40bc1f1e950f5c4363f6d56f752bbfc33d); [Port Laravel training jobs table design + add SSE log streaming](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/e80a7cb4f7bfbdb516d9c3d77456181351ff79f2); [Remove Start Training button from training-jobs page; fix infra tsconfig exclusion](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/2ebdbe6f9205048f825c9eacc9fe62c034412647); [Exclude infra tests from vitest](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/667e16476708beea4e07e0fcea6661f525439460); [Add infra directory from Laravel app](https://github.com/NeuronSearchLab/nsl_admin_console_next/commit/e344bd55bfd32330b632675b5f4c3e2cfe4bf3bb).
+
+</Update>
+
+## Automation
+
+The changelog is refreshed by `.github/workflows/changelog.yml` every Monday at 07:24 UTC and can also be regenerated manually with:
+
+```bash
+node scripts/generate-changelog.mjs
+```
+
+Override the default sibling repository paths with `NSL_CONSOLE_REPO`, `NSL_TYPESCRIPT_SDK_REPO`, `NSL_PHP_SDK_REPO`, or `NSL_MCP_REPO`.

@@ -59,4 +59,4 @@ jobs:
         with:
           repository: docs
           commit_message: "docs: refresh changelog"
-          file_pattern: "changelog.mdx"
+          file_pattern: "changelog.mdx changelog/*.mdx"
