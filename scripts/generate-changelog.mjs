@@ -243,7 +243,7 @@ function updateEntry(group) {
     .map((source) => sourceLine(source, group.records.filter((record) => record.source.id === source.id)))
     .join("\n\n");
 
-  return `<Update label="${dateLabel(group.key)}" description="${descriptionSources}" rss="${mdEscape(rss)}">
+  return `<Update label="${dateLabel(group.key)}" rss="${mdEscape(rss)}">
 
 ${body}
 
