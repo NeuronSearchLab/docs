@@ -59,6 +59,7 @@
               "quickstart",
               "connect-your-data",
               "generate-recommendations",
+              "generate-search-results",
               "contexts",
               "authentication"
             ]
@@ -135,6 +136,10 @@
           {
             "group": "Recommendations",
             "pages": ["api-reference/endpoint/get-recommendations"]
+          },
+          {
+            "group": "Search",
+            "pages": ["api-reference/endpoint/search"]
           }
         ]
       },

@@ -1,0 +1,127 @@
+---
+title: 'Generate Search Results'
+icon: 'magnifying-glass'
+description: 'Run query-driven retrieval through the Core API search endpoint.'
+---
+
+Search lets your application send a free-text query and receive ranked catalog items through the same serving pipeline used for recommendations. It is a Core API feature for your product experience and uses the AWS API Gateway endpoint at `https://api.neuronsearchlab.com/v1/search`.
+
+<Info>
+Do not use the Platform API for end-user search. Platform API search endpoints are for console and admin workflows. Product search should call the Core API `/v1/search` endpoint from your backend with an OAuth token that includes `neuronsearchlab-api/read`.
+</Info>
+
+## When to use search
+
+Use search when the user supplies intent as text, such as a product search box, content discovery query, or support article lookup. The service embeds the query, retrieves matching candidates, applies context filters and pipeline stages, and returns the same recommendation item shape your rendering code already handles.
+
+Recommendations start from a user or item embedding. Search starts from the query text.
+
+## Call the REST API
+
+```bash
+curl -X POST "https://api.neuronsearchlab.com/v1/search" \
+  -H "Authorization: Bearer <access_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "waterproof trail shoes",
+    "user_id": "user-123",
+    "context_id": "101",
+    "limit": "10",
+    "filter": ["category:footwear"]
+  }'
+```
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `query` | string | yes | Free-text search query. |
+| `user_id` | string | no | End-user identifier for telemetry, personalization context, and event attribution. |
+| `context_id` | string | no | Numeric console context ID. Legacy `ctx_` aliases are accepted. |
+| `limit` | string | no | Number of results to return. Defaults to `20`, maximum `100`. |
+| `filter` | string or string[] | no | Metadata filter shorthand such as `category:footwear`. |
+| `scope` | string | no | JSON-encoded structured filters, for example `{"filters":[{"column":"brand","operator":"=","value":"Acme"}]}`. |
+
+Advanced hybrid retrieval options are also accepted: `query_retrieval_enabled`, `fusion_method`, `semantic_weight`, `keyword_weight`, and `keyword_fields`. In most integrations these should be set in the active pipeline, not per request.
+
+## Use the JavaScript SDK
+
+```ts
+const results = await sdk.search({
+  query: "waterproof trail shoes",
+  userId: "user-123",
+  contextId: "101",
+  limit: 10,
+  filter: ["category:footwear"],
+});
+
+console.log(results.data);
+```
+
+The JavaScript SDK posts to `/v1/search` and captures the returned `request_id` for subsequent `trackEvent()` calls.
+
+## Use the PHP SDK
+
+```php
+$results = $sdk->search([
+    'query' => 'waterproof trail shoes',
+    'userId' => 'user-123',
+    'contextId' => '101',
+    'limit' => 10,
+    'filter' => ['category:footwear'],
+]);
+
+var_dump($results['data']);
+```
+
+The PHP SDK uses the same Core API endpoint and mirrors the request ID propagation behavior.
+
+## Response shape
+
+Search responses use the standard list envelope:
+
+```json
+{
+  "object": "list",
+  "message": "Search results fetched",
+  "request_id": "66666666-6666-4666-8666-666666666666",
+  "url": "/v1/search",
+  "query": "waterproof trail shoes",
+  "data": [
+    {
+      "id": "rec_itm_7f3a2c9e",
+      "object": "recommendation",
+      "item_id": "itm_7f3a2c9e",
+      "rank": 1,
+      "score": 0.94,
+      "item": {
+        "id": "itm_7f3a2c9e",
+        "object": "item",
+        "name": "Waterproof Trail Shoes",
+        "description": "Lightweight trail shoes with a waterproof upper.",
+        "metadata": {
+          "category": "footwear"
+        }
+      }
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "rec_itm_7f3a2c9e",
+      "object": "recommendation",
+      "item_id": "itm_7f3a2c9e",
+      "rank": 1,
+      "score": 0.94
+    }
+  ],
+  "has_more": false,
+  "next_cursor": null,
+  "limit": 10
+}
+```
+
+Each item includes explanation metadata when available. The request-level explanation shows whether semantic, keyword, or hybrid search candidates were used.
+
+## Measure search engagement
+
+Use the returned `request_id` when sending click, view, add-to-cart, or conversion events. The official SDKs handle this automatically after `search()`. If you call REST directly, include `request_id` in your event payload so analytics can attribute engagement to the search result set.
+
+See the [search endpoint reference](/api-reference/endpoint/search) for the full contract.

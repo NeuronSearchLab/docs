@@ -64,6 +64,24 @@ console.log(result.recommendations);
 
 Each recommendation includes `id`, `object`, `item_id`, `rank`, `score`, and an embedded `item` object with the metadata you stored. The response also includes a `request_id` for event attribution.
 
+## Search
+
+Use `search` when the user supplies a free-text query and you want ranked catalog items back through the Core API data plane:
+
+```ts
+const results = await sdk.search({
+  query: "waterproof trail shoes",
+  userId: "user-123",
+  contextId: "101",
+  limit: 10,
+  filter: ["category:footwear"],
+});
+
+console.log(results.data);
+```
+
+The SDK posts to `https://api.neuronsearchlab.com/v1/search`, not the console Platform API. Search responses use the same item shape as recommendations and include `query`, `request_id`, `data`, and `recommendations`.
+
 ### Auto-generated sections
 
 Use `getAutoRecommendations` for paginated, auto-titled recommendation sections — ideal for infinite-scroll feeds:
@@ -126,7 +144,7 @@ await sdk.flushEvents();
 
 ### Request ID propagation
 
-When `propagateRecommendationRequestId` is enabled (the default), the SDK captures the `request_id` from `getRecommendations()` and automatically attaches it to subsequent `trackEvent()` calls. This links events back to the recommendation request that produced them.
+When `propagateRecommendationRequestId` is enabled (the default), the SDK captures the `request_id` from `getRecommendations()` or `search()` and automatically attaches it to subsequent `trackEvent()` calls. This links events back to the result set that produced them.
 
 ```ts
 const recs = await sdk.getRecommendations({ userId: "user-123", limit: 5 });
