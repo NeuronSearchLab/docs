@@ -1,0 +1,101 @@
+---
+title: "Search"
+description: "Run query-driven retrieval through the Core API."
+openapi: "POST /v1/search"
+---
+
+## Description
+
+Returns ranked catalog items for a free-text query. Search uses the Core API data plane at `https://api.neuronsearchlab.com/v1/search`; it is not a Platform API or console search endpoint.
+
+The search request embeds `query`, retrieves candidates, applies context filters and pipeline configuration, and returns the same recommendation item shape as `GET /v1/recommendations`.
+
+## Request
+
+```http
+POST /v1/search
+Content-Type: application/json
+Authorization: Bearer <access_token>
+```
+
+```json
+{
+  "query": "waterproof trail shoes",
+  "user_id": "usr_abc123",
+  "context_id": "101",
+  "limit": "10",
+  "filter": ["category:footwear"]
+}
+```
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `query` | string | yes | Free-text query to embed and retrieve against. |
+| `user_id` | string | no | End-user identifier for telemetry, personalization context, and attribution. |
+| `context_id` | string | no | Numeric console context ID. Legacy `ctx_` aliases such as `ctx_101` are accepted. |
+| `context_key` | string | no | Context lookup key alias when your integration uses keys instead of numeric IDs. |
+| `limit` | string | no | Number of results to return. Defaults to `20`, maximum `100`. |
+| `filter` | string or string[] | no | Metadata filter shorthand. Repeat to combine filters. |
+| `scope` | string | no | JSON-encoded structured request scope, currently honoring `filters`. |
+| `query_retrieval_enabled` | string | no | Per-request override for query retrieval. Prefer configuring this in the active pipeline. |
+| `fusion_method` | string | no | `rrf` or `weighted` for semantic/keyword fusion. |
+| `semantic_weight` | string | no | Semantic retrieval weight when `fusion_method` is `weighted`. |
+| `keyword_weight` | string | no | Keyword retrieval weight when query retrieval is enabled. |
+| `keyword_fields` | string | no | Comma-separated metadata fields for keyword matching. |
+
+## Response
+
+```json
+{
+  "object": "list",
+  "message": "Search results fetched",
+  "request_id": "66666666-6666-4666-8666-666666666666",
+  "url": "/v1/search",
+  "query": "waterproof trail shoes",
+  "data": [
+    {
+      "id": "rec_itm_7f3a2c9e",
+      "object": "recommendation",
+      "item_id": "itm_7f3a2c9e",
+      "rank": 1,
+      "score": 0.94,
+      "item": {
+        "id": "itm_7f3a2c9e",
+        "object": "item",
+        "name": "Waterproof Trail Shoes",
+        "description": "Lightweight trail shoes with a waterproof upper.",
+        "metadata": {
+          "category": "footwear"
+        }
+      }
+    }
+  ],
+  "has_more": false,
+  "next_cursor": null,
+  "limit": 10,
+  "recommendations": [
+    {
+      "id": "rec_itm_7f3a2c9e",
+      "object": "recommendation",
+      "item_id": "itm_7f3a2c9e",
+      "rank": 1,
+      "score": 0.94
+    }
+  ],
+  "processing_time_ms": 182
+}
+```
+
+For backwards-compatible rendering code, the response also includes `recommendations` with the same result array as `data`. Responses may include `embedding_info`, request-level `explanation`, and per-item `explanation` fields.
+
+Use the returned `request_id` in downstream events to attribute engagement to the search result set. The official JavaScript and PHP SDKs capture it automatically after `search()`.
+
+## Errors
+
+| Status | Scenario |
+| --- | --- |
+| `400` | Validation failed or malformed filters |
+| `401` | Missing/invalid access token or tenant resolution failed |
+| `403` | Token does not include `neuronsearchlab-api/read` |
+| `422` | Search query embedding is unavailable for the team |
+| `500` | Unexpected search, database, or model-serving failure |

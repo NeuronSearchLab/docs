@@ -3,7 +3,7 @@ title: "Core API Overview"
 description: "Integrate with the NeuronSearchLab Core API."
 ---
 
-The NeuronSearchLab Core API is the data-plane surface for catalog ingestion, event ingestion, and recommendation serving.
+The NeuronSearchLab Core API is the data-plane surface for catalog ingestion, event ingestion, recommendation serving, and query-driven search.
 
 <Info>
 Use this API when your application backend needs to create catalog items, submit user events, or fetch recommendations for your app experience. If you are looking to automate console data, tenant configuration, training, analytics, billing, or other control-plane workflows, use the [Platform API](/api-reference/platform-api/introduction) instead.
@@ -14,7 +14,7 @@ Use this API when your application backend needs to create catalog items, submit
 ```mermaid
 flowchart LR
   endUser["End user\nBrowser or mobile app"] --> appBackend["Your application backend\nServer-side only"]
-  appBackend --> coreApi["Core API\nRecommendations, catalog items, events"]
+  appBackend --> coreApi["Core API\nRecommendations, search, catalog items, events"]
 
   operator["Operator or internal system"] --> console["NeuronSearchLab console\nAdmin workflows"]
   operator --> internalTool["Internal automation\nServer-side tools"]
@@ -131,5 +131,6 @@ Common statuses are `400` for invalid requests, `401` for missing or invalid cre
 | `GET` | `/v1/events` | `neuronsearchlab-api/read` |
 | `GET` | `/v1/events/{event_id}` | `neuronsearchlab-api/read` |
 | `GET` | `/v1/recommendations` | `neuronsearchlab-api/read` |
+| `POST` | `/v1/search` | `neuronsearchlab-api/read` |
 
 Each endpoint supports `OPTIONS` preflight with standard CORS headers.

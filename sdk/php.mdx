@@ -69,6 +69,24 @@ var_dump($result['recommendations']);
 
 Each recommendation includes `id`, `object`, `item_id`, `rank`, `score`, and an embedded `item` object with the metadata you stored. The response also includes a `request_id` for event attribution.
 
+## Search
+
+Use `search` when the user supplies a free-text query and you want ranked catalog items back through the Core API data plane:
+
+```php
+$results = $sdk->search([
+    'query' => 'waterproof trail shoes',
+    'userId' => 'user-123',
+    'contextId' => '101',
+    'limit' => 10,
+    'filter' => ['category:footwear'],
+]);
+
+var_dump($results['data']);
+```
+
+The SDK posts to `https://api.neuronsearchlab.com/v1/search`, not the console Platform API. Search responses use the same item shape as recommendations and include `query`, `request_id`, `data`, and `recommendations`.
+
 ### Auto-generated sections
 
 Use `getAutoRecommendations` for paginated, auto-titled recommendation sections:
@@ -136,7 +154,7 @@ $sdk->flushEvents();
 
 ### Request ID propagation
 
-When `propagateRecommendationRequestId` is enabled, the SDK captures the `request_id` from `getRecommendations()` and automatically attaches it to subsequent `trackEvent()` calls unless you explicitly provide `requestId` or `request_id`.
+When `propagateRecommendationRequestId` is enabled, the SDK captures the `request_id` from `getRecommendations()` or `search()` and automatically attaches it to subsequent `trackEvent()` calls unless you explicitly provide `requestId` or `request_id`.
 
 ```php
 $recs = $sdk->getRecommendations([

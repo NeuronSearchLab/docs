@@ -66,6 +66,15 @@ curl -X GET "https://api.neuronsearchlab.com/v1/recommendations?user_id=user-123
 
 Send optional query parameters such as `limit`, `filter`, or `scope` to tailor the response. Responses include ranked items with associated metadata so you can render UI components quickly.
 
+For query-driven product search, call the Core API search endpoint from the same backend boundary:
+
+```bash
+curl -X POST "https://api.neuronsearchlab.com/v1/search" \
+  -H "Authorization: Bearer <your_access_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"query":"waterproof trail shoes","user_id":"user-123","context_id":"101","limit":"10"}'
+```
+
 If you prefer higher level abstractions, use one of the official SDKs from your backend:
 
 - JavaScript/TypeScript: [`@neuronsearchlab/sdk` on npm](https://www.npmjs.com/package/@neuronsearchlab/sdk)
@@ -155,5 +164,9 @@ NeuronSearchLab supports rich documentation and examples to help you integrate q
 
   <Card title="Get Recommendations" icon="sparkles" href="/api-reference/endpoint/get-recommendations">
     Retrieve personalized results that respect context filters and ranking rules.
+  </Card>
+
+  <Card title="Search" icon="magnifying-glass" href="/generate-search-results">
+    Run query-driven retrieval through the Core API search endpoint.
   </Card>
 </CardGroup>
