@@ -4,7 +4,7 @@ icon: 'magnifying-glass'
 description: 'Run query-driven retrieval through the Core API search endpoint.'
 ---
 
-Search lets your application send a free-text query and receive ranked catalog items through the same serving pipeline used for recommendations. It is a Core API feature for your product experience and uses the AWS API Gateway endpoint at `https://api.neuronsearchlab.com/v1/search`.
+Search lets your application send a free-text query and receive ranked catalog items through the same serving pipeline used for recommendations. It is a Core API data-plane feature for your product experience and uses the AWS API Gateway endpoint at `https://api.neuronsearchlab.com/v1/search`.
 
 <Info>
 Do not use the Platform API for end-user search. Platform API search endpoints are for console and admin workflows. Product search should call the Core API `/v1/search` endpoint from your backend with an OAuth token that includes `neuronsearchlab-api/read`.
