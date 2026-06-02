@@ -179,7 +179,7 @@ A recommendation item explanation is expected to include:
 
 ```json
 {
-  "item_id": "itm_example",
+  "item_id": "example",
   "rank": 1,
   "source": "model",
   "score": {

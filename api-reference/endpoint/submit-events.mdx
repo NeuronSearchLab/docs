@@ -18,8 +18,8 @@ POST /v1/events
 
 ```json
 {
-  "user_id": "usr_abc123",
-  "item_id": "itm_7f3a2c9e",
+  "user_id": "user-abc123",
+  "item_id": "7f3a2c9e",
   "context_id": "101",
   "type": "purchase",
   "occurred_at": 1777478400,
@@ -36,7 +36,7 @@ POST /v1/events
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `user_id` | string | yes | End-user identifier. |
-| `item_id` | string | yes | Prefixed item ID such as `itm_7f3a2c9e`. |
+| `item_id` | string | yes | Item ID such as `7f3a2c9e`. |
 | `context_id` | string | no | Optional context identifier for analytics and attribution. Use the same context ID convention as your recommendation request, for example `101`. |
 | `type` | string | yes | Event type configured in the console. |
 | `session_id` | string | no | Session identifier for attribution and analytics. |
@@ -55,10 +55,10 @@ Legacy aliases `userId`, `itemId`, `eventType`, `event_type`, `eventId`, `event_
   "object": "list",
   "data": [
     {
-      "id": "evt_12345",
+      "id": "12345",
       "object": "event",
-      "user_id": "usr_abc123",
-      "item_id": "itm_7f3a2c9e",
+      "user_id": "user-abc123",
+      "item_id": "7f3a2c9e",
       "type": "purchase",
       "purchase": {
         "amount": 4999,

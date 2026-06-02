@@ -29,7 +29,7 @@ curl -X POST https://api.neuronsearchlab.com/v1/items \
   -H "Authorization: Bearer <access_token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "id": "itm_7f3a2c9e",
+    "id": "7f3a2c9e",
     "name": "Nike Running Shoes",
     "description": "High-performance running shoes.",
     "metadata": { "category": "Footwear", "brand": "Nike", "price": 109.99 }
@@ -43,9 +43,9 @@ curl -X POST https://api.neuronsearchlab.com/v1/events \
   -H "Authorization: Bearer <access_token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "user_id": "usr_456",
+    "user_id": "user-456",
     "type": "click",
-    "item_id": "itm_7f3a2c9e",
+    "item_id": "7f3a2c9e",
     "context_id": "101",
     "occurred_at": 1777478400,
     "click": {}

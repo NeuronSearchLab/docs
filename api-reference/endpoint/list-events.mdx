@@ -7,13 +7,13 @@ openapi: "GET /v1/events"
 ## Request
 
 ```http
-GET /v1/events?user_id=usr_abc123&type=click&limit=50
+GET /v1/events?user_id=user-abc123&type=click&limit=50
 ```
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
 | `limit` | integer | no | Number of events to return. Defaults to `20`, maximum `100`. |
-| `starting_after` | string | no | Event ID cursor such as `evt_12345`. |
+| `starting_after` | string | no | Event ID cursor such as `12345`. |
 | `user_id` | string | no | Filters to events for one user. |
 | `type` | string | no | Filters to one event type. |
 
@@ -24,10 +24,10 @@ GET /v1/events?user_id=usr_abc123&type=click&limit=50
   "object": "list",
   "data": [
     {
-      "id": "evt_12345",
+      "id": "12345",
       "object": "event",
-      "user_id": "usr_abc123",
-      "item_id": "itm_7f3a2c9e",
+      "user_id": "user-abc123",
+      "item_id": "7f3a2c9e",
       "type": "click",
       "click": {},
       "session_id": null,
@@ -43,7 +43,7 @@ GET /v1/events?user_id=usr_abc123&type=click&limit=50
     }
   ],
   "has_more": true,
-  "next_cursor": "evt_12345",
+  "next_cursor": "12345",
   "url": "/v1/events"
 }
 ```

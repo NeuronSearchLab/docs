@@ -30,7 +30,7 @@ curl -X GET "https://api.neuronsearchlab.com/v1/recommendations" \
 Requests may also provide the same fields in a JSON body instead of the query string. The service merges both sources before validation with the following schema:
 
 - `user_id` (optional): identifier for the end user. If omitted, the `sub` claim from the access token is used.
-- `context_id` (optional): numeric console context ID. `ctx_` aliases such as `ctx_101` are accepted for backwards compatibility.
+- `context_id` (optional): numeric console context ID.
 - `limit` (optional): number of results to return. Defaults to `20` and is capped at `100`.
 - `entity_type`, `name`, `description` (optional): override attributes saved with the user embedding. `entity_type` must be either `User` or `Item`.
 

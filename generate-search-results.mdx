@@ -35,7 +35,7 @@ curl -X POST "https://api.neuronsearchlab.com/v1/search" \
 | --- | --- | --- | --- |
 | `query` | string | yes | Free-text search query. |
 | `user_id` | string | no | End-user identifier for telemetry, personalization context, and event attribution. |
-| `context_id` | string | no | Numeric console context ID. Legacy `ctx_` aliases are accepted. |
+| `context_id` | string | no | Numeric console context ID. |
 | `limit` | string | no | Number of results to return. Defaults to `20`, maximum `100`. |
 | `filter` | string or string[] | no | Metadata filter shorthand such as `category:footwear`. |
 | `scope` | string | no | JSON-encoded structured filters, for example `{"filters":[{"column":"brand","operator":"=","value":"Acme"}]}`. |
@@ -87,13 +87,13 @@ Search responses use the standard list envelope:
   "query": "waterproof trail shoes",
   "data": [
     {
-      "id": "rec_itm_7f3a2c9e",
+      "id": "7f3a2c9e",
       "object": "recommendation",
-      "item_id": "itm_7f3a2c9e",
+      "item_id": "7f3a2c9e",
       "rank": 1,
       "score": 0.94,
       "item": {
-        "id": "itm_7f3a2c9e",
+        "id": "7f3a2c9e",
         "object": "item",
         "name": "Waterproof Trail Shoes",
         "description": "Lightweight trail shoes with a waterproof upper.",
@@ -105,9 +105,9 @@ Search responses use the standard list envelope:
   ],
   "recommendations": [
     {
-      "id": "rec_itm_7f3a2c9e",
+      "id": "7f3a2c9e",
       "object": "recommendation",
-      "item_id": "itm_7f3a2c9e",
+      "item_id": "7f3a2c9e",
       "rank": 1,
       "score": 0.94
     }

@@ -18,13 +18,13 @@ These walkthroughs show how the ranking platform features work together to solve
 
     - Condition field: `entity_id`
     - Operator: `equals`
-    - Value: `itm_school_closures_live`
+    - Value: `school-closures-live`
     - Action: pin the item to position `2`
     - Scope: homepage context
     - Status: active
   </Step>
   <Step title="Verify with Explainability">
-    Open **Console > Explainability**, enter a reader ID and the item ID `itm_school_closures_live`, then click **Explain**.
+    Open **Console > Explainability**, enter a reader ID and the item ID `school-closures-live`, then click **Explain**.
 
     **Pass condition:** Explainability shows the rule `Pin school closures guide to slot 2` matched the item.
   </Step>
@@ -48,7 +48,7 @@ This scenario is a good operational test because only one valid result exists. I
     **Segment: "Hasn't watched Series X"**
 
     - Type: `item_interaction`
-    - Item ID: the series item ID, for example `itm_series_x_ep1`
+    - Item ID: the series item ID, for example `series-x-ep1`
     - Operator: `interactions <`
     - Value: `1`
     - Name: "Hasn't watched Series X"

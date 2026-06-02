@@ -200,7 +200,7 @@
       "post": {
         "operationId": "createItems",
         "summary": "Create items",
-        "description": "Create one or more catalog items. When `id` is omitted, the API generates an `itm_` prefixed ID. Single-item requests return an item; array requests return a list envelope.",
+        "description": "Create one or more catalog items. When `id` is omitted, the API generates an opaque ID. Single-item requests return an item; array requests return a list envelope.",
         "tags": [
           "Items"
         ],
@@ -294,7 +294,7 @@
       "get": {
         "operationId": "retrieveItem",
         "summary": "Retrieve item",
-        "description": "Retrieve one catalog item by its public `itm_` ID.",
+        "description": "Retrieve one catalog item by its item ID.",
         "tags": [
           "Items"
         ],
@@ -480,7 +480,7 @@
       "delete": {
         "operationId": "deleteItem",
         "summary": "Delete item",
-        "description": "Delete a catalog item by its public `itm_` ID. The operation is idempotent at the response level and returns `deletedCount: 0` when no item matched.",
+        "description": "Delete a catalog item by its item ID. The operation is idempotent at the response level and returns `deletedCount: 0` when no item matched.",
         "tags": [
           "Items"
         ],
@@ -578,7 +578,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "usr_abc123"
+            "example": "user-abc123"
           },
           {
             "name": "type",
@@ -704,7 +704,7 @@
       "get": {
         "operationId": "retrieveEvent",
         "summary": "Retrieve event",
-        "description": "Retrieve one ingested event by its public `evt_` ID.",
+        "description": "Retrieve one ingested event by its event ID.",
         "tags": [
           "Events"
         ],
@@ -848,12 +848,12 @@
             "schema": {
               "type": "string"
             },
-            "example": "usr_abc123"
+            "example": "user-abc123"
           },
           {
             "name": "context_id",
             "in": "query",
-            "description": "Numeric console context ID. Legacy ctx_ aliases such as ctx_101 are also accepted.",
+            "description": "Numeric console context ID.",
             "schema": {
               "type": "string"
             },
@@ -880,7 +880,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "rec_itm_7f3a2c9e"
+            "example": "7f3a2c9e"
           },
           {
             "name": "entity_type",
@@ -1200,7 +1200,7 @@
                   "summary": "Search footwear",
                   "value": {
                     "query": "waterproof trail shoes",
-                    "user_id": "usr_abc123",
+                    "user_id": "user-abc123",
                     "context_id": "101",
                     "limit": "10",
                     "filter": [
@@ -1328,9 +1328,9 @@
         "description": "Cursor from a previous item list response.",
         "schema": {
           "type": "string",
-          "pattern": "^itm_[A-Za-z0-9][A-Za-z0-9_-]{2,}$"
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
         },
-        "example": "itm_7f3a2c9e"
+        "example": "7f3a2c9e"
       },
       "EventStartingAfter": {
         "name": "starting_after",
@@ -1338,9 +1338,9 @@
         "description": "Cursor from a previous event list response.",
         "schema": {
           "type": "string",
-          "pattern": "^evt_[1-9][0-9]*$"
+          "pattern": "^[1-9][0-9]*$"
         },
-        "example": "evt_12345"
+        "example": "12345"
       },
       "ItemId": {
         "name": "item_id",
@@ -1349,9 +1349,9 @@
         "description": "Public item ID.",
         "schema": {
           "type": "string",
-          "pattern": "^itm_[A-Za-z0-9][A-Za-z0-9_-]{2,}$"
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
         },
-        "example": "itm_7f3a2c9e"
+        "example": "7f3a2c9e"
       },
       "EventId": {
         "name": "event_id",
@@ -1360,9 +1360,9 @@
         "description": "Public event ID.",
         "schema": {
           "type": "string",
-          "pattern": "^evt_[1-9][0-9]*$"
+          "pattern": "^[1-9][0-9]*$"
         },
-        "example": "evt_12345"
+        "example": "12345"
       }
     },
     "responses": {
@@ -1582,18 +1582,18 @@
           "id": {
             "type": "string",
             "description": "Optional public item ID. If omitted, the API generates one.",
-            "pattern": "^itm_[A-Za-z0-9][A-Za-z0-9_-]{2,}$",
-            "example": "itm_7f3a2c9e"
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+            "example": "7f3a2c9e"
           },
           "item_id": {
             "type": "string",
             "description": "Snake-case alias for `id`.",
-            "pattern": "^itm_[A-Za-z0-9][A-Za-z0-9_-]{2,}$"
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
           },
           "itemId": {
             "type": "string",
             "description": "CamelCase alias for `id`.",
-            "pattern": "^itm_[A-Za-z0-9][A-Za-z0-9_-]{2,}$"
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
           },
           "name": {
             "type": "string",
@@ -1647,8 +1647,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^itm_[A-Za-z0-9][A-Za-z0-9_-]{2,}$",
-            "example": "itm_7f3a2c9e"
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+            "example": "7f3a2c9e"
           },
           "object": {
             "type": "string",
@@ -1720,8 +1720,8 @@
           },
           "itemId": {
             "type": "string",
-            "pattern": "^itm_[A-Za-z0-9][A-Za-z0-9_-]{2,}$",
-            "example": "itm_7f3a2c9e"
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+            "example": "7f3a2c9e"
           },
           "deletedCount": {
             "type": "integer",
@@ -1757,7 +1757,7 @@
           "user_id": {
             "type": "string",
             "description": "End-user identifier.",
-            "example": "usr_abc123"
+            "example": "user-abc123"
           },
           "userId": {
             "type": "string",
@@ -1766,13 +1766,13 @@
           "item_id": {
             "type": "string",
             "description": "Public item ID.",
-            "pattern": "^itm_[A-Za-z0-9][A-Za-z0-9_-]{2,}$",
-            "example": "itm_7f3a2c9e"
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+            "example": "7f3a2c9e"
           },
           "itemId": {
             "type": "string",
             "description": "CamelCase alias for `item_id`.",
-            "pattern": "^itm_[A-Za-z0-9][A-Za-z0-9_-]{2,}$"
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
           },
           "type": {
             "type": "string",
@@ -1914,8 +1914,8 @@
         },
         "additionalProperties": true,
         "example": {
-          "user_id": "usr_abc123",
-          "item_id": "itm_7f3a2c9e",
+          "user_id": "user-abc123",
+          "item_id": "7f3a2c9e",
           "context_id": "101",
           "type": "purchase",
           "occurred_at": 1777478400,
@@ -1943,8 +1943,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^evt_[1-9][0-9]*$",
-            "example": "evt_12345"
+            "pattern": "^[1-9][0-9]*$",
+            "example": "12345"
           },
           "object": {
             "type": "string",
@@ -1954,11 +1954,11 @@
           },
           "user_id": {
             "type": "string",
-            "example": "usr_abc123"
+            "example": "user-abc123"
           },
           "item_id": {
             "type": "string",
-            "example": "itm_7f3a2c9e"
+            "example": "7f3a2c9e"
           },
           "type": {
             "type": "string",
@@ -2104,7 +2104,7 @@
           "id": {
             "type": "string",
             "pattern": "^rec_",
-            "example": "rec_itm_7f3a2c9e"
+            "example": "7f3a2c9e"
           },
           "object": {
             "type": "string",
@@ -2114,12 +2114,12 @@
           },
           "item_id": {
             "type": "string",
-            "example": "itm_7f3a2c9e"
+            "example": "7f3a2c9e"
           },
           "entity_id": {
             "type": "string",
             "description": "Raw item entity ID from the candidate source.",
-            "example": "itm_7f3a2c9e"
+            "example": "7f3a2c9e"
           },
           "rank": {
             "type": "integer",
@@ -2197,7 +2197,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "example": "itm_7f3a2c9e"
+            "example": "7f3a2c9e"
           },
           "object": {
             "type": "string",
@@ -2819,11 +2819,11 @@
           "user_id": {
             "type": "string",
             "description": "End-user identifier for telemetry, personalization context, and attribution.",
-            "example": "usr_abc123"
+            "example": "user-abc123"
           },
           "context_id": {
             "type": "string",
-            "description": "Numeric console context ID. Legacy ctx_ aliases such as ctx_101 are also accepted.",
+            "description": "Numeric console context ID.",
             "example": "101"
           },
           "context_key": {
@@ -2975,7 +2975,7 @@
       "ItemCreate": {
         "summary": "Create one item",
         "value": {
-          "id": "itm_7f3a2c9e",
+          "id": "7f3a2c9e",
           "name": "Wireless Headphones",
           "description": "Noise-cancelling Bluetooth headphones.",
           "metadata": {
@@ -2990,7 +2990,7 @@
         "summary": "Create multiple items",
         "value": [
           {
-            "id": "itm_7f3a2c9e",
+            "id": "7f3a2c9e",
             "name": "Wireless Headphones",
             "metadata": {
               "category": "electronics"
@@ -3018,7 +3018,7 @@
       "Item": {
         "summary": "Item",
         "value": {
-          "id": "itm_7f3a2c9e",
+          "id": "7f3a2c9e",
           "object": "item",
           "name": "Wireless Headphones",
           "description": "Noise-cancelling Bluetooth headphones.",
@@ -3037,7 +3037,7 @@
           "object": "list",
           "data": [
             {
-              "id": "itm_7f3a2c9e",
+              "id": "7f3a2c9e",
               "object": "item",
               "name": "Wireless Headphones",
               "description": "Noise-cancelling Bluetooth headphones.",
@@ -3058,7 +3058,7 @@
         "summary": "Deleted item",
         "value": {
           "message": "Item deleted successfully",
-          "itemId": "itm_7f3a2c9e",
+          "itemId": "7f3a2c9e",
           "deletedCount": 1,
           "processing_time_ms": 42
         }
@@ -3066,8 +3066,8 @@
       "EventCreate": {
         "summary": "Submit one event",
         "value": {
-          "user_id": "usr_abc123",
-          "item_id": "itm_7f3a2c9e",
+          "user_id": "user-abc123",
+          "item_id": "7f3a2c9e",
           "context_id": "101",
           "type": "purchase",
           "request_id": "c7f0d2bb-56b1-4ca7-8f09-84d8e4ed02b4",
@@ -3085,14 +3085,14 @@
         "summary": "Submit multiple events",
         "value": [
           {
-            "user_id": "usr_abc123",
-            "item_id": "itm_7f3a2c9e",
+            "user_id": "user-abc123",
+            "item_id": "7f3a2c9e",
             "type": "view",
             "occurred_at": 1777478400
           },
           {
-            "user_id": "usr_abc123",
-            "item_id": "itm_7f3a2c9e",
+            "user_id": "user-abc123",
+            "item_id": "7f3a2c9e",
             "type": "purchase",
             "purchase": {
               "amount": 4999,
@@ -3104,16 +3104,16 @@
       "Event": {
         "summary": "Event",
         "value": {
-          "id": "evt_12345",
+          "id": "12345",
           "object": "event",
-          "user_id": "usr_abc123",
-          "item_id": "itm_7f3a2c9e",
+          "user_id": "user-abc123",
+          "item_id": "7f3a2c9e",
           "type": "purchase",
           "purchase": {
             "amount": 4999,
             "currency": "usd"
           },
-          "session_id": "sess_4a93",
+          "session_id": "4a93",
           "request_id": "c7f0d2bb-56b1-4ca7-8f09-84d8e4ed02b4",
           "context_id": "101",
           "placement": "home_feed",
@@ -3134,10 +3134,10 @@
           "object": "list",
           "data": [
             {
-              "id": "evt_12345",
+              "id": "12345",
               "object": "event",
-              "user_id": "usr_abc123",
-              "item_id": "itm_7f3a2c9e",
+              "user_id": "user-abc123",
+              "item_id": "7f3a2c9e",
               "type": "click",
               "click": {},
               "session_id": null,
@@ -3153,7 +3153,7 @@
             }
           ],
           "has_more": true,
-          "next_cursor": "evt_12345",
+          "next_cursor": "12345",
           "url": "/v1/events"
         }
       },
@@ -3163,10 +3163,10 @@
           "object": "list",
           "data": [
             {
-              "id": "evt_12345",
+              "id": "12345",
               "object": "event",
-              "user_id": "usr_abc123",
-              "item_id": "itm_7f3a2c9e",
+              "user_id": "user-abc123",
+              "item_id": "7f3a2c9e",
               "type": "purchase",
               "purchase": {
                 "amount": 4999,
@@ -3213,13 +3213,13 @@
           "url": "/v1/recommendations",
           "data": [
             {
-              "id": "rec_itm_7f3a2c9e",
+              "id": "7f3a2c9e",
               "object": "recommendation",
-              "item_id": "itm_7f3a2c9e",
+              "item_id": "7f3a2c9e",
               "rank": 1,
               "score": 0.94,
               "item": {
-                "id": "itm_7f3a2c9e",
+                "id": "7f3a2c9e",
                 "object": "item",
                 "name": "Wireless Headphones",
                 "description": "Noise-cancelling Bluetooth headphones.",
@@ -3341,7 +3341,7 @@
             "message": "Item already exists",
             "details": {
               "item_ids": [
-                "itm_7f3a2c9e"
+                "7f3a2c9e"
               ]
             }
           }

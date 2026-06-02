@@ -57,7 +57,7 @@ Pass the event type when tracking actions via the SDK:
 await sdk.trackEvent({
   type: "click",
   userId: "user-123",
-  itemId: "itm_7f3a2c9e",
+  itemId: "7f3a2c9e",
   metadata: { placement: "homepage" },
 });
 ```
@@ -71,7 +71,7 @@ curl -X POST https://api.neuronsearchlab.com/v1/events \
   -d '[{
     "type": "click",
     "user_id": "user-123",
-    "item_id": "itm_7f3a2c9e",
+    "item_id": "7f3a2c9e",
     "context_id": "101",
     "occurred_at": 1777478400,
     "click": {}

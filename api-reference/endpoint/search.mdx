@@ -21,7 +21,7 @@ Authorization: Bearer <access_token>
 ```json
 {
   "query": "waterproof trail shoes",
-  "user_id": "usr_abc123",
+  "user_id": "user-abc123",
   "context_id": "101",
   "limit": "10",
   "filter": ["category:footwear"]
@@ -32,7 +32,7 @@ Authorization: Bearer <access_token>
 | --- | --- | --- | --- |
 | `query` | string | yes | Free-text query to embed and retrieve against. |
 | `user_id` | string | no | End-user identifier for telemetry, personalization context, and attribution. |
-| `context_id` | string | no | Numeric console context ID. Legacy `ctx_` aliases such as `ctx_101` are accepted. |
+| `context_id` | string | no | Numeric console context ID. |
 | `context_key` | string | no | Context lookup key alias when your integration uses keys instead of numeric IDs. |
 | `limit` | string | no | Number of results to return. Defaults to `20`, maximum `100`. |
 | `filter` | string or string[] | no | Metadata filter shorthand. Repeat to combine filters. |
@@ -54,13 +54,13 @@ Authorization: Bearer <access_token>
   "query": "waterproof trail shoes",
   "data": [
     {
-      "id": "rec_itm_7f3a2c9e",
+      "id": "7f3a2c9e",
       "object": "recommendation",
-      "item_id": "itm_7f3a2c9e",
+      "item_id": "7f3a2c9e",
       "rank": 1,
       "score": 0.94,
       "item": {
-        "id": "itm_7f3a2c9e",
+        "id": "7f3a2c9e",
         "object": "item",
         "name": "Waterproof Trail Shoes",
         "description": "Lightweight trail shoes with a waterproof upper.",
@@ -75,9 +75,9 @@ Authorization: Bearer <access_token>
   "limit": 10,
   "recommendations": [
     {
-      "id": "rec_itm_7f3a2c9e",
+      "id": "7f3a2c9e",
       "object": "recommendation",
-      "item_id": "itm_7f3a2c9e",
+      "item_id": "7f3a2c9e",
       "rank": 1,
       "score": 0.94
     }
