@@ -16,7 +16,7 @@ POST /v1/items
 
 ```json
 {
-  "id": "itm_7f3a2c9e",
+  "id": "7f3a2c9e",
   "name": "Wireless Headphones",
   "description": "Noise-cancelling Bluetooth headphones.",
   "metadata": {
@@ -28,11 +28,11 @@ POST /v1/items
 }
 ```
 
-`id` is optional. If omitted, NeuronSearchLab generates an `itm_` prefixed ID. The aliases `item_id` and `itemId` are also accepted, but only one ID field should be present.
+`id` is optional. If omitted, NeuronSearchLab generates an opaque ID. The aliases `item_id` and `itemId` are also accepted, but only one ID field should be present.
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `id` | string | no | Prefixed item ID such as `itm_7f3a2c9e`. |
+| `id` | string | no | Item ID such as `7f3a2c9e`. |
 | `name` | string | yes | Human-readable item name. |
 | `description` | string | no | Text used for embeddings and debugging. |
 | `metadata` | object | no | JSON object with filterable catalog attributes. |
@@ -43,7 +43,7 @@ You can also send an array of item objects to create multiple items in one call.
 
 ```json
 {
-  "id": "itm_7f3a2c9e",
+  "id": "7f3a2c9e",
   "object": "item",
   "name": "Wireless Headphones",
   "description": "Noise-cancelling Bluetooth headphones.",

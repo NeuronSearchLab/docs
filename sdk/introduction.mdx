@@ -115,7 +115,7 @@ Events provide the feedback loop that powers personalization. The SDK buffers ev
 await sdk.trackEvent({
   type: "click",
   userId: "user-123",
-  itemId: "itm_7f3a2c9e",
+  itemId: "7f3a2c9e",
 });
 ```
 
@@ -165,7 +165,7 @@ await sdk.trackEvent({
 
 ```ts
 await sdk.upsertItem({
-  itemId: "itm_7f3a2c9e",
+  itemId: "7f3a2c9e",
   name: "Nike Running Shoes",
   description: "High-performance running shoes for daily training.",
   metadata: { category: "Footwear", brand: "Nike", price: 109.99 },
@@ -178,7 +178,7 @@ The `description` field is used to generate embeddings for similarity matching.
 
 ```ts
 await sdk.patchItem({
-  itemId: "itm_7f3a2c9e",
+  itemId: "7f3a2c9e",
   active: false, // disable the item
 });
 ```
@@ -186,18 +186,18 @@ await sdk.patchItem({
 Or use the convenience helper:
 
 ```ts
-await sdk.setItemActive("itm_7f3a2c9e", false);
+await sdk.setItemActive("7f3a2c9e", false);
 ```
 
 ### Delete items
 
 ```ts
-await sdk.deleteItems({ itemId: "itm_7f3a2c9e" });
+await sdk.deleteItems({ itemId: "7f3a2c9e" });
 
 // Batch delete
 await sdk.deleteItems([
-  { itemId: "itm_7f3a2c9e" },
-  { itemId: "itm_a8d1b247" },
+  { itemId: "7f3a2c9e" },
+  { itemId: "a8d1b247" },
 ]);
 ```
 

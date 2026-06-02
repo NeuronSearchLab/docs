@@ -11,13 +11,13 @@ Returns ranked recommendation objects for a user or item. Pass `context_id` when
 ## Request
 
 ```http
-GET /v1/recommendations?user_id=usr_abc123&context_id=101&limit=10
+GET /v1/recommendations?user_id=user-abc123&context_id=101&limit=10
 ```
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
 | `user_id` | string | no | End-user identifier. Falls back to the token subject when omitted. |
-| `context_id` | string | no | Numeric console context ID such as `101`. Legacy `ctx_` aliases such as `ctx_101` are also accepted. |
+| `context_id` | string | no | Numeric console context ID such as `101`. |
 | `limit` | integer | no | Number of recommendations to return. Defaults to `20`, maximum `100`. |
 | `starting_after` | string | no | Cursor from the previous page. Accepts a recommendation ID or item ID. |
 | `entity_type` | string | no | `User` or `Item`. Defaults to `User`. |
@@ -45,13 +45,13 @@ GET /v1/recommendations?user_id=usr_abc123&context_id=101&limit=10
   "url": "/v1/recommendations",
   "data": [
     {
-      "id": "rec_itm_7f3a2c9e",
+      "id": "7f3a2c9e",
       "object": "recommendation",
-      "item_id": "itm_7f3a2c9e",
+      "item_id": "7f3a2c9e",
       "rank": 1,
       "score": 0.94,
       "item": {
-        "id": "itm_7f3a2c9e",
+        "id": "7f3a2c9e",
         "object": "item",
         "name": "Wireless Headphones",
         "description": "Noise-cancelling Bluetooth headphones.",

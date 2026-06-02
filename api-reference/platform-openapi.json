@@ -1233,7 +1233,7 @@
     "parameters": {
       "IdNum": { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } },
       "IdAny": { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } },
-      "ItemId": { "name": "itemId", "in": "path", "required": true, "schema": { "type": "string", "pattern": "^itm_" } },
+      "ItemId": { "name": "itemId", "in": "path", "required": true, "schema": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}" } },
       "JobName": { "name": "jobName", "in": "path", "required": true, "schema": { "type": "string" } }
     },
     "responses": {

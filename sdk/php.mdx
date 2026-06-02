@@ -116,7 +116,7 @@ Events provide the feedback loop that powers personalization. The PHP SDK buffer
 $sdk->trackEvent([
     'type' => 'click',
     'userId' => 'user-123',
-    'itemId' => 'itm_7f3a2c9e',
+    'itemId' => '7f3a2c9e',
 ])->wait();
 ```
 
@@ -144,7 +144,7 @@ $sdk->trackEvent([
 $pending = $sdk->trackEvent([
     'type' => 'view',
     'userId' => 'user-123',
-    'itemId' => 'itm_7f3a2c9e',
+    'itemId' => '7f3a2c9e',
 ]);
 
 $pending->wait();
@@ -177,7 +177,7 @@ $sdk->trackEvent([
 
 ```php
 $sdk->upsertItem([
-    'itemId' => 'itm_7f3a2c9e',
+    'itemId' => '7f3a2c9e',
     'name' => 'Nike Running Shoes',
     'description' => 'High-performance running shoes for daily training.',
     'metadata' => [
@@ -192,7 +192,7 @@ $sdk->upsertItem([
 
 ```php
 $sdk->patchItem([
-    'itemId' => 'itm_7f3a2c9e',
+    'itemId' => '7f3a2c9e',
     'active' => false,
 ]);
 ```
@@ -200,17 +200,17 @@ $sdk->patchItem([
 Or use the convenience helper:
 
 ```php
-$sdk->setItemActive('itm_7f3a2c9e', false);
+$sdk->setItemActive('7f3a2c9e', false);
 ```
 
 ### Delete items
 
 ```php
-$sdk->deleteItems(['itemId' => 'itm_7f3a2c9e']);
+$sdk->deleteItems(['itemId' => '7f3a2c9e']);
 
 $sdk->deleteItems([
-    ['itemId' => 'itm_7f3a2c9e'],
-    ['itemId' => 'itm_a8d1b247'],
+    ['itemId' => '7f3a2c9e'],
+    ['itemId' => 'a8d1b247'],
 ]);
 ```
 
