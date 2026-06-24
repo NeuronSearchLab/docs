@@ -16,7 +16,7 @@ const sources = [
     id: "typescript-sdk",
     label: "TypeScript SDK",
     env: "NSL_TYPESCRIPT_SDK_REPO",
-    defaultPath: "../neuronsearchlab-sdk",
+    defaultPath: "../neuronsearchlab-sdk-js",
     description: "Browser and server JavaScript client for recommendations, events, catalog items, and API contract updates.",
   },
   {
