@@ -8,6 +8,12 @@ on:
 permissions:
   contents: write
 
+env:
+  CHANGELOG_CONSOLE_REPOSITORY: NeuronSearchLab/nsl_admin_console_next
+  CHANGELOG_TYPESCRIPT_SDK_REPOSITORY: NeuronSearchLab/neuronsearchlab-sdk-js
+  CHANGELOG_PHP_SDK_REPOSITORY: NeuronSearchLab/neuronsearchlab-sdk-php
+  CHANGELOG_MCP_REPOSITORY: NeuronSearchLab/mcp
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
@@ -22,17 +28,17 @@ jobs:
           NSL_CHANGELOG_TOKEN: ${{ secrets.NSL_CHANGELOG_TOKEN }}
         run: |
           if [ -z "$NSL_CHANGELOG_TOKEN" ]; then
-            echo "::error title=Missing NSL_CHANGELOG_TOKEN::Refresh changelog needs a token with Contents: read access to NeuronSearchLab/nsl_admin_console_next, NeuronSearchLab/neuronsearchlab-sdk, NeuronSearchLab/neuronsearchlab-sdk-php, and NeuronSearchLab/mcp."
+            echo "::error title=Missing NSL_CHANGELOG_TOKEN::Refresh changelog needs a token with Contents: read access to $CHANGELOG_CONSOLE_REPOSITORY, $CHANGELOG_TYPESCRIPT_SDK_REPOSITORY, $CHANGELOG_PHP_SDK_REPOSITORY, and $CHANGELOG_MCP_REPOSITORY."
             exit 1
           fi
 
           for repo in \
-            NeuronSearchLab/nsl_admin_console_next \
-            NeuronSearchLab/neuronsearchlab-sdk \
-            NeuronSearchLab/neuronsearchlab-sdk-php \
-            NeuronSearchLab/mcp
+            "$CHANGELOG_CONSOLE_REPOSITORY" \
+            "$CHANGELOG_TYPESCRIPT_SDK_REPOSITORY" \
+            "$CHANGELOG_PHP_SDK_REPOSITORY" \
+            "$CHANGELOG_MCP_REPOSITORY"
           do
-            status="$(curl -sS -o /tmp/changelog-repo.json -w "%{http_code}" \
+            status="$(curl -sSL -o /tmp/changelog-repo.json -w "%{http_code}" \
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: Bearer $NSL_CHANGELOG_TOKEN" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
@@ -48,7 +54,7 @@ jobs:
       - name: Check out admin console
         uses: actions/checkout@v4
         with:
-          repository: NeuronSearchLab/nsl_admin_console_next
+          repository: ${{ env.CHANGELOG_CONSOLE_REPOSITORY }}
           path: nsl_admin_console_next
           token: ${{ secrets.NSL_CHANGELOG_TOKEN }}
           ref: master
@@ -57,8 +63,8 @@ jobs:
       - name: Check out TypeScript SDK
         uses: actions/checkout@v4
         with:
-          repository: NeuronSearchLab/neuronsearchlab-sdk
-          path: neuronsearchlab-sdk
+          repository: ${{ env.CHANGELOG_TYPESCRIPT_SDK_REPOSITORY }}
+          path: neuronsearchlab-sdk-js
           token: ${{ secrets.NSL_CHANGELOG_TOKEN }}
           ref: main
           fetch-depth: 0
@@ -66,7 +72,7 @@ jobs:
       - name: Check out PHP SDK
         uses: actions/checkout@v4
         with:
-          repository: NeuronSearchLab/neuronsearchlab-sdk-php
+          repository: ${{ env.CHANGELOG_PHP_SDK_REPOSITORY }}
           path: neuronsearchlab-php-sdk
           token: ${{ secrets.NSL_CHANGELOG_TOKEN }}
           ref: main
@@ -75,7 +81,7 @@ jobs:
       - name: Check out MCP server
         uses: actions/checkout@v4
         with:
-          repository: NeuronSearchLab/mcp
+          repository: ${{ env.CHANGELOG_MCP_REPOSITORY }}
           path: neuronsearchlab-mcp
           token: ${{ secrets.NSL_CHANGELOG_TOKEN }}
           ref: main
