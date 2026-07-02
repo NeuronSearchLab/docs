@@ -82,6 +82,36 @@ console.log(results.data);
 
 The SDK posts to `https://api.neuronsearchlab.com/v1/search`, not the console Platform API. Search responses use the same item shape as recommendations and include `query`, `request_id`, `data`, and `recommendations`.
 
+### Search-to-click loop
+
+For search-backed surfaces, treat search and events as one attribution loop:
+
+1. Run `search` with the user's query and optional context.
+2. Render results from `data` or `recommendations`.
+3. Capture `request_id` from the search response.
+4. Send that `requestId` back with the click, view, or purchase event.
+
+This keeps attribution tied to the exact result set the user saw.
+
+```ts
+const search = await sdk.search({
+  query: "wireless headphones",
+  userId: "user-123",
+  limit: 8,
+});
+
+const first = search.data[0];
+
+if (first) {
+  await sdk.trackEvent({
+    type: "click",
+    userId: "user-123",
+    itemId: first.item_id,
+    requestId: search.request_id,
+  });
+}
+```
+
 ### Auto-generated sections
 
 Use `getAutoRecommendations` for paginated, auto-titled recommendation sections — ideal for infinite-scroll feeds:
