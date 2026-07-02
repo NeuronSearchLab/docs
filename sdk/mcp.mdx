@@ -41,6 +41,22 @@ claude mcp add neuronsearchlab -- npx -y @neuronsearchlab/mcp \
   --env NSL_CLIENT_SECRET=your-client-secret
 ```
 
+### Demo path
+
+After connection, run the smallest end-to-end loop before adding custom prompts or automations:
+
+1. Ask for recommendations for a test user and context.
+2. Search the catalog for a concrete product phrase.
+3. Record a click or view event for one returned item, including the event type ID and the response `request_id` when available.
+4. Ask why that item ranked where it did.
+
+```text
+Get 10 recommendations for user demo-user@example.com using context homepage-feed
+Search the catalog for waterproof jackets and show the top 5 item ids
+Record event type id 1 as a click for item jacket-123 from user demo-user@example.com, using the request_id from the recommendation or search response
+Explain why item jacket-123 ranked first for demo-user@example.com
+```
+
 ---
 
 ## Configuration
