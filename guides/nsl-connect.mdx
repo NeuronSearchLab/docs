@@ -6,9 +6,15 @@ description: 'Resolve first-party identities, manage consent, mint partner-scope
 
 NSL Connect is the identity and collaboration layer behind NeuronSearchLab recommendations. It helps you keep recommendation behavior consistent across sessions, devices, accounts, and approved partners without exposing NeuronSearchLab's internal identity graph.
 
+You do not need NSL Connect for every recommendation call. If a customer already has one stable first-party `user_id` that is present on every web, app, server, and device request, they can send that ID directly to the recommendation API.
+
+NSL Connect is for the messier cases where recommendation signals are split across anonymous sessions, logged-in accounts, devices, subscriptions, households, consent states, or partner workflows. It turns those identifiers into a consent-aware recommendation identity so ranking behaviour stays consistent without forcing every channel to share the same raw user ID.
+
 Use it when you need to:
 
+- connect pre-login behaviour to the signed-in user once the user authenticates
 - link anonymous, session, customer, household, device, CRM, and subscription identifiers into one recommendation identity
+- reduce cold starts across web, mobile, CTV, email, and subscription surfaces
 - carry consent decisions into recommendation, measurement, activation, and collaboration workflows
 - mint partner-scoped NSL IDs that are different for every partner
 - run approved data collaborations that return aggregate overlap, not raw partner identity data
