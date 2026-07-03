@@ -1,0 +1,123 @@
+---
+title: 'NSL Connect'
+icon: 'fingerprint'
+description: 'Resolve first-party identities, manage consent, mint partner-scoped NSL IDs, and run privacy-safe data collaborations.'
+---
+
+NSL Connect is the identity and collaboration layer behind NeuronSearchLab recommendations. It helps you keep recommendation behavior consistent across sessions, devices, accounts, and approved partners without exposing NeuronSearchLab's internal identity graph.
+
+Use it when you need to:
+
+- link anonymous, session, customer, household, device, CRM, and subscription identifiers into one recommendation identity
+- carry consent decisions into recommendation, measurement, activation, and collaboration workflows
+- mint partner-scoped NSL IDs that are different for every partner
+- run approved data collaborations that return aggregate overlap, not raw partner identity data
+
+## How NSL Connect fits into recommendations
+
+A recommendation engine is only as useful as the signals it can safely connect. NSL Connect gives the platform a stable, consent-aware subject for retrieval, ranking, measurement, and downstream activation.
+
+<Steps>
+  <Step title="Resolve an identity">
+    Send one or more supported identifiers, such as `customer_user_id`, `anonymous_id`, `session_id`, `email_sha256`, `phone_sha256`, `device_id`, `crm_id`, or `subscription_id`.
+  </Step>
+  <Step title="Attach consent">
+    Record which purposes are allowed for that identity, such as `recommendations`, `personalisation`, `measurement`, `third_party_activation`, or `data_collaboration`.
+  </Step>
+  <Step title="Serve better recommendations">
+    Use the resolved identity to connect behavior across surfaces and sessions while respecting restricted purposes.
+  </Step>
+  <Step title="Collaborate safely when approved">
+    Register partners, mint partner-scoped NSL IDs, or create data collaborations only when the required purposes and approvals are present.
+  </Step>
+</Steps>
+
+## Identity resolution
+
+The identity resolver accepts multiple identifier types and returns a canonical `identityId`, optional `householdId`, match confidence, resolution status, and the purposes that can or cannot be used.
+
+Supported identifier families include:
+
+- customer and account identifiers: `customer_user_id`, `account_id`, `crm_id`, `subscription_id`
+- session and anonymous identifiers: `anonymous_id`, `session_id`, `cookie_id`, `app_instance_id`
+- privacy-normalized contact identifiers: `email_sha256`, `phone_sha256`
+- device and household identifiers: `device_id`, `mobile_ad_id`, `ctv_device_id`, `household_id`
+- partner identifiers: `external_partner_id`
+
+Use `POST /api/identity/resolve` when your backend wants NSL to resolve an incoming user, visitor, device, or account before personalization.
+
+## Consent purposes
+
+Consent is purpose-based. NSL Connect tracks allowed and restricted purposes so identity data can be used differently across recommendation, analytics, activation, and collaboration workflows.
+
+Common purposes include:
+
+- `recommendations`
+- `personalisation`
+- `analytics`
+- `identity_resolution`
+- `cross_device_linking`
+- `measurement`
+- `third_party_activation`
+- `data_collaboration`
+
+When a purpose is restricted, downstream flows such as partner ID minting or data collaboration are blocked for that identity.
+
+## Partner-scoped NSL IDs
+
+Partner IDs let you register an activation or collaboration partner and mint an NSL ID for a resolved identity. The internal `identityId` never leaves NeuronSearchLab.
+
+Each partner receives its own private key and public encoding. The same internal identity becomes a different NSL ID for every partner, so IDs are not portable across partners unless an approved translation path exists.
+
+Use partner-scoped NSL IDs for:
+
+- privacy-safe activation
+- partner-specific measurement
+- consent-aware audience handoff
+- collaboration workflows where the partner should not receive the internal NSL identity
+
+Minting is consent-gated for `data_collaboration` or `third_party_activation`.
+
+## Data collaborations
+
+Data collaborations let two NSL teams create an approved, purpose-limited match space.
+
+A collaboration has:
+
+- two-party approval before matching is active
+- a per-collaboration secret and isolated keyspace
+- optional expiry
+- revocation that disables matching and purges scoped keys
+- supported match identifiers: `email_sha256` and `phone_sha256`
+- aggregate overlap calculation only
+
+This is designed for recommendation and measurement use cases where both parties need to understand overlap or eligibility without exchanging raw identity records.
+
+## Recommended workflow
+
+<Steps>
+  <Step title="Resolve identities on ingest or request">
+    Send identifiers and consent when users interact, sign in, subscribe, or move across devices.
+  </Step>
+  <Step title="Review identity state in the console">
+    Confirm confidence, resolution status, consent purposes, and partner mappings before using the identity for activation or collaboration.
+  </Step>
+  <Step title="Register partners only when needed">
+    Create partner records for approved activation, measurement, or collaboration workflows.
+  </Step>
+  <Step title="Use collaborations for aggregate overlap">
+    Create a collaboration, wait for partner approval, contribute eligible identifiers, then calculate aggregate overlap.
+  </Step>
+</Steps>
+
+## Related API reference
+
+- [Resolve identity](/api-reference/platform-api/identity/resolveIdentity)
+- [Record consent](/api-reference/platform-api/identity/recordConsent)
+- [List partners](/api-reference/platform-api/identity/listIdentityPartners)
+- [Create partner](/api-reference/platform-api/identity/createIdentityPartner)
+- [Mint NSL ID](/api-reference/platform-api/identity/mintNslId)
+- [List collaborations](/api-reference/platform-api/identity/listDataCollaborations)
+- [Create collaboration](/api-reference/platform-api/identity/createDataCollaboration)
+- [Contribute identifiers](/api-reference/platform-api/identity/contributeDataCollaboration)
+- [Calculate overlap](/api-reference/platform-api/identity/calculateDataCollaborationOverlap)
