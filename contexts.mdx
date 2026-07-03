@@ -1,113 +1,40 @@
 ---
 title: 'Contexts'
 icon: 'sliders'
-description: 'Define each recommendation surface, its ranking recipe, model defaults, pipeline, and pre-query constraints.'
+description: 'Understand how NeuronSearchLab models each recommendation surface.'
 ---
 
-A context is a programmable recommendation surface. Use contexts to tell NeuronSearchLab where recommendations are being served, what the surface is trying to achieve, which retrieval and ranking strategy should run, and what constraints must be applied before results are scored.
+A context is a named recommendation surface, such as a homepage feed, related articles rail, product detail page, checkout upsell, email digest, or video carousel.
 
-Examples include a homepage feed, related articles rail, product detail page, checkout upsell, email digest, search-adjacent discovery module, or video carousel.
+Contexts are how NeuronSearchLab separates the intent of one surface from another. A homepage can optimize for discovery, a product page can optimize for similarity, and a checkout surface can optimize for conversion without forcing every request through the same ranking setup.
 
-## What a context controls
+## Why contexts matter
 
-A context can define:
+A context gives operators one place to control the recommendation behavior for a surface:
 
-- the recommendation type for the surface
-- the model family and retrieval algorithm used for candidate generation
-- the currently serving model resolved through the fine-tune, family base, and general fallback chain
-- the ranking recipe attached to the surface
-- candidate sources, signal overrides, rerank rules, discovery settings, and guardrails
-- an embedded pipeline for the context
-- pre-query filters that narrow the candidate pool before scoring
+- which model family and retrieval algorithm should be preferred
+- which ranking recipe should shape candidate sources, signals, discovery, and guardrails
+- which pipeline stages should run for that surface
+- which hard pre-query filters should narrow the candidate pool
+- which rules should reshape already-scored results
+- which model is currently serving after fallback resolution
 
-Contexts are the bridge between your product surface and the ranking system. Your application sends a `context_id` or context-specific configuration when requesting recommendations; operators then tune that surface in the console without requiring application changes for every ranking adjustment.
+This is what turns NSL from a generic recommendation endpoint into a controllable ranking platform. Applications keep sending a stable `context_id`; operators can then tune the surface without changing application code every time.
 
-## Context editor layout
+## How context control fits together
 
-In the console, create or edit contexts from **Console > Contexts**. Opening a context launches a slide-over editor with four areas.
-
-### Basics
-
-Basics stores the human-readable context name and description, then sets the surface-level recommendation defaults:
-
-- recommendation type
-- model family
-- retrieval algorithm
-- currently serving model, when editing an existing context
-
-The serving model card shows which model will answer requests for that context after fallback resolution.
-
-### Recipe
-
-A recipe describes how the context should rank. It can start blank, from a use-case preset, or from a reference template.
-
-Recipes can include:
-
-- candidate source mix
-- signal weights and overrides
-- rerank behavior
-- discovery or exploration settings
-- guardrails
-- suggested events needed by the recipe
-
-Use recipes when a surface needs a recognizable strategy, such as long-tail discovery, editorial control, related content, or conversion-oriented recommendations.
-
-### Pipeline
-
-When editing an existing context, the pipeline tab embeds the pipeline editor for that specific context. Use it to inspect or adjust the ranking stages used by that surface.
-
-Typical stages include candidate generation, feature enrichment, scoring, business rules, ranking, and post-processing. See [Pipeline Config](/guides/pipeline-config).
-
-### Advanced
-
-Advanced settings manage pre-query filters. These filters narrow the candidate pool before scoring. For post-scoring changes such as boost, bury, pin, dedupe, cap, grouping, or reordering, use the [Rules Engine](/guides/rules-engine).
-
-## Contexts vs recipes vs pipelines vs rules
-
-| Layer | Purpose |
+| Layer | Role |
 | --- | --- |
-| Context | Names the recommendation surface and stores its model, retrieval, recipe, pipeline, and filter configuration. |
-| Recipe | Defines a reusable ranking strategy for the context: sources, signals, rerank behavior, discovery, and guardrails. |
-| Pipeline | Controls the runtime stages that candidates move through before results are returned. |
-| Rules | Applies business logic such as boosts, filters, pins, caps, dedupe, and grouping. |
+| Context | Names the product surface and stores its recommendation defaults. |
+| Recipe | Describes the ranking strategy for the surface. |
+| Pipeline | Controls the runtime stages candidates move through before results return. |
+| Rules | Applies post-scoring business logic such as boost, bury, pin, filter, cap, dedupe, and grouping. |
+| Explainability | Shows why a user-item recommendation behaved the way it did. |
 
-## Operational workflow
+## Where to go next
 
-<Steps>
-  <Step title="Create the context">
-    Name the surface and choose the recommendation type, model family, and retrieval algorithm.
-  </Step>
-  <Step title="Attach a recipe">
-    Start from a use-case preset, reference template, or blank recipe, then tune sources, signals, discovery, and guardrails.
-  </Step>
-  <Step title="Review the pipeline">
-    Confirm the context's pipeline stages, candidate limits, and page size match the surface requirements.
-  </Step>
-  <Step title="Add filters or rules">
-    Use pre-query filters for hard candidate constraints and rules for post-scoring merchandising or editorial control.
-  </Step>
-  <Step title="Verify serving behavior">
-    Check the currently serving model, then request sample recommendations and use Explainability to inspect the result.
-  </Step>
-</Steps>
-
-## API fields
-
-Context create and update operations support the console fields used by the editor:
-
-- `contextName`
-- `contextKey`
-- `contextType`
-- `description`
-- `modelFamilyId`
-- `architectureOverride` or `architecture_override`
-- `jsonData`
-
-See [Create context](/api-reference/platform-api/contexts/createContext), [Update context](/api-reference/platform-api/contexts/updateContext), and [Get active model](/api-reference/platform-api/contexts/getContextActiveModel).
-
-## Next steps
-
-- [Console Contexts guide](/guides/contexts)
-- [Launch a new context](/guides/how-to-launch-a-new-context)
-- [Pipeline Config](/guides/pipeline-config)
-- [Explainability](/guides/explainability)
+- [Console Contexts](/guides/contexts) for the operator workflow inside the context editor.
+- [Launch a New Context](/guides/how-to-launch-a-new-context) for a staged rollout checklist.
+- [Pipeline Config](/guides/pipeline-config) for runtime ranking stages.
+- [Rules Engine](/guides/rules-engine) for post-scoring controls.
+- [Recommendation Control Demo Path](/guides/recommendation-control-demo) for a buyer-facing proof path through contexts, rules, pipelines, and explainability.

@@ -60,8 +60,49 @@
               "connect-your-data",
               "generate-recommendations",
               "generate-search-results",
-              "contexts",
               "authentication"
+            ]
+          },
+          {
+            "group": "Recommendation Control",
+            "icon": "sliders",
+            "pages": [
+              "contexts",
+              {
+                "group": "Contexts",
+                "pages": [
+                  "guides/contexts",
+                  "guides/how-to-launch-a-new-context",
+                  "guides/recommendation-control-demo"
+                ]
+              },
+              {
+                "group": "Ranking controls",
+                "pages": [
+                  "guides/pipeline-config",
+                  "guides/rules-engine",
+                  "guides/rerank-controls",
+                  "guides/explainability",
+                  "guides/ab-testing"
+                ]
+              },
+              {
+                "group": "Audience and scenarios",
+                "pages": [
+                  "guides/user-segments",
+                  "guides/scenarios"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "NSL Connect",
+            "icon": "fingerprint",
+            "pages": [
+              "guides/nsl-connect",
+              "guides/integrations",
+              "guides/users-and-items",
+              "guides/events"
             ]
           },
           {
@@ -72,25 +113,7 @@
               "guides/quick-search",
               "guides/api-keys",
               "guides/models",
-              "guides/analytics",
-              "guides/users-and-items",
-              "guides/ab-testing"
-            ]
-          },
-          {
-            "group": "Advanced Console",
-            "icon": "gear",
-            "pages": [
-              "guides/contexts",
-              "guides/nsl-connect",
-              "guides/integrations",
-              "guides/user-segments",
-              "guides/rules-engine",
-              "guides/pipeline-config",
-              "guides/explainability",
-              "guides/rerank-controls",
-              "guides/events",
-              "guides/scenarios"
+              "guides/analytics"
             ]
           },
           {
@@ -99,7 +122,6 @@
             "pages": [
               "guides/how-to-serve-recommendations",
               "guides/how-to-connect-catalog-and-events",
-              "guides/how-to-launch-a-new-context",
               "guides/how-to-measure-recommendation-performance"
             ]
           }
@@ -165,19 +187,34 @@
           {
             "group": "Identity and Collaboration",
             "pages": [
-              "api-reference/platform-api/identity/resolveIdentity",
-              "api-reference/platform-api/identity/listConsentRecords",
-              "api-reference/platform-api/identity/recordConsent",
-              "api-reference/platform-api/identity/listIdentityPartners",
-              "api-reference/platform-api/identity/createIdentityPartner",
-              "api-reference/platform-api/identity/mintNslId",
-              "api-reference/platform-api/identity/listDataCollaborations",
-              "api-reference/platform-api/identity/createDataCollaboration",
-              "api-reference/platform-api/identity/getDataCollaboration",
-              "api-reference/platform-api/identity/approveDataCollaboration",
-              "api-reference/platform-api/identity/revokeDataCollaboration",
-              "api-reference/platform-api/identity/contributeDataCollaboration",
-              "api-reference/platform-api/identity/calculateDataCollaborationOverlap"
+              {
+                "group": "Identity",
+                "pages": [
+                  "api-reference/platform-api/identity/resolveIdentity",
+                  "api-reference/platform-api/identity/listConsentRecords",
+                  "api-reference/platform-api/identity/recordConsent"
+                ]
+              },
+              {
+                "group": "Partners",
+                "pages": [
+                  "api-reference/platform-api/identity/listIdentityPartners",
+                  "api-reference/platform-api/identity/createIdentityPartner",
+                  "api-reference/platform-api/identity/mintNslId"
+                ]
+              },
+              {
+                "group": "Data collaborations",
+                "pages": [
+                  "api-reference/platform-api/identity/listDataCollaborations",
+                  "api-reference/platform-api/identity/createDataCollaboration",
+                  "api-reference/platform-api/identity/getDataCollaboration",
+                  "api-reference/platform-api/identity/approveDataCollaboration",
+                  "api-reference/platform-api/identity/revokeDataCollaboration",
+                  "api-reference/platform-api/identity/contributeDataCollaboration",
+                  "api-reference/platform-api/identity/calculateDataCollaborationOverlap"
+                ]
+              }
             ]
           },
           {
@@ -211,28 +248,53 @@
           {
             "group": "Ranking",
             "pages": [
-              "api-reference/platform-api/contexts/listContexts",
-              "api-reference/platform-api/contexts/createContext",
-              "api-reference/platform-api/contexts/updateContext",
-              "api-reference/platform-api/contexts/getContextActiveModel",
-              "api-reference/platform-api/rules/listRules",
-              "api-reference/platform-api/rules/getRule",
-              "api-reference/platform-api/rules/createRule",
-              "api-reference/platform-api/rules/updateRule",
-              "api-reference/platform-api/rules/deleteRule",
-              "api-reference/platform-api/pipelines/listPipelines",
-              "api-reference/platform-api/pipelines/getPipeline",
-              "api-reference/platform-api/pipelines/createPipeline",
-              "api-reference/platform-api/pipelines/updatePipeline",
-              "api-reference/platform-api/pipelines/deletePipeline",
-              "api-reference/platform-api/rerank-controls/getRerankControls",
-              "api-reference/platform-api/rerank-controls/saveRerankControls",
-              "api-reference/platform-api/experiments/listExperiments",
-              "api-reference/platform-api/experiments/getExperiment",
-              "api-reference/platform-api/experiments/createExperiment",
-              "api-reference/platform-api/experiments/updateExperiment",
-              "api-reference/platform-api/experiments/deleteExperiment",
-              "api-reference/platform-api/experiments/refreshExperimentMetrics"
+              {
+                "group": "Contexts",
+                "pages": [
+                  "api-reference/platform-api/contexts/listContexts",
+                  "api-reference/platform-api/contexts/createContext",
+                  "api-reference/platform-api/contexts/updateContext",
+                  "api-reference/platform-api/contexts/getContextActiveModel"
+                ]
+              },
+              {
+                "group": "Rules",
+                "pages": [
+                  "api-reference/platform-api/rules/listRules",
+                  "api-reference/platform-api/rules/getRule",
+                  "api-reference/platform-api/rules/createRule",
+                  "api-reference/platform-api/rules/updateRule",
+                  "api-reference/platform-api/rules/deleteRule"
+                ]
+              },
+              {
+                "group": "Pipelines",
+                "pages": [
+                  "api-reference/platform-api/pipelines/listPipelines",
+                  "api-reference/platform-api/pipelines/getPipeline",
+                  "api-reference/platform-api/pipelines/createPipeline",
+                  "api-reference/platform-api/pipelines/updatePipeline",
+                  "api-reference/platform-api/pipelines/deletePipeline"
+                ]
+              },
+              {
+                "group": "Rerank controls",
+                "pages": [
+                  "api-reference/platform-api/rerank-controls/getRerankControls",
+                  "api-reference/platform-api/rerank-controls/saveRerankControls"
+                ]
+              },
+              {
+                "group": "Experiments",
+                "pages": [
+                  "api-reference/platform-api/experiments/listExperiments",
+                  "api-reference/platform-api/experiments/getExperiment",
+                  "api-reference/platform-api/experiments/createExperiment",
+                  "api-reference/platform-api/experiments/updateExperiment",
+                  "api-reference/platform-api/experiments/deleteExperiment",
+                  "api-reference/platform-api/experiments/refreshExperimentMetrics"
+                ]
+              }
             ]
           },
           {
