@@ -1,102 +1,99 @@
 ---
-title: 'Configuring Contexts'
+title: 'Console Contexts'
 icon: 'sliders'
-description: 'Define retrieval defaults and pre-query filters for each recommendation surface.'
+description: 'Use the context slide-over editor to configure recommendation surfaces, recipes, pipelines, and filters.'
 ---
 
-A context is a named configuration that shapes what the recommendation engine retrieves for a specific surface. Create one context per placement, such as a homepage feed, product detail page, or email digest, and reference its numeric console ID in recommendation calls for that surface.
+The Contexts page is the operator workspace for each recommendation surface. It lets you create a context, attach a ranking recipe, review the runtime pipeline, and manage pre-query filters from a single slide-over editor.
 
-This guide covers the controls that belong in the current context editor.
-
-## Create a context
+## Open the context editor
 
 <Steps>
-  <Step title="Open the context editor">
-    Open [Console > Contexts](https://console.neuronsearchlab.com/contexts) and click **New context**.
+  <Step title="Go to Contexts">
+    Open **Console > Contexts**.
   </Step>
-  <Step title="Name the context">
-    Give it a descriptive name such as "Homepage Feed" or "Post-purchase Sidebar".
+  <Step title="Create or edit a context">
+    Click **New Context** to create one, or click an existing row to edit it.
   </Step>
-  <Step title="Document its purpose">
-    Add an optional description so teammates understand its purpose.
+  <Step title="Work through the tabs">
+    Use **Basics**, **Recipe**, **Pipeline**, and **Advanced** to configure the surface.
   </Step>
-  <Step title="Select the model">
-    Select the model this context draws recommendations from.
-  </Step>
-  <Step title="Choose the model family">
-    Choose the recommendation type / model family, such as **General**, **Similar Items**, **Watch Next**, **Trending**, or **Email Digest**, depending on which model families are enabled for your tenant.
-  </Step>
-  <Step title="Save and record the ID">
-    Save the context and note its ID, such as `101`. Your engineering team will pass this ID in `context_id` on recommendation requests.
+  <Step title="Save changes">
+    Use the sheet footer to save the context. Recipe and pipeline edits are managed inside their embedded editors.
   </Step>
 </Steps>
 
----
+## Basics tab
 
-## Retrieval settings
+Use Basics for the surface definition.
 
-Contexts control the retrieval defaults for a surface:
+Fields include:
 
-- **Embedding model** decides which representation is used to compare users and items.
-- **Recommendation type** decides whether the request is user-driven or item-driven.
-- **Pre-query filters** decide which candidates are even allowed into the scoring stage.
+- **Context Name** - the operator-facing name, such as `Home Page Feed` or `Related Articles`.
+- **Description** - optional notes for operators.
+- **Recommendation Type** - the intended recommendation mode for the surface.
+- **Model Family** - the model family the resolver should prefer.
+- **Retrieval Algorithm** - the first-stage candidate generator for the context.
 
-If the question is "what pool should the model search?", the answer usually belongs in the context.
+For existing contexts, Basics also shows **Currently serving**, which resolves the model actually used by requests after the fine-tune, family base, and general fallback chain.
 
----
+## Recipe tab
 
-## Filters
+Use Recipe to attach or edit the ranking strategy for the context.
 
-Filters restrict which items are eligible before scoring. Only items that pass the active filters are considered by the ranking pipeline.
+A context can start with:
 
-To add a filter:
+- a context-only setup with no recipe
+- a blank ranking recipe
+- a use-case preset
+- a reference template
 
-<Steps>
-  <Step title="Add a filter">
-    In the **Advanced** tab, click **Add Filter**.
-  </Step>
-  <Step title="Select a metadata field">
-    Select a metadata field from your catalog, such as `category`, `in_stock`, or `price`.
-  </Step>
-  <Step title="Choose an operator">
-    Choose an operator: `=`, `!=`, `LIKE`, `NOT LIKE`, `>`, `<`, `>=`, `<=`, `IN`, `NOT IN`.
-  </Step>
-  <Step title="Enter a comparison value">
-    Enter the value to compare against.
-  </Step>
-  <Step title="Combine conditions">
-    Add more conditions and combine them with `AND` or `OR` as needed.
-  </Step>
-</Steps>
+Recipes can configure candidate sources, signal overrides, rerank behavior, discovery, guardrails, and suggested events. Switching tabs keeps staged recipe edits mounted while the editor remains open.
 
-**Example:** Restrict a context to in-stock items in the Electronics category:
+If the context has no recipe, attach one from the Recipe tab. If a recipe exists, the embedded recipe editor opens inside the sheet.
 
-| Field | Operator | Value | Logic |
-|-------|----------|-------|-------|
-| `in_stock` | `=` | `true` | |
-| `category` | `=` | `Electronics` | AND |
+## Pipeline tab
 
-Use context filters for durable eligibility rules such as inventory, country, brand, or catalog partitioning.
+The Pipeline tab appears when editing an existing context. It embeds the pipeline editor in context-locked mode so the operator can review and tune the stages used by that surface.
 
----
+Use it to check:
 
-## What now belongs in Rules Engine
+- candidate generation limits
+- feature enrichment
+- scoring
+- rules stage behavior
+- post-processing and page size
 
-Contexts are no longer the place for post-scoring merchandising controls. If you need to change how scored results are promoted, suppressed, ordered, or grouped, use [Rules Engine](/guides/rules-engine).
+If you are creating a new context, save it first before configuring its pipeline.
 
-| Use case | Configure in |
-|----------|--------------|
-| Promote or demote matching items | **Rules Engine** with `boost` or `bury` |
-| Remove items after scoring | **Rules Engine** with `filter` |
-| Limit list share or enforce variety | **Rules Engine** with `cap`, `diversity`, or `dedupe` |
-| Pin, reorder, randomize, or protect top slots | **Rules Engine** with `pin`, `reorder`, `randomize`, or `ensure_top` |
-| Return grouped results | **Rules Engine** with `group_by` |
-| Reweight by user topic affinity | **Rules Engine** with `weighted_topic` |
+## Advanced tab
 
-If the question is "how should already-scored candidates be reshaped?", the answer belongs in the Rules Engine.
+Advanced is for pre-query filters. These filters narrow the candidate pool before scoring.
 
----
+Use pre-query filters for hard constraints such as:
 
-## Iterate over time
+- only recommend items from a specific inventory pool
+- exclude unavailable content before ranking
+- restrict a surface to a metadata category
 
-As your product evolves, return to the context editor to refine retrieval settings and eligibility filters. When you need to change ranking behaviour after scoring, pair those context changes with explicit rules rather than overloading the context itself.
+Use the Rules Engine instead for post-scoring controls such as boost, bury, pin, dedupe, cap, grouping, or reorder.
+
+## Quality checks before launch
+
+Before sending traffic to a context:
+
+- confirm the model family and retrieval algorithm are intentional
+- verify the currently serving model
+- attach or review the ranking recipe
+- confirm suggested events exist if the recipe depends on them
+- inspect the context pipeline
+- test at least one representative user through the recommendation API
+- use Explainability to validate a few ranked results
+
+## Related guides
+
+- [Contexts overview](/contexts)
+- [Launch a new context](/guides/how-to-launch-a-new-context)
+- [Pipeline Config](/guides/pipeline-config)
+- [Rules Engine](/guides/rules-engine)
+- [Explainability](/guides/explainability)

@@ -1,65 +1,84 @@
 ---
 title: 'How-To: Launch a New Context'
 icon: 'compass'
-description: 'Create and release a new recommendation surface with context-specific logic.'
+description: 'Create and release a new recommendation surface with context-specific logic, recipe, pipeline, and measurement.'
 ---
 
-Use this guide when launching recommendations into a new surface (for example homepage, PDP, checkout upsell, or email digest).
+Use this guide when launching recommendations into a new surface, such as a homepage feed, related articles rail, product detail page, checkout upsell, video carousel, or email digest.
 
 ## Setup
 
 <Steps>
   <Step title="Define the business goal">
-    Define the business goal for the new surface (CTR, conversion, AOV, retention).
+    Decide what the surface should improve: CTR, conversion, AOV, retention, long-tail discovery, editorial coverage, or content freshness.
   </Step>
   <Step title="Create a dedicated context">
-    Create a dedicated context in Console -> Contexts.
+    Open **Console > Contexts**, create a context, and set the recommendation type, model family, and retrieval algorithm.
   </Step>
-  <Step title="Configure retrieval controls">
-    Configure the model family and any pre-query filters for that context.
+  <Step title="Attach a ranking recipe">
+    Choose a blank recipe, use-case preset, or reference template. Tune candidate sources, signals, discovery, rerank behavior, and guardrails.
+  </Step>
+  <Step title="Review the pipeline">
+    Open the context's Pipeline tab after saving. Confirm candidate limits, scoring, rules, and post-processing fit the surface.
+  </Step>
+  <Step title="Add filters and rules">
+    Use Advanced for hard pre-query filters. Use the Rules Engine for post-scoring business logic.
   </Step>
 </Steps>
 
-## Common workflows
+## Validate context behavior in staging
 
-### Validate context behavior in staging
-
-- Call the Core API recommendation endpoint with the new `context_id` and representative `user_id` values.
+- Call the Core API recommendation endpoint with the new `context_id` and representative user IDs.
 - Compare output quality with and without the context applied.
-- Confirm the right item categories and constraints are reflected.
+- Check that the right item categories, availability constraints, and business rules are reflected.
+- Use [Explainability](/guides/explainability) to inspect retrieval score, rules, pipeline stages, and feature contributions.
+- Confirm the context's **Currently serving** model is the one you expect.
 
-### Roll out progressively
+## Roll out progressively
 
-- Start with a small traffic segment.
+- Start with a small traffic segment or internal-only surface.
 - Keep context-specific instrumentation so results can be measured independently.
+- Watch the context's analytics against the business goal.
 - Increase rollout percentage only after quality checks pass.
 
-### Keep context docs operational
+## Keep context docs operational
 
-For each context, maintain a short owner note with purpose, constraints, and KPI target so changes remain auditable.
+For each context, maintain a short owner note with:
 
-## Example app journey: Checkout upsell launch
+- purpose of the surface
+- target KPI
+- attached recipe
+- key filters or rules
+- expected model family
+- rollout status
+
+This makes future recipe, pipeline, and rule changes easier to audit.
+
+## Example app journey: checkout upsell launch
 
 <Steps>
   <Step title="Define upsell objectives">
-    Merchandising defines checkout upsell objectives.
+    Merchandising defines checkout upsell objectives, such as increasing AOV without recommending unavailable or already-owned items.
   </Step>
   <Step title="Create the checkout context">
-    Team creates context `205` with checkout-safe filters.
+    Team creates a checkout context with checkout-safe filters and a conversion-oriented recipe.
+  </Step>
+  <Step title="Review the pipeline">
+    Operators check candidate limits, page size, and whether the rules stage is enabled.
   </Step>
   <Step title="Request checkout recommendations">
-    Backend requests recommendations using `context_id=205` during checkout.
+    Backend requests recommendations using the checkout `context_id` during checkout.
   </Step>
   <Step title="Tag checkout events">
     Events are tagged from checkout interactions and posted to `/v1/events`.
   </Step>
   <Step title="Evaluate lift">
-    Analytics is filtered by the checkout context to evaluate lift.
+    Analytics is filtered by context to evaluate lift before increasing traffic.
   </Step>
 </Steps>
 
 ## Next steps
 
 - [Contexts overview](/contexts)
-- [Console Contexts How-To](/guides/contexts)
+- [Console Contexts guide](/guides/contexts)
 - [How-To: Measure Recommendation Performance](./how-to-measure-recommendation-performance)

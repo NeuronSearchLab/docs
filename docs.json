@@ -82,6 +82,8 @@
             "icon": "gear",
             "pages": [
               "guides/contexts",
+              "guides/nsl-connect",
+              "guides/integrations",
               "guides/user-segments",
               "guides/rules-engine",
               "guides/pipeline-config",
@@ -108,11 +110,15 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["api-reference/introduction"]
+            "pages": [
+              "api-reference/introduction"
+            ]
           },
           {
             "group": "Authentication",
-            "pages": ["api-reference/endpoint/authenticate"]
+            "pages": [
+              "api-reference/endpoint/authenticate"
+            ]
           },
           {
             "group": "Items",
@@ -135,11 +141,15 @@
           },
           {
             "group": "Recommendations",
-            "pages": ["api-reference/endpoint/get-recommendations"]
+            "pages": [
+              "api-reference/endpoint/get-recommendations"
+            ]
           },
           {
             "group": "Search",
-            "pages": ["api-reference/endpoint/search"]
+            "pages": [
+              "api-reference/endpoint/search"
+            ]
           }
         ]
       },
@@ -148,7 +158,27 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["api-reference/platform-api/introduction"]
+            "pages": [
+              "api-reference/platform-api/introduction"
+            ]
+          },
+          {
+            "group": "Identity and Collaboration",
+            "pages": [
+              "api-reference/platform-api/identity/resolveIdentity",
+              "api-reference/platform-api/identity/listConsentRecords",
+              "api-reference/platform-api/identity/recordConsent",
+              "api-reference/platform-api/identity/listIdentityPartners",
+              "api-reference/platform-api/identity/createIdentityPartner",
+              "api-reference/platform-api/identity/mintNslId",
+              "api-reference/platform-api/identity/listDataCollaborations",
+              "api-reference/platform-api/identity/createDataCollaboration",
+              "api-reference/platform-api/identity/getDataCollaboration",
+              "api-reference/platform-api/identity/approveDataCollaboration",
+              "api-reference/platform-api/identity/revokeDataCollaboration",
+              "api-reference/platform-api/identity/contributeDataCollaboration",
+              "api-reference/platform-api/identity/calculateDataCollaborationOverlap"
+            ]
           },
           {
             "group": "Catalog",
@@ -279,17 +309,23 @@
           {
             "group": "JavaScript SDK",
             "icon": "js",
-            "pages": ["sdk/introduction"]
+            "pages": [
+              "sdk/introduction"
+            ]
           },
           {
             "group": "PHP SDK",
             "icon": "code",
-            "pages": ["sdk/php"]
+            "pages": [
+              "sdk/php"
+            ]
           },
           {
             "group": "MCP Integration",
             "icon": "robot",
-            "pages": ["sdk/mcp"]
+            "pages": [
+              "sdk/mcp"
+            ]
           }
         ]
       },
@@ -299,7 +335,9 @@
           {
             "item": "All changes",
             "icon": "list",
-            "pages": ["changelog"]
+            "pages": [
+              "changelog"
+            ]
           },
           {
             "item": "By source",

@@ -1,0 +1,99 @@
+---
+title: 'Integrations'
+icon: 'plug'
+description: 'Connect catalog, media, storage, commerce, identity, and collaboration providers to NeuronSearchLab.'
+---
+
+Integrations bring external data and enrichment signals into NeuronSearchLab. They are managed from **Console > Integrations** and can be used by catalog ingest, recommendation pipelines, identity workflows, and analytics.
+
+## Supported integration surfaces
+
+| Integration | Use it for |
+| --- | --- |
+| Twelve Labs | Video and multimodal enrichment for recommendation signals |
+| Shopify | Product catalog sync from a Shopify store |
+| WooCommerce | Product catalog sync from a WooCommerce store |
+| BigCommerce | Product catalog sync from a BigCommerce store |
+| CSV Upload | Mark the team ready for file-based catalog ingest through API or SDK flows |
+| AWS S3 | Sync catalog data from a scoped S3 bucket and prefix |
+| Partner IDs | Register activation or collaboration partners for partner-scoped NSL IDs |
+| Data collaborations | Run approved, consent-aware aggregate overlap workflows |
+
+## Commerce and catalog connectors
+
+Shopify, WooCommerce, BigCommerce, CSV, and S3 connectors help you get catalog data into NSL without building a custom ingestion pipeline first.
+
+<Steps>
+  <Step title="Open Integrations">
+    Go to **Console > Integrations**.
+  </Step>
+  <Step title="Choose the provider">
+    Select Shopify, WooCommerce, BigCommerce, CSV, or S3.
+  </Step>
+  <Step title="Enter scoped credentials">
+    Use read-only or narrowly scoped credentials wherever possible. NSL stores only the connection configuration needed to read catalog data.
+  </Step>
+  <Step title="Verify sync state">
+    Confirm that catalog records appear in the console and that metadata fields are available for contexts, rules, and pipelines.
+  </Step>
+</Steps>
+
+### Provider requirements
+
+| Provider | Required details |
+| --- | --- |
+| Shopify | `shop_domain` and an Admin API access token. Required scopes: `read_products`, `read_inventory`. |
+| WooCommerce | Store URL, consumer key, and consumer secret from the WooCommerce REST API settings. |
+| BigCommerce | Store hash and access token from a store-level API account with product read access. |
+| S3 | AWS region, bucket, optional prefix, access key ID, and secret access key. Prefer a scoped IAM user. |
+| CSV | No remote credentials. Enabling the integration marks the team ready for CSV or JSON catalog ingest through API or SDK paths. |
+
+## Twelve Labs enrichment
+
+The Twelve Labs integration adds async multimodal understanding for eligible video catalog items.
+
+When enabled, NSL can:
+
+- create and manage one team-scoped Twelve Labs index
+- read configured metadata keys that contain public video asset URLs
+- run enrichment outside the recommendation serving path
+- store analysis metadata, vectors, and relationship signals for reuse
+- let recommendation pipelines opt in to or ignore Twelve Labs-derived signals
+
+This makes video understanding a recommendation signal source, not just a detached enrichment job.
+
+## Identity and collaboration integrations
+
+The integrations page also surfaces NSL Connect workflows:
+
+- **Partner IDs** register activation or collaboration partners and mint partner-scoped NSL IDs.
+- **Data collaborations** create approved match spaces between two NSL teams and calculate aggregate overlap.
+- **LiveRamp configuration** can be used where a team needs an external identity resolution provider alongside NSL's first-party identity graph.
+
+See [NSL Connect](/guides/nsl-connect) for the identity, consent, partner ID, and collaboration model.
+
+## API actions
+
+The Platform API exposes integration actions through `POST /api/integrations`.
+
+Common actions include:
+
+- `connect_provider` for Shopify, WooCommerce, BigCommerce, CSV, and S3
+- `disconnect_provider` for connected providers
+- `configure_twelve_labs`
+- `sync_twelve_labs`
+- `disable_twelve_labs`
+- default connection status updates for simple integrations
+- `delete` for removing a saved integration record
+
+See [List integrations](/api-reference/platform-api/integrations/listIntegrations) and [Save integration](/api-reference/platform-api/integrations/saveIntegration).
+
+## Verification checklist
+
+After connecting an integration, check:
+
+- catalog records appear in **Users & Items** or item search
+- expected metadata keys are available for filters and rules
+- ingest or sync timestamps are recent
+- pipelines that depend on integration-derived signals are enabled intentionally
+- credentials are scoped to read only what NSL needs
