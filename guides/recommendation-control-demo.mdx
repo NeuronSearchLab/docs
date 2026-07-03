@@ -1,0 +1,63 @@
+---
+title: 'Recommendation Control Demo Path'
+icon: 'route'
+description: 'A buyer-facing walkthrough that proves NSL can control, explain, and improve a recommendation surface.'
+---
+
+Use this path when you want to show that NeuronSearchLab is more than a recommendation API. The demo should prove that a team can define a surface, tune ranking behavior, apply business logic, and explain the result.
+
+The strongest version is a vertical-specific walkthrough, such as news/media, commerce, sport, or video. Keep the story narrow: one surface, one goal, one ranking change, one explanation.
+
+## Demo story
+
+<Steps>
+  <Step title="Start with a surface">
+    Open or create a context for a recognizable surface, such as `Homepage Feed`, `Related Articles`, `Product Detail Rail`, or `Video Continue Watching`.
+  </Step>
+  <Step title="State the business goal">
+    Explain what the surface is meant to improve: discovery, CTR, conversion, retention, long-tail coverage, freshness, or editorial control.
+  </Step>
+  <Step title="Show the recipe">
+    Open the context's Recipe tab and show how candidate sources, signals, discovery settings, and guardrails are attached to that surface.
+  </Step>
+  <Step title="Show the pipeline">
+    Open the Pipeline tab and show the runtime stages: candidate generation, enrichment, scoring, rules, ranking, and post-processing.
+  </Step>
+  <Step title="Apply one business control">
+    Use a simple rule, such as boosting fresh content, filtering unavailable items, capping sponsored items, or pinning a launch item.
+  </Step>
+  <Step title="Explain the result">
+    Use Explainability to show retrieval score, rule impact, pipeline stage status, and feature contributions for one user-item pair.
+  </Step>
+</Steps>
+
+## What the buyer should understand
+
+By the end, the buyer should believe:
+
+- NSL can separate ranking behavior by product surface.
+- Operators can adjust ranking without waiting for application releases.
+- Business rules sit after model scoring, so control does not replace relevance.
+- Pipelines expose the runtime path instead of hiding everything in a black box.
+- Explainability makes recommendations inspectable enough for debugging, demos, and rollout confidence.
+
+## Suggested proof scenario
+
+For a media/news demo:
+
+1. Create or open a `Homepage Feed` context.
+2. Attach a discovery-oriented recipe.
+3. Show candidate generation and rules stages in the pipeline.
+4. Add a rule that boosts recent editorial priority content but keeps relevance in the ranking.
+5. Request recommendations for a sample user.
+6. Explain one recommended item and point to the score, matched rules, and pipeline stages.
+
+The message is simple: NSL gives teams inspectable control over recommendation behavior, not just a black-box ranked list.
+
+## Related pages
+
+- [Contexts](/contexts)
+- [Console Contexts](/guides/contexts)
+- [Pipeline Config](/guides/pipeline-config)
+- [Rules Engine](/guides/rules-engine)
+- [Explainability](/guides/explainability)
