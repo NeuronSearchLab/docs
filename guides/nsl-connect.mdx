@@ -17,20 +17,50 @@ Use it when you need to:
 
 A recommendation engine is only as useful as the signals it can safely connect. NSL Connect gives the platform a stable, consent-aware subject for retrieval, ranking, measurement, and downstream activation.
 
+Without identity resolution, the same person can look like several unrelated users: an anonymous browser session on Monday, a signed-in account on Tuesday, a phone app on Wednesday, and a TV device later in the week. Each surface then starts from partial behaviour.
+
+NSL Connect resolves those identifiers into a canonical `identityId`. Recommendation requests, events, analytics, and collaboration flows can then refer to the same recommendation subject even when the request arrives with a different identifier.
+
 <Steps>
   <Step title="Resolve an identity">
     Send one or more supported identifiers, such as `customer_user_id`, `anonymous_id`, `session_id`, `email_sha256`, `phone_sha256`, `device_id`, `crm_id`, or `subscription_id`.
   </Step>
+  <Step title="Attach identifiers to the same subject">
+    NSL normalizes and hashes the identifiers, finds existing matches, attaches new identifiers to the canonical `identityId`, and records resolution edges such as login links or same-device links.
+  </Step>
   <Step title="Attach consent">
     Record which purposes are allowed for that identity, such as `recommendations`, `personalisation`, `measurement`, `third_party_activation`, or `data_collaboration`.
   </Step>
-  <Step title="Serve better recommendations">
-    Use the resolved identity to connect behavior across surfaces and sessions while respecting restricted purposes.
+  <Step title="Serve consistent recommendations">
+    Use the resolved `identityId` to retrieve behaviour, profile signals, and recommendation state across surfaces and sessions while respecting restricted purposes.
   </Step>
   <Step title="Collaborate safely when approved">
     Register partners, mint partner-scoped NSL IDs, or create data collaborations only when the required purposes and approvals are present.
   </Step>
 </Steps>
+
+## Example: one viewer across web, app, and TV
+
+Imagine a media product with a user who starts anonymous, signs in, and later watches on a connected TV.
+
+<Steps>
+  <Step title="Anonymous web visit">
+    The user browses articles on the web. The site sends `anonymous_id=anon_123` and `session_id=sess_456`. NSL creates a derived identity and stores early behaviour against it.
+  </Step>
+  <Step title="Account sign-in">
+    The same user signs in later. The backend resolves `customer_user_id=user_789`, `email_sha256=...`, and the existing `anonymous_id=anon_123`. Because the account and email identifiers are strong, NSL attaches the anonymous history to the canonical identity.
+  </Step>
+  <Step title="Mobile app request">
+    The mobile app sends `customer_user_id=user_789` and `app_instance_id=app_abc`. NSL resolves the request to the same `identityId`, so recommendations can use the earlier web reading history instead of treating the app install as a cold start.
+  </Step>
+  <Step title="Connected TV request">
+    The TV app sends `ctv_device_id=ctv_999` plus the signed-in account. NSL links the CTV device to the same subject, so the TV carousel can reflect web and mobile behaviour while still applying TV-specific context, rules, and filters.
+  </Step>
+</Steps>
+
+The result is consistent behaviour without forcing every channel to use the same raw user ID. A homepage, article rail, app feed, and TV carousel can all resolve to the same recommendation subject, then apply their own context-specific ranking controls.
+
+If consent changes, NSL Connect keeps the identity graph but restricts what the identity can be used for. For example, recommendations may remain allowed while third-party activation or data collaboration is blocked.
 
 ## Identity resolution
 
