@@ -6,6 +6,12 @@ description: "Connect NeuronSearchLab to AI assistants like Claude, Cursor, and 
 
 The NeuronSearchLab MCP server lets you use your recommendation engine from any MCP-compatible AI client. Ask questions, manage your catalog, debug rankings, and run experiments through natural language conversation.
 
+## AI agents for recommendation operations
+
+A useful recommendation agent should be able to complete a small operational loop: fetch recommendations, search the catalogue, record a feedback event with request attribution, and explain why an item ranked where it did. That turns the assistant from a passive chatbot into an operator-facing tool for relevance investigations.
+
+Use the [AI agents for recommendation operations](https://www.neuronsearchlab.com/blog/ai-agents-for-recommendation-operations) article as the public framing, then run the demo path below to verify the MCP server against one real context.
+
 ## Installation
 
 The MCP server is published as an npm package. No local installation is required — your MCP client runs it automatically via `npx`.
