@@ -1,32 +1,30 @@
-# Mintlify Starter Kit
+# NeuronSearchLab Docs
 
-Click on `Use this template` to copy the Mintlify starter kit. The starter kit contains examples including
+Public documentation for NeuronSearchLab: Core API integration, SDK setup, recommendation contexts, events, ranking controls, analytics, and platform workflows.
 
-- Guide pages
-- Navigation
-- Customizations
-- API Reference pages
-- Use of popular components
+## Key links
 
-### Development
+- Docs site: https://docs.neuronsearchlab.com
+- Product site: https://www.neuronsearchlab.com
+- Recommendation systems reading path: https://www.neuronsearchlab.com/blog/recommendation-systems
+- Console: https://console.neuronsearchlab.com
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the documentation changes locally. To install, use the following command
+## Local preview
 
-```
+Install the Mintlify CLI, then run it from this repository root:
+
+```bash
 npm i -g mintlify
-```
-
-Run the following command at the root of your documentation (where docs.json is)
-
-```
 mintlify dev
 ```
 
-### Publishing Changes
+## Structure
 
-Install our Github App to auto propagate changes from your repo to your deployment. Changes will be deployed to production automatically after pushing to the default branch. Find the link to install on your dashboard. 
+- `introduction.mdx`, `quickstart.mdx`, and onboarding pages introduce the Core API flow.
+- `guides/` covers contexts, rules, pipelines, analytics, integrations, and console workflows.
+- `sdk/` documents the JavaScript, PHP, and MCP packages.
+- `api-reference/` contains generated Core API and Platform API reference pages.
 
-#### Troubleshooting
+## Publishing
 
-- Mintlify dev isn't running - Run `mintlify install` it'll re-install dependencies.
-- Page loads as a 404 - Make sure you are running in a folder with `docs.json`
+Mintlify deploys changes from the default branch after pushes to GitHub.
