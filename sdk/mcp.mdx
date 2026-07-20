@@ -1,7 +1,7 @@
 ---
 title: "MCP Integration"
 icon: "robot"
-description: "Connect NeuronSearchLab to AI assistants like Claude, Cursor, and Windsurf using the Model Context Protocol."
+description: "Connect NeuronSearchLab to Claude, Codex, Cursor, and any other MCP client — hosted endpoint with one-click OAuth, or local via npm."
 ---
 
 The NeuronSearchLab MCP server lets you use your recommendation engine from any MCP-compatible AI client. Ask questions, manage your catalog, debug rankings, and run experiments through natural language conversation.
@@ -12,9 +12,76 @@ A useful recommendation agent should be able to complete a small operational loo
 
 Use the [AI agents for recommendation operations](https://www.neuronsearchlab.com/blog/ai-agents-for-recommendation-operations) article as the public framing, then run the demo path below to verify the MCP server against one real context.
 
-## Installation
+There are two ways to connect:
 
-The MCP server is published as an npm package. No local installation is required — your MCP client runs it automatically via `npx`.
+- **Hosted (recommended)** — point your client at `https://console.neuronsearchlab.com/api/mcp`. Nothing to install; sign in with OAuth or pass an API key. Listed on the official [MCP Registry](https://registry.modelcontextprotocol.io) as `com.neuronsearchlab/mcp`.
+- **Local (stdio)** — run `npx -y @neuronsearchlab/mcp` from your client, configured with environment variables.
+
+## Connect to the hosted server
+
+The hosted server exposes the full platform toolset. What a connection can actually *do* is governed by the scopes of the API key behind it — an `admin`-scoped key unlocks everything; narrower keys (e.g. `search` + `events`) get clear permission errors on out-of-scope calls. Keys created through OAuth consent are named `Connector: <client>` and can be revoked anytime from [Console → Security](https://console.neuronsearchlab.com/security).
+
+<Tabs>
+  <Tab title="claude.ai / Claude Desktop">
+    1. Open **Settings → Connectors → Add custom connector**.
+    2. Paste `https://console.neuronsearchlab.com/api/mcp` and click **Add**.
+    3. Click **Connect** — you'll be taken to your NeuronSearchLab console to sign in and approve the permission scopes.
+
+    That's it: no npm, no config file, no copied keys.
+  </Tab>
+  <Tab title="Claude Code">
+    OAuth (browser sign-in):
+
+    ```bash
+    claude mcp add --transport http neuronsearchlab https://console.neuronsearchlab.com/api/mcp
+    ```
+
+    Or with an API key from [Console → Security](https://console.neuronsearchlab.com/security):
+
+    ```bash
+    claude mcp add --transport http neuronsearchlab https://console.neuronsearchlab.com/api/mcp \
+      --header "Authorization: Bearer nsl_your_key"
+    ```
+
+    Add `--scope project` to share the server with your team via a checked-in `.mcp.json`.
+  </Tab>
+  <Tab title="OpenAI Codex">
+    In `~/.codex/config.toml`:
+
+    ```toml
+    [mcp_servers.neuronsearchlab]
+    url = "https://console.neuronsearchlab.com/api/mcp"
+    bearer_token_env_var = "NSL_API_KEY"
+    ```
+
+    Then export `NSL_API_KEY=nsl_your_key` in your shell. You can also use `codex mcp add neuronsearchlab --url https://console.neuronsearchlab.com/api/mcp`.
+  </Tab>
+  <Tab title="Cursor / Windsurf">
+    Add to your editor's MCP settings (`.cursor/mcp.json` or equivalent):
+
+    ```json
+    {
+      "mcpServers": {
+        "neuronsearchlab": {
+          "url": "https://console.neuronsearchlab.com/api/mcp",
+          "headers": { "Authorization": "Bearer nsl_your_key" }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="ChatGPT">
+    In ChatGPT, enable **Developer mode** (Settings → Apps & Connectors → Advanced), then create a connector with the server URL `https://console.neuronsearchlab.com/api/mcp` and OAuth authentication.
+  </Tab>
+</Tabs>
+
+The endpoint implements Streamable HTTP with standard OAuth 2.1 discovery (RFC 8414 / RFC 9728), so any MCP client that supports remote servers — with OAuth or bearer headers — can connect.
+
+---
+
+## Local installation (stdio)
+
+Prefer running locally (air-gapped environments, custom base URLs, development)? The server is published as [`@neuronsearchlab/mcp`](https://www.npmjs.com/package/@neuronsearchlab/mcp) and your client runs it automatically via `npx`.
 
 ### Claude Desktop
 
@@ -35,10 +102,6 @@ Add this to your Claude Desktop configuration file (`claude_desktop_config.json`
 }
 ```
 
-### Cursor / Windsurf
-
-Add the same configuration to your editor's MCP settings. The server uses stdio transport and works with any MCP-compatible client.
-
 ### Claude Code
 
 ```bash
@@ -49,7 +112,7 @@ claude mcp add neuronsearchlab -- npx -y @neuronsearchlab/mcp \
 
 ### Demo path
 
-After connection, run the smallest end-to-end loop before adding custom prompts or automations:
+After connection (hosted or local), run the smallest end-to-end loop before adding custom prompts or automations:
 
 1. Ask for recommendations for a test user and context.
 2. Search the catalog for a concrete product phrase.
@@ -63,11 +126,9 @@ Record event type id 1 as a click for item jacket-123 from user demo-user@exampl
 Explain why item jacket-123 ranked first for demo-user@example.com
 ```
 
----
+### Configuration
 
-## Configuration
-
-All configuration is done through environment variables:
+All local configuration is done through environment variables:
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
@@ -77,13 +138,9 @@ All configuration is done through environment variables:
 | `NSL_API_KEY` | Yes (internal mode) | — | API key with admin scope |
 | `NSL_TIMEOUT_MS` | No | `15000` | Request timeout in milliseconds |
 
-### Core API mode (default, `public`)
+**Core API mode** (default, `public`) uses OAuth 2.0 client credentials against the [Core API](/api-reference/introduction): recommendations, catalog management, events, segments, experiments, campaigns, and analytics.
 
-Uses OAuth 2.0 client credentials to authenticate against the [Core API](/api-reference/introduction). This mode provides access to recommendations, catalog management, events, segments, experiments, campaigns, and analytics.
-
-### Internal mode
-
-Uses a static API key to authenticate against the console API (`console.neuronsearchlab.com`). This mode provides access to context, pipeline, and rule management — the same admin operations available in the console.
+**Internal mode** uses a static API key against the console API — the same admin operations available in the console (and the same toolset the hosted server exposes):
 
 ```json
 {
@@ -104,7 +161,9 @@ Uses a static API key to authenticate against the console API (`console.neuronse
 
 ## Available tools
 
-### Recommendations and catalog (Core API mode)
+Every tool carries MCP annotations (`readOnlyHint` / `destructiveHint`), so well-behaved clients ask before destructive operations and skip confirmation for read-only ones.
+
+### Recommendations and catalog
 
 | Tool | Description |
 |------|-------------|
@@ -117,7 +176,7 @@ Uses a static API key to authenticate against the console API (`console.neuronse
 | `delete_items` | Permanently remove items |
 | `track_event` | Record a user interaction event |
 
-### Segments (Core API mode)
+### Segments
 
 | Tool | Description |
 |------|-------------|
@@ -128,7 +187,7 @@ Uses a static API key to authenticate against the console API (`console.neuronse
 | `delete_segment` | Remove a segment |
 | `get_segment_stats` | Get segment size and overlap stats |
 
-### Experiments (Core API mode)
+### Experiments
 
 | Tool | Description |
 |------|-------------|
@@ -140,7 +199,7 @@ Uses a static API key to authenticate against the console API (`console.neuronse
 | `stop_experiment` | End an experiment |
 | `get_experiment_results` | Get statistical results |
 
-### Campaigns (Core API mode)
+### Campaigns
 
 | Tool | Description |
 |------|-------------|
@@ -150,21 +209,28 @@ Uses a static API key to authenticate against the console API (`console.neuronse
 | `pause_campaign` | Pause a campaign |
 | `delete_campaign` | Remove a campaign |
 
-### Analytics (Core API mode)
+### Analytics
 
 | Tool | Description |
 |------|-------------|
 | `get_ranking_metrics` | Get ranking performance metrics |
 | `get_experiment_metrics` | Get live experiment stats |
 | `get_segment_metrics` | Get segment performance |
+| `get_user_analytics` | Per-user engagement analytics |
+| `get_item_analytics` | Per-item performance analytics |
+| `compare_items` | Side-by-side item comparison |
+| `top_items` | Top items by metric |
 
-### Admin tools (internal mode)
+### Platform administration
 
 | Tool | Description |
 |------|-------------|
 | `list_contexts` / `create_context` / `update_context` / `delete_context` | Manage recommendation contexts |
 | `list_pipelines` / `create_pipeline` / `activate_pipeline` / `clone_pipeline` | Manage ranking pipelines |
 | `list_rules` / `create_rule` / `toggle_rule` / `delete_rule` | Manage ranking rules |
+| `list_event_types` / `create_event_type` / `update_event_type` / `delete_event_type` | Manage event type definitions |
+| `list_api_keys` / `create_api_key` / `revoke_api_key` | Manage API credentials |
+| `list_platform_routes` / `call_platform_api` | Escape hatch for any console capability without a dedicated tool |
 
 ---
 
@@ -204,6 +270,7 @@ The MCP server includes automatic retry with exponential backoff for transient e
 
 ## Next steps
 
-- Get your SDK credentials from [Console > SDK Credentials](https://console.neuronsearchlab.com/security).
+- Create an API key or SDK credentials in [Console → Security](https://console.neuronsearchlab.com/security).
+- Find the server on the [MCP Registry](https://registry.modelcontextprotocol.io) as `com.neuronsearchlab/mcp`.
 - Try the built-in [NeuronSearchLab AI](/guides/studio-workflow) assistant in the console — it uses the same MCP tools.
 - View the [JavaScript SDK](/sdk/introduction) for direct programmatic access.
