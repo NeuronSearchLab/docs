@@ -14,7 +14,7 @@ Use the [AI agents for recommendation operations](https://www.neuronsearchlab.co
 
 There are two ways to connect:
 
-- **Hosted (recommended)** — point your client at `https://console.neuronsearchlab.com/api/mcp`. Nothing to install; sign in with OAuth or pass an API key. Listed on the official [MCP Registry](https://registry.modelcontextprotocol.io) as `com.neuronsearchlab/mcp`.
+- **Hosted (recommended)** — point your client at `https://console.neuronsearchlab.com/api/mcp`. Nothing to install; sign in with OAuth or pass an API key. Listed on the official [MCP Registry](https://registry.modelcontextprotocol.io) as `com.neuronsearchlab/mcp` (search `neuronsearchlab` in the registry API or directory).
 - **Local (stdio)** — run `npx -y @neuronsearchlab/mcp` from your client, configured with environment variables.
 
 ## Connect to the hosted server
@@ -110,21 +110,34 @@ claude mcp add neuronsearchlab -- npx -y @neuronsearchlab/mcp \
   --env NSL_CLIENT_SECRET=your-client-secret
 ```
 
-### Demo path
+### Recommendation-ops demo path
 
-After connection (hosted or local), run the smallest end-to-end loop before adding custom prompts or automations:
+After connection (hosted or local), run the smallest end-to-end loop before adding custom prompts or automations. Keep the first pass read-only so the assistant can investigate ranking behavior without mutating a production surface.
 
-1. Ask for recommendations for a test user and context.
-2. Search the catalog for a concrete product phrase.
-3. Record a click or view event for one returned item, including the event type ID and the response `request_id` when available.
-4. Ask why that item ranked where it did.
+1. **List contexts** and confirm the exact context/surface to inspect.
+2. **Fetch recommendations** for a test user and selected context.
+3. **Search the catalog** for a concrete product/content phrase and compare result IDs.
+4. **Explain one ranked item** with the `request_id` from the recommendation/search response when available.
+5. **Optional, sandbox only:** draft or toggle a rule after the explanation shows the expected leak.
 
 ```text
-Get 10 recommendations for user demo-user@example.com using context homepage-feed
-Search the catalog for waterproof jackets and show the top 5 item ids
-Record event type id 1 as a click for item jacket-123 from user demo-user@example.com, using the request_id from the recommendation or search response
-Explain why item jacket-123 ranked first for demo-user@example.com
+Use the NeuronSearchLab MCP server in read-only mode first.
+List my recommendation contexts and choose the homepage-feed context.
+Get 10 recommendations for user demo-user@example.com using context homepage-feed.
+Search the catalog for waterproof jackets and show the top 5 item ids.
+Explain why the first recommended item ranked first, using the request_id from the recommendation response if available.
+If you see a relevance leak, draft the smallest rule that would fix it, but do not create or toggle the rule yet.
 ```
+
+For internal/admin mode, inspect operational state before proposing a change:
+
+```text
+List ranking rules for the homepage-feed context.
+Show the latest ranking metrics for that context.
+Compare item jacket-123 with item jacket-456 and explain which rule or signal separates them.
+```
+
+This is the buyer-facing story: **ChatGPT audits a recommendation surface, explains the leak, and drafts the fix**. Operators stay in control because destructive MCP tools carry annotations and the safe demo prompt explicitly asks for a draft before any rule write.
 
 ### Configuration
 
