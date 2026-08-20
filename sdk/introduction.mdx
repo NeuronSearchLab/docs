@@ -16,7 +16,7 @@ Need PHP instead? View the [PHP SDK guide](/sdk/php) or install it from [Packagi
 npm install @neuronsearchlab/sdk
 ```
 
-The SDK ships with TypeScript declarations — no additional type packages needed.
+The SDK ships with TypeScript declarations - no additional type packages needed.
 
 ---
 
@@ -54,7 +54,7 @@ const sdk = new NeuronSDK({
 ```ts
 const result = await sdk.getRecommendations({
   userId: "user-123",
-  contextId: "101",
+  contextId: 101,
   limit: 10,
 });
 
@@ -72,7 +72,7 @@ Use `search` when the user supplies a free-text query and you want ranked catalo
 const results = await sdk.search({
   query: "waterproof trail shoes",
   userId: "user-123",
-  contextId: "101",
+  contextId: 101,
   limit: 10,
   filter: ["category:footwear"],
 });
@@ -104,7 +104,7 @@ const first = search.data[0];
 
 if (first) {
   await sdk.trackEvent({
-    type: "click",
+    eventId: 42,
     userId: "user-123",
     itemId: first.item_id,
     requestId: search.request_id,
@@ -114,7 +114,7 @@ if (first) {
 
 ### Auto-generated sections
 
-Use `getAutoRecommendations` for paginated, auto-titled recommendation sections — ideal for infinite-scroll feeds:
+Use `getAutoRecommendations` for paginated, auto-titled recommendation sections - ideal for infinite-scroll feeds:
 
 ```ts
 const section = await sdk.getAutoRecommendations({
@@ -143,9 +143,9 @@ Events provide the feedback loop that powers personalization. The SDK buffers ev
 
 ```ts
 await sdk.trackEvent({
-  type: "click",
+  eventId: 42,
   userId: "user-123",
-  itemId: "7f3a2c9e",
+  itemId: 3187,
 });
 ```
 
@@ -179,9 +179,9 @@ When `propagateRecommendationRequestId` is enabled (the default), the SDK captur
 ```ts
 const recs = await sdk.getRecommendations({ userId: "user-123", limit: 5 });
 
-// request_id is auto-attached — no need to pass it
+// request_id is auto-attached - no need to pass it
 await sdk.trackEvent({
-  type: "click",
+  eventId: 42,
   userId: "user-123",
   itemId: recs.recommendations[0].item_id,
 });
@@ -194,21 +194,20 @@ await sdk.trackEvent({
 ### Create an item
 
 ```ts
-await sdk.upsertItem({
-  itemId: "7f3a2c9e",
+const item = await sdk.upsertItem({
   name: "Nike Running Shoes",
   description: "High-performance running shoes for daily training.",
   metadata: { category: "Footwear", brand: "Nike", price: 109.99 },
 });
 ```
 
-The `description` field is used to generate embeddings for similarity matching.
+The `description` field is used to generate embeddings for similarity matching. NSL generates `item.id`; persist that integer alongside your source record.
 
 ### Update an item
 
 ```ts
 await sdk.patchItem({
-  itemId: "7f3a2c9e",
+  itemId: 3187,
   active: false, // disable the item
 });
 ```
@@ -216,18 +215,18 @@ await sdk.patchItem({
 Or use the convenience helper:
 
 ```ts
-await sdk.setItemActive("7f3a2c9e", false);
+await sdk.setItemActive(3187, false);
 ```
 
 ### Delete items
 
 ```ts
-await sdk.deleteItems({ itemId: "7f3a2c9e" });
+await sdk.deleteItems({ itemId: 3187 });
 
 // Batch delete
 await sdk.deleteItems([
-  { itemId: "7f3a2c9e" },
-  { itemId: "a8d1b247" },
+  { itemId: 3187 },
+  { itemId: 3188 },
 ]);
 ```
 

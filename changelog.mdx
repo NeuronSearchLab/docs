@@ -1,11 +1,11 @@
 ---
 title: "Changelog"
 icon: "list"
-description: "Release history for the NeuronSearchLab console, SDKs, and MCP server."
+description: "Release history for the NeuronSearchLab console, SDKs, MCP server, and native integrations."
 rss: true
 ---
 
-<CardGroup cols={3}>
+<CardGroup cols={2}>
   <Card title="Console changes" icon="browser" href="/changelog/console">
     Admin console, ranking controls, analytics, billing, and model lifecycle updates.
   </Card>
@@ -15,22 +15,98 @@ rss: true
   <Card title="MCP changes" icon="robot" href="/changelog/mcp">
     MCP server tools, platform automation, and assistant integration changes.
   </Card>
+  <Card title="Integration changes" icon="plug" href="/changelog/integrations">
+    Vercel Marketplace, Next.js SDK, and deployable starter updates.
+  </Card>
 </CardGroup>
 
-<Update label="August 16, 2026" rss="August 16, 2026: Admin console, MCP server.">
+<Update label="August 20, 2026" rss="August 20, 2026: Admin console, Next.js SDK, Vercel integration, Next.js personalized starter.">
 
 ### Admin console
 
 #### Features
 
-- Introduced the in-console assistant, connected MCP tools, hardened transport options, and routed analytics and management actions through platform APIs.
+- Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
 
+#### Bug fixes
 
-### MCP server
+- Expose provisioned runtime identifiers
+
+### Next.js SDK
 
 #### Features
 
-- Expanded MCP coverage from the first server release into contexts, pipelines, rules, event types, analytics, install paths, and clearer API error handling.
+- Added a server-first Next.js SDK and deployable personalized content starter with catalogue sync, event tracking, safe fallbacks, and provisioned runtime identifiers.
+
+#### Bug fixes
+
+- Build package for git installs
+- Normalize events for Core API
+- Support numeric runtime identifiers
+- Make catalogue sync idempotent
+
+### Vercel integration
+
+#### Features
+
+- Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
+
+#### Bug fixes
+
+- Inject default context and event identifiers
+
+### Next.js personalized starter
+
+#### Features
+
+- Added a server-first Next.js SDK and deployable personalized content starter with catalogue sync, event tracking, safe fallbacks, and provisioned runtime identifiers.
+
+#### Bug fixes
+
+- Send canonical Core API events
+- Use provisioned runtime identifiers
+- Keep starter seamless during serving warm-up
+- Continue after idempotent catalogue sync
+
+</Update>
+
+<Update label="August 18, 2026" rss="August 18, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- Added intent-aware onboarding so starter guidance and follow-up steps reflect what each customer is building.
+
+
+</Update>
+
+<Update label="August 17, 2026" rss="August 17, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- Added staged content distribution controls, rollout metrics, and hardened ranker deployment behavior.
+- Added intent-aware onboarding so starter guidance and follow-up steps reflect what each customer is building.
+
+#### Bug fixes
+
+- Type controlled distribution metrics
+- Harden staged distribution and ranker rollout
+- Close distribution rollout edge cases
+- Align recommendation contract tests
+- Type partial distribution stage overrides
+
+</Update>
+
+<Update label="August 16, 2026" rss="August 16, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- Added ChatGPT activation, OAuth onboarding, starter catalogues, recommendation prompts, and handoff from the in-console assistant.
 
 
 </Update>
@@ -42,7 +118,7 @@ rss: true
 #### Features
 
 - Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Introduced the in-console assistant, connected MCP tools, hardened transport options, and routed analytics and management actions through platform APIs.
+- Added ChatGPT activation, OAuth onboarding, starter catalogues, recommendation prompts, and handoff from the in-console assistant.
 
 #### Bug fixes
 
@@ -57,8 +133,7 @@ rss: true
 #### Features
 
 - Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Introduced the in-console assistant, connected MCP tools, hardened transport options, and routed analytics and management actions through platform APIs.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
+- Added ChatGPT activation, OAuth onboarding, starter catalogues, recommendation prompts, and handoff from the in-console assistant.
 
 #### Bug fixes
 
@@ -91,7 +166,7 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- Added an experimental generative catalogue ranker for evaluating model-driven ordering strategies.
 
 
 </Update>
@@ -131,12 +206,13 @@ rss: true
 
 #### Features
 
+- Added hosted MCP tools for effective plan, usage-limit, exact overage, and context cleanup visibility.
 - Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
 
 
 </Update>
 
-<Update label="July 24, 2026" rss="July 24, 2026: Admin console, MCP server.">
+<Update label="July 24, 2026" rss="July 24, 2026: Admin console.">
 
 ### Admin console
 
@@ -149,13 +225,6 @@ rss: true
 #### Bug fixes
 
 - Allow PostHog browser bootstrap in build
-
-### MCP server
-
-#### Features
-
-- No major feature changes in this period.
-
 
 </Update>
 
@@ -172,7 +241,7 @@ rss: true
 
 #### Features
 
-- Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
+- Added a submission-safe hosted profile for ChatGPT with explicit OAuth requirements and restricted credential operations.
 
 #### Bug fixes
 
@@ -233,21 +302,7 @@ rss: true
 
 </Update>
 
-<Update label="July 7, 2026" rss="July 7, 2026: TypeScript SDK, PHP SDK, MCP server.">
-
-### TypeScript SDK
-
-#### Features
-
-- Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
-
-
-### PHP SDK
-
-#### Features
-
-- Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
-
+<Update label="July 7, 2026" rss="July 7, 2026: MCP server.">
 
 ### MCP server
 
@@ -258,20 +313,13 @@ rss: true
 
 </Update>
 
-<Update label="July 2, 2026" rss="July 2, 2026: Admin console, MCP server.">
+<Update label="July 2, 2026" rss="July 2, 2026: Admin console.">
 
 ### Admin console
 
 #### Features
 
 - Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-
-
-### MCP server
-
-#### Features
-
-- No major feature changes in this period.
 
 
 </Update>
@@ -722,6 +770,7 @@ rss: true
 #### Features
 
 - Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
+- Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
 - Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
 - Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
 
@@ -891,6 +940,7 @@ rss: true
 - Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
 - Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
 - Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
 
 #### Bug fixes
 
@@ -1050,6 +1100,7 @@ rss: true
 
 - Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
 - Introduced the in-console assistant, connected MCP tools, hardened transport options, and routed analytics and management actions through platform APIs.
+- Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
 
 #### Bug fixes
 
@@ -1227,9 +1278,10 @@ rss: true
 
 #### Features
 
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
+- Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
 - Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
 - Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
 
 #### Bug fixes
 
@@ -1301,10 +1353,10 @@ rss: true
 #### Bug fixes
 
 - Context modal UX parity: replace native selects, fix a11y, polish mobile
-- Add Vitest suite for context modal + schema utilities
 - Fix context modal type errors for production build
 - Run CI on staging branch with tests
 - Keep dashboard gauge stable across period changes
+- Resolve TypeScript error in ContextClient Select value prop
 
 </Update>
 
@@ -1385,6 +1437,7 @@ rss: true
 - Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
 - Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
 - Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
 
 #### Bug fixes
 
@@ -1402,8 +1455,9 @@ rss: true
 
 #### Features
 
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
+- Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
 - Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
 - Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
 - Added period-aware dashboards, usage gauges, KPI cards, multi-series charts, saved analytic views, and production data refresh paths.
 

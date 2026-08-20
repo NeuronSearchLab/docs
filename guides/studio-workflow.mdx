@@ -14,7 +14,7 @@ The assistant has access to the same tools available in the [MCP server](/sdk/mc
 
 - **Get recommendations** for any user and context
 - **Search your catalog** by keyword
-- **Explain rankings** — why an item appeared at a given position
+- **Explain rankings** - why an item appeared at a given position
 - **Create, update, and delete items** in your catalog
 - **Track events** on behalf of a user
 - **Manage contexts, pipelines, and rules** (when connected with admin credentials)
@@ -33,6 +33,14 @@ When you first open the assistant, you will see a set of starter prompts to help
 - "Search my catalog for running shoes"
 
 Type a message in the input field and press Enter. The assistant streams its response and shows any tool calls it makes along the way.
+
+## Continue in ChatGPT
+
+Select **Open in ChatGPT** above the composer to continue the workflow in the NeuronSearchLab ChatGPT plugin. If the composer contains text, the handoff includes that request. If it is empty, the handoff starts with a recommendation and ranking-explanation prompt.
+
+The handoff opens the ChatGPT app when a compatible native handler is available and otherwise opens `chatgpt.com`. Install NeuronSearchLab from the ChatGPT plugin directory if it is not already available in your conversation. When ChatGPT asks you to connect, sign up or log in to the NeuronSearchLab console and approve access.
+
+You do not need a local MCP server, Developer mode, an MCP URL, or an API key. See the [ChatGPT plugin setup steps](/sdk/mcp#chatgpt).
 
 ## How it connects to your data
 

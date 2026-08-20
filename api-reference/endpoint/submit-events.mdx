@@ -6,9 +6,7 @@ openapi: "POST /v1/events"
 
 ## Description
 
-Records user behavior that powers personalization, attribution, analytics, and model training. Events use a `type` field plus a type-specific object so new event shapes can be added without changing shared fields.
-
-Common event types are `impression`, `view`, `click`, `like`, `purchase`, and `conversion`. Your console event definitions decide which types are valid for your tenant.
+Records user behavior that powers personalization, attribution, analytics, and model training. `event_id` must be the positive integer shown for an event created in your dashboard. Event names such as `"click"` are display labels and are not accepted as identifiers.
 
 ## Request
 
@@ -19,16 +17,14 @@ POST /v1/events
 ```json
 {
   "user_id": "user-abc123",
-  "item_id": "7f3a2c9e",
-  "context_id": "101",
-  "type": "purchase",
+  "item_id": 3187,
+  "context_id": 101,
+  "event_id": 42,
   "occurred_at": 1777478400,
-  "purchase": {
+  "metadata": {
+    "surface": "home_feed",
     "amount": 4999,
     "currency": "usd"
-  },
-  "metadata": {
-    "surface": "home_feed"
   }
 }
 ```
@@ -36,17 +32,16 @@ POST /v1/events
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `user_id` | string | yes | End-user identifier. |
-| `item_id` | string | yes | Item ID such as `7f3a2c9e`. |
-| `context_id` | string | no | Optional context identifier for analytics and attribution. Use the same context ID convention as your recommendation request, for example `101`. |
-| `type` | string | yes | Event type configured in the console. |
+| `item_id` | integer | yes | Item ID returned by NSL ingestion, such as `3187`. |
+| `context_id` | integer | no | Context ID generated when the context is created in the dashboard. |
+| `event_id` | integer | yes | Event ID generated when the event is created in dashboard Event configuration. |
 | `session_id` | string | no | Session identifier for attribution and analytics. |
 | `request_id` | string | no | Recommendation request ID returned by `GET /v1/recommendations`. |
 | `placement` | string | no | Surface or placement where the event occurred. |
 | `occurred_at` | integer | no | Unix timestamp for when the action happened. Defaults to ingestion time. |
-| `<type>` | object | no | Type-specific payload. Include `{}` when there are no type-specific fields. |
 | `metadata` | object | no | Additional event context. |
 
-Legacy aliases `userId`, `itemId`, `eventType`, `event_type`, `eventId`, `event_id`, `contextId`, `sessionId`, `requestId`, `client_ts`, `clientTs`, `occurredAt`, and `timestamp` are still accepted. Event batches are capped at 200 events per request by default.
+Camel-case aliases `userId`, `itemId`, `eventId`, `contextId`, `sessionId`, and `requestId` remain available, but all identifier aliases carry the same integer values. Event batches are capped at 200 events per request by default.
 
 ## Response
 
@@ -55,26 +50,18 @@ Legacy aliases `userId`, `itemId`, `eventType`, `event_type`, `eventId`, `event_
   "object": "list",
   "data": [
     {
-      "id": "12345",
+      "id": 12345,
       "object": "event",
       "user_id": "user-abc123",
-      "item_id": "7f3a2c9e",
-      "type": "purchase",
-      "purchase": {
-        "amount": 4999,
-        "currency": "usd"
-      },
+      "item_id": 3187,
+      "event_id": 42,
       "session_id": null,
       "request_id": null,
-      "context_id": "101",
+      "context_id": 101,
       "placement": null,
       "metadata": {
         "surface": "home_feed",
-        "context_id": "101",
-        "purchase": {
-          "amount": 4999,
-          "currency": "usd"
-        }
+        "context_id": 101
       },
       "occurred_at": 1777478400,
       "created": 1777478405

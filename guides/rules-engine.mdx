@@ -68,7 +68,7 @@ If you need to change what gets scored in the first place, use a **Context**. If
 | `boost` | Multiplies matching item scores upward so they rise in the ranked list. | `weight` | Conditions: `is_new_arrival = true` • Action: `weight = 1.8` |
 | `bury` | Multiplies matching item scores downward so they fall relative to stronger candidates. | `weight` | Conditions: `quality_band = low` • Action: `weight = 0.4` |
 | `filter` | Removes matching items from the result set entirely. | None | Conditions: `availability = out_of_stock` |
-| `pin` | Moves the first matching item to a fixed 1-based position after ranking. | `pin_position` | Conditions: `item_id = launch-hero-2026` • Action: `pin_position = 1` |
+| `pin` | Moves the first matching item to a fixed 1-based position after ranking. | `pin_position` | Conditions: `item_id = 3187` • Action: `pin_position = 1` |
 | `cap` | Limits how much of the final list matching items may occupy. | `cap_fraction` | Conditions: `content_type = sponsored` • Action: `cap_fraction = 0.2` |
 | `diversity` | Limits repetition across a metadata field so the result set stays varied. | `diversity_field`, `diversity_max` | Action: `diversity_field = brand`, `diversity_max = 2` |
 | `dedupe` | Prevents the same item or entity from reappearing within a sliding result window. | `dedupe_window` | Action: `dedupe_window = 24` |
@@ -235,7 +235,7 @@ Use priority deliberately:
 
 When an A/B experiment is running, each variant can include `config_overrides` that specify:
 
-- `include_rule_ids` — only these rules apply for users in this variant
-- `exclude_rule_ids` — these rules are skipped for users in this variant
+- `include_rule_ids` - only these rules apply for users in this variant
+- `exclude_rule_ids` - these rules are skipped for users in this variant
 
 This lets you test the impact of specific rule sets against a control group. See [A/B Testing](/guides/ab-testing) for details.
