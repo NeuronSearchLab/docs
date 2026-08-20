@@ -1,0 +1,43 @@
+---
+title: 'Vercel native integration'
+description: 'Deploy personalized Next.js applications without exposing credentials or creating a separate NSL account.'
+---
+
+The NeuronSearchLab Vercel integration provisions a ready-to-use recommendation workspace, injects server-only credentials, and opens the NSL console through Vercel SSO.
+
+## Deploy the personalized starter
+
+1. Install **NeuronSearchLab** from Vercel Marketplace and choose Free, Starter, or Pro.
+2. Connect the new resource to your Vercel project.
+3. Deploy the **Next.js Personalized Content Starter**.
+4. Open several stories in one category and refresh the homepage to see the ranking adapt.
+
+Vercel injects `NSL_API_URL`, `NSL_TOKEN_URL`, `NSL_CLIENT_ID`, and `NSL_CLIENT_SECRET`. They must remain server-side. Never copy either credential into a variable beginning with `NEXT_PUBLIC_`.
+
+## Use the Next.js package
+
+```bash
+npm install @neuronsearchlab/nextjs
+```
+
+```ts app/api/nsl/events/route.ts
+import { createEventRoute } from '@neuronsearchlab/nextjs/server';
+
+export const POST = createEventRoute();
+```
+
+```tsx
+import { nsl } from '@neuronsearchlab/nextjs/server';
+
+const recommendations = await nsl.recommend({
+  userId: user.id,
+  context: 'homepage',
+  limit: 10,
+});
+```
+
+Browser components can use `NSLTracker` or `trackNSLEvent`; both call your Route Handler and never receive the OAuth secret.
+
+## What is provisioned
+
+Each Vercel resource maps to a separate NSL team with a homepage context, view/click/purchase event types, an active default ranking pipeline, and a dedicated OAuth client. Removing the Vercel resource disconnects it without deleting its historical recommendation data.
