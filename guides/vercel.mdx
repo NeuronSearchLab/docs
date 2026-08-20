@@ -3,16 +3,29 @@ title: 'Vercel native integration'
 description: 'Deploy personalized Next.js applications without exposing credentials or creating a separate NSL account.'
 ---
 
-The NeuronSearchLab Vercel integration provisions a ready-to-use recommendation workspace, injects server-only credentials, and opens the NSL console through Vercel SSO.
+The NeuronSearchLab Vercel integration provisions a ready-to-use recommendation workspace, injects server-only configuration, and opens the NSL console through Vercel SSO. You do not need to create a separate NeuronSearchLab account before installing it.
 
 ## Deploy the personalized starter
 
-1. Install **NeuronSearchLab** from Vercel Marketplace and choose Free, Starter, or Pro.
-2. Connect the new resource to your Vercel project.
+1. Open Vercel Marketplace, install **NeuronSearchLab**, and choose Free, Starter, or Pro.
+2. Create a NeuronSearchLab resource and connect it to your Vercel project.
 3. Deploy the **Next.js Personalized Content Starter**.
-4. Open several stories in one category and refresh the homepage to see the ranking adapt.
+4. Open several Football stories, then refresh the homepage to see the ranking adapt.
 
-Vercel injects `NSL_API_URL`, `NSL_TOKEN_URL`, `NSL_CLIENT_ID`, and `NSL_CLIENT_SECRET`. They must remain server-side. Never copy either credential into a variable beginning with `NEXT_PUBLIC_`.
+When the resource is connected, Vercel creates these environment variables in the project:
+
+| Variable | Purpose |
+| --- | --- |
+| `NSL_API_URL` | Core API base URL |
+| `NSL_TOKEN_URL` | OAuth token endpoint |
+| `NSL_CLIENT_ID` | Resource-specific OAuth client ID |
+| `NSL_CLIENT_SECRET` | Resource-specific OAuth client secret |
+| `NSL_CONTEXT_ID` | Numeric ID of the provisioned homepage context |
+| `NSL_EVENT_VIEW_ID` | Numeric ID of the provisioned view event type |
+| `NSL_EVENT_CLICK_ID` | Numeric ID of the provisioned click event type |
+| `NSL_EVENT_PURCHASE_ID` | Numeric ID of the provisioned purchase event type |
+
+All eight values are server-only configuration. Never copy one into a variable beginning with `NEXT_PUBLIC_`. The Next.js package uses the provisioned context and event IDs automatically, so the starter works across deployed Core API versions without hard-coded numeric identifiers.
 
 ## Use the Next.js package
 
@@ -40,4 +53,14 @@ Browser components can use `NSLTracker` or `trackNSLEvent`; both call your Route
 
 ## What is provisioned
 
-Each Vercel resource maps to a separate NSL team with a homepage context, view/click/purchase event types, an active default ranking pipeline, and a dedicated OAuth client. Removing the Vercel resource disconnects it without deleting its historical recommendation data.
+Each Vercel resource maps to a separate NSL workspace with:
+
+- a homepage context
+- view, click, and purchase event types
+- an active default ranking pipeline
+- a dedicated OAuth client
+- Free, Starter, or Pro resource-level billing
+
+Use **Manage** on the installed Vercel integration to open the NSL console through Vercel SSO. Rotating resource secrets replaces the dedicated OAuth credential and returns an updated keyset to Vercel.
+
+Removing the resource revokes its OAuth credential and disconnects it from Vercel projects. The historical recommendation data in the NSL workspace is retained.

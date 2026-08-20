@@ -408,7 +408,8 @@
             "pages": [
               "changelog/console",
               "changelog/sdk",
-              "changelog/mcp"
+              "changelog/mcp",
+              "changelog/integrations"
             ]
           }
         ]

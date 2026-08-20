@@ -16,7 +16,7 @@ const sources = [
     id: "typescript-sdk",
     label: "TypeScript SDK",
     env: "NSL_TYPESCRIPT_SDK_REPO",
-    defaultPath: "../neuronsearchlab-sdk-js",
+    defaultPath: "../neuronsearchlab-sdk",
     description: "Browser and server JavaScript client for recommendations, events, catalog items, and API contract updates.",
   },
   {
@@ -33,9 +33,78 @@ const sources = [
     defaultPath: "../neuronsearchlab-mcp",
     description: "Model Context Protocol tools for assistant-led platform management and analytics.",
   },
+  {
+    id: "nextjs-sdk",
+    label: "Next.js SDK",
+    env: "NSL_NEXTJS_SDK_REPO",
+    defaultPath: "../neuronsearchlab-nextjs",
+    description: "Server-first Next.js bindings for recommendations, catalogue sync, and event tracking.",
+  },
+  {
+    id: "vercel-integration",
+    label: "Vercel integration",
+    env: "NSL_VERCEL_INTEGRATION_REPO",
+    defaultPath: "../nsl-vercel-integration",
+    description: "Native Vercel Marketplace provisioning, plans, secrets, resource lifecycle, and SSO.",
+  },
+  {
+    id: "nextjs-starter",
+    label: "Next.js personalized starter",
+    env: "NSL_NEXTJS_STARTER_REPO",
+    defaultPath: "../nsl-nextjs-personalized-starter",
+    description: "Deployable example for catalogue sync, behavioral events, and personalized ranking.",
+  },
 ];
 
 const topics = [
+  {
+    id: "chatgpt-integration",
+    label: "ChatGPT integration",
+    match: /(chatgpt|openai marketplace|marketplace activation)/i,
+    summary: "Added ChatGPT activation, OAuth onboarding, starter catalogues, recommendation prompts, and handoff from the in-console assistant.",
+  },
+  {
+    id: "vercel-native",
+    label: "Vercel integration",
+    match: /(vercel|marketplace partner api|resource provisioning|resource attribution|runtime identifier)/i,
+    summary: "Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.",
+  },
+  {
+    id: "nextjs-integration",
+    label: "Next.js integration",
+    match: /(next\.js|nextjs|personalized|catalogue sync|runtime identifier|core api events|portable sdk|server-first)/i,
+    summary: "Added a server-first Next.js SDK and deployable personalized content starter with catalogue sync, event tracking, safe fallbacks, and provisioned runtime identifiers.",
+  },
+  {
+    id: "controlled-distribution",
+    label: "Controlled distribution",
+    match: /(controlled content distribution|staged distribution|distribution rollout|distribution metrics|ranker rollout)/i,
+    summary: "Added staged content distribution controls, rollout metrics, and hardened ranker deployment behavior.",
+  },
+  {
+    id: "intent-onboarding",
+    label: "Intent-aware onboarding",
+    match: /(build intent|booking-aware onboarding|onboarding demo follow-up)/i,
+    summary: "Added intent-aware onboarding so starter guidance and follow-up steps reflect what each customer is building.",
+  },
+  {
+    id: "generative-ranking",
+    label: "Generative ranking",
+    match: /(generative.*ranker|ranker model)/i,
+    summary: "Added an experimental generative catalogue ranker for evaluating model-driven ordering strategies.",
+  },
+  {
+    id: "mcp-plan-controls",
+    label: "MCP plan and usage tools",
+    match: /(account plan|usage limits|context deletion)/i,
+    summary: "Added hosted MCP tools for effective plan, usage-limit, exact overage, and context cleanup visibility.",
+  },
+  {
+    id: "mcp-hosted-profile",
+    label: "Hosted MCP profile",
+    match: /(submission-safe|openai skill|openai submission|chatgpt app|hosted openai)/i,
+    summary: "Added a submission-safe hosted profile for ChatGPT with explicit OAuth requirements and restricted credential operations.",
+  },
   {
     id: "platform-foundation",
     label: "Platform foundation",
@@ -106,6 +175,11 @@ const topics = [
 
 const sourceTopics = {
   console: [
+    "chatgpt-integration",
+    "vercel-native",
+    "controlled-distribution",
+    "intent-onboarding",
+    "generative-ranking",
     "platform-foundation",
     "auth-billing",
     "data-exploration",
@@ -117,7 +191,10 @@ const sourceTopics = {
   ],
   "typescript-sdk": ["sdk-contract", "sdk-distribution", "reliability"],
   "php-sdk": ["sdk-contract", "sdk-distribution"],
-  mcp: ["mcp-tools", "sdk-distribution", "reliability"],
+  mcp: ["mcp-plan-controls", "mcp-hosted-profile", "mcp-tools", "sdk-distribution", "reliability"],
+  "nextjs-sdk": ["nextjs-integration", "sdk-contract", "sdk-distribution", "reliability"],
+  "vercel-integration": ["vercel-native", "reliability"],
+  "nextjs-starter": ["nextjs-integration", "reliability"],
 };
 
 function repoPath(source) {
@@ -159,7 +236,7 @@ function isNoise(subject) {
 function normalizeSubject(subject) {
   return subject
     .replace(/^(feat|fix|docs|test|ci|chore|redesign|refactor|rename|agents)(\([^)]+\))?:\s*/i, "")
-    .replace(/\s+—\s+/g, ": ")
+    .replace(/\s+\u2014\s+/g, ": ")
     .trim();
 }
 
@@ -197,12 +274,12 @@ function topicFor(source, commit) {
 }
 
 function changeTypeFor(record) {
-  if (record.topic?.id === "reliability" || /^fix\b|fix|error|bug|compat|harden|stabilize/i.test(record.rawSubject)) {
-    return "Bug fixes";
-  }
-
   if (/^(chore|ci|test|docs|refactor|rename)\b/i.test(record.rawSubject)) {
     return "Maintenance";
+  }
+
+  if (record.topic?.id === "reliability" || /^fix\b|fix|error|bug|compat|harden|stabilize/i.test(record.rawSubject)) {
+    return "Bug fixes";
   }
 
   return "Features";
@@ -300,10 +377,11 @@ const records = sourceCommits.flatMap(({source, commits}) =>
       rawSubject: commit.subject,
       title: normalizeSubject(commit.subject),
       topic: topicFor(source, commit),
-    })),
+    }))
+    .filter((record) => changeTypeFor(record) !== "Maintenance"),
 );
 
-const sourceLinks = `<CardGroup cols={3}>
+const sourceLinks = `<CardGroup cols={2}>
   <Card title="Console changes" icon="browser" href="/changelog/console">
     Admin console, ranking controls, analytics, billing, and model lifecycle updates.
   </Card>
@@ -313,12 +391,15 @@ const sourceLinks = `<CardGroup cols={3}>
   <Card title="MCP changes" icon="robot" href="/changelog/mcp">
     MCP server tools, platform automation, and assistant integration changes.
   </Card>
+  <Card title="Integration changes" icon="plug" href="/changelog/integrations">
+    Vercel Marketplace, Next.js SDK, and deployable starter updates.
+  </Card>
 </CardGroup>`;
 
 renderPage({
   title: "Changelog",
   icon: "list",
-  description: "Release history for the NeuronSearchLab console, SDKs, and MCP server.",
+  description: "Release history for the NeuronSearchLab console, SDKs, MCP server, and native integrations.",
   outputPath: "changelog.mdx",
   pageRecords: records,
   links: sourceLinks,
@@ -346,6 +427,14 @@ renderPage({
   description: "Release history for the NeuronSearchLab MCP server.",
   outputPath: "changelog/mcp.mdx",
   pageRecords: records.filter((record) => record.source.id === "mcp"),
+});
+
+renderPage({
+  title: "Integration Changelog",
+  icon: "plug",
+  description: "Release history for the NeuronSearchLab Vercel integration, Next.js SDK, and personalized starter.",
+  outputPath: "changelog/integrations.mdx",
+  pageRecords: records.filter((record) => ["nextjs-sdk", "vercel-integration", "nextjs-starter"].includes(record.source.id)),
 });
 
 console.log(`Generated changelog pages from ${commitLabel(records.length)} summarized product changes across ${sources.length} repositories.`);

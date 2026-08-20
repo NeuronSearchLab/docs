@@ -9,8 +9,8 @@ Use this guide when you need to keep item data current and user behavior signals
 ## Setup
 
 <Steps>
-  <Step title="Choose item ID ownership">
-    Decide whether your source catalog will provide stable item IDs or let NeuronSearchLab generate them.
+  <Step title="Store NSL item IDs">
+    NeuronSearchLab generates integer item IDs during ingestion. Persist the returned ID alongside your source record.
   </Step>
   <Step title="Map source fields">
     Map source fields to `/v1/items` payloads (`name`, `description`, `metadata`).
@@ -29,7 +29,6 @@ curl -X POST https://api.neuronsearchlab.com/v1/items \
   -H "Authorization: Bearer <access_token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "id": "7f3a2c9e",
     "name": "Nike Running Shoes",
     "description": "High-performance running shoes.",
     "metadata": { "category": "Footwear", "brand": "Nike", "price": 109.99 }
@@ -44,11 +43,10 @@ curl -X POST https://api.neuronsearchlab.com/v1/events \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": "user-456",
-    "type": "click",
-    "item_id": "7f3a2c9e",
-    "context_id": "101",
-    "occurred_at": 1777478400,
-    "click": {}
+    "event_id": 42,
+    "item_id": 3187,
+    "context_id": 101,
+    "occurred_at": 1777478400
   }'
 ```
 
@@ -62,7 +60,7 @@ curl -X POST https://api.neuronsearchlab.com/v1/events \
 
 <Steps>
   <Step title="Sync catalog records">
-    Nightly job creates new catalog items using `/v1/items` and updates existing records with `/v1/items/{id}`.
+    Nightly job creates new catalog items using `/v1/items`, stores returned integer IDs, and updates existing records with `/v1/items/{id}`.
   </Step>
   <Step title="Request recommendations">
     App session requests recommendations from the Core API recommendation endpoint.
