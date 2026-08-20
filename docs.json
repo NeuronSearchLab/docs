@@ -101,6 +101,7 @@
             "pages": [
               "guides/nsl-connect",
               "guides/integrations",
+              "guides/vercel",
               "guides/users-and-items",
               "guides/events"
             ]
