@@ -855,9 +855,10 @@
             "in": "query",
             "description": "Numeric console context ID.",
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "minimum": 1
             },
-            "example": "101"
+            "example": 101
           },
           {
             "$ref": "#/components/parameters/RecommendationLimit"
@@ -1201,7 +1202,7 @@
                   "value": {
                     "query": "waterproof trail shoes",
                     "user_id": "user-abc123",
-                    "context_id": "101",
+                    "context_id": 101,
                     "limit": "10",
                     "filter": [
                       "category:footwear"
@@ -1348,10 +1349,10 @@
         "required": true,
         "description": "Public item ID.",
         "schema": {
-          "type": "string",
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
+          "type": "integer",
+          "minimum": 1
         },
-        "example": "7f3a2c9e"
+        "example": 3187
       },
       "EventId": {
         "name": "event_id",
@@ -1359,10 +1360,10 @@
         "required": true,
         "description": "Public event ID.",
         "schema": {
-          "type": "string",
-          "pattern": "^[1-9][0-9]*$"
+          "type": "integer",
+          "minimum": 1
         },
-        "example": "12345"
+        "example": 12345
       }
     },
     "responses": {
@@ -1579,22 +1580,6 @@
           "name"
         ],
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Optional public item ID. If omitted, the API generates one.",
-            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
-            "example": "7f3a2c9e"
-          },
-          "item_id": {
-            "type": "string",
-            "description": "Snake-case alias for `id`.",
-            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
-          },
-          "itemId": {
-            "type": "string",
-            "description": "CamelCase alias for `id`.",
-            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
-          },
           "name": {
             "type": "string",
             "minLength": 1,
@@ -1752,7 +1737,7 @@
       },
       "EventCreate": {
         "type": "object",
-        "description": "At least one user ID alias, one item ID alias, and one event type alias are required. Type-specific payloads are accepted as additional object properties named after the event type.",
+        "description": "A user ID, a non-zero dashboard event_id, and a positive NSL-generated item_id are required. context_id is also a positive NSL-generated integer when supplied.",
         "properties": {
           "user_id": {
             "type": "string",
@@ -1764,50 +1749,25 @@
             "description": "CamelCase alias for `user_id`."
           },
           "item_id": {
-            "type": "string",
-            "description": "Public item ID.",
-            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
-            "example": "7f3a2c9e"
+            "type": "integer",
+            "minimum": 1,
+            "description": "Item ID returned by NSL ingestion.",
+            "example": 3187
           },
           "itemId": {
-            "type": "string",
-            "description": "CamelCase alias for `item_id`.",
-            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
-          },
-          "type": {
-            "type": "string",
-            "description": "Tenant-configured event type.",
-            "example": "purchase"
-          },
-          "event_type": {
-            "type": "string",
-            "description": "Snake-case alias for `type`."
-          },
-          "eventType": {
-            "type": "string",
-            "description": "CamelCase alias for `type`."
+            "type": "integer",
+            "minimum": 1,
+            "description": "CamelCase alias for `item_id`."
           },
           "event_id": {
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "number"
-              }
-            ],
-            "description": "Legacy alias for event type."
+            "type": "integer",
+            "not": { "enum": [0] },
+            "description": "Non-zero event ID shown in dashboard Event configuration."
           },
           "eventId": {
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "number"
-              }
-            ],
-            "description": "CamelCase legacy alias for event type."
+            "type": "integer",
+            "not": { "enum": [0] },
+            "description": "CamelCase alias for event_id."
           },
           "session_id": {
             "type": "string",
@@ -1828,14 +1788,16 @@
             "description": "CamelCase alias for `request_id`."
           },
           "context_id": {
-            "type": "string",
-            "description": "Optional context identifier for analytics and attribution. Use the same context ID convention as the recommendation request.",
-            "example": "101"
+            "type": "integer",
+            "minimum": 1,
+            "description": "Optional context ID created in the dashboard.",
+            "example": 101
           },
           "contextId": {
-            "type": "string",
+            "type": "integer",
+            "minimum": 1,
             "description": "CamelCase alias for context_id.",
-            "example": "101"
+            "example": 101
           },
           "placement": {
             "type": "string",
@@ -1915,9 +1877,9 @@
         "additionalProperties": true,
         "example": {
           "user_id": "user-abc123",
-          "item_id": "7f3a2c9e",
-          "context_id": "101",
-          "type": "purchase",
+          "item_id": 3187,
+          "context_id": 101,
+          "event_id": 42,
           "occurred_at": 1777478400,
           "purchase": {
             "amount": 4999,
@@ -1935,16 +1897,16 @@
           "object",
           "user_id",
           "item_id",
-          "type",
+          "event_id",
           "metadata",
           "occurred_at",
           "created"
         ],
         "properties": {
           "id": {
-            "type": "string",
-            "pattern": "^[1-9][0-9]*$",
-            "example": "12345"
+            "type": "integer",
+            "minimum": 1,
+            "example": 12345
           },
           "object": {
             "type": "string",
@@ -1957,12 +1919,14 @@
             "example": "user-abc123"
           },
           "item_id": {
-            "type": "string",
-            "example": "7f3a2c9e"
+            "type": "integer",
+            "minimum": 1,
+            "example": 3187
           },
-          "type": {
-            "type": "string",
-            "example": "purchase"
+          "event_id": {
+            "type": "integer",
+            "not": { "enum": [0] },
+            "example": 42
           },
           "session_id": {
             "type": "string",
@@ -1974,9 +1938,10 @@
             "nullable": true
           },
           "context_id": {
-            "type": "string",
+            "type": "integer",
+            "minimum": 1,
             "nullable": true,
-            "example": "101"
+            "example": 101
           },
           "placement": {
             "type": "string",
@@ -1999,7 +1964,7 @@
             "example": 1777478405
           }
         },
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "EventList": {
         "allOf": [
@@ -2102,9 +2067,9 @@
         ],
         "properties": {
           "id": {
-            "type": "string",
-            "pattern": "^rec_",
-            "example": "7f3a2c9e"
+            "type": "integer",
+            "minimum": 1,
+            "example": 3187
           },
           "object": {
             "type": "string",
@@ -2113,13 +2078,14 @@
             ]
           },
           "item_id": {
-            "type": "string",
-            "example": "7f3a2c9e"
+            "type": "integer",
+            "minimum": 1,
+            "example": 3187
           },
           "entity_id": {
-            "type": "string",
+            "type": "integer",
             "description": "Raw item entity ID from the candidate source.",
-            "example": "7f3a2c9e"
+            "example": 3187
           },
           "rank": {
             "type": "integer",
@@ -2450,7 +2416,8 @@
         "type": "object",
         "properties": {
           "item_id": {
-            "type": "string"
+            "type": "integer",
+            "minimum": 1
           },
           "rank": {
             "type": "integer"
@@ -2528,7 +2495,8 @@
         "type": "object",
         "properties": {
           "context_id": {
-            "type": "string",
+            "type": "integer",
+            "minimum": 1,
             "nullable": true
           },
           "mode": {
@@ -2822,13 +2790,10 @@
             "example": "user-abc123"
           },
           "context_id": {
-            "type": "string",
+            "type": "integer",
+            "minimum": 1,
             "description": "Numeric console context ID.",
-            "example": "101"
-          },
-          "context_key": {
-            "type": "string",
-            "description": "Context lookup key alias when your integration uses keys instead of numeric IDs."
+            "example": 101
           },
           "limit": {
             "oneOf": [
@@ -3058,7 +3023,7 @@
         "summary": "Deleted item",
         "value": {
           "message": "Item deleted successfully",
-          "itemId": "7f3a2c9e",
+          "itemId": 3187,
           "deletedCount": 1,
           "processing_time_ms": 42
         }
@@ -3067,9 +3032,9 @@
         "summary": "Submit one event",
         "value": {
           "user_id": "user-abc123",
-          "item_id": "7f3a2c9e",
-          "context_id": "101",
-          "type": "purchase",
+          "item_id": 3187,
+          "context_id": 101,
+          "event_id": 42,
           "request_id": "c7f0d2bb-56b1-4ca7-8f09-84d8e4ed02b4",
           "occurred_at": 1777478400,
           "purchase": {
@@ -3086,14 +3051,14 @@
         "value": [
           {
             "user_id": "user-abc123",
-            "item_id": "7f3a2c9e",
-            "type": "view",
+            "item_id": 3187,
+            "event_id": 41,
             "occurred_at": 1777478400
           },
           {
             "user_id": "user-abc123",
-            "item_id": "7f3a2c9e",
-            "type": "purchase",
+            "item_id": 3187,
+            "event_id": 42,
             "purchase": {
               "amount": 4999,
               "currency": "usd"
@@ -3104,21 +3069,21 @@
       "Event": {
         "summary": "Event",
         "value": {
-          "id": "12345",
+          "id": 12345,
           "object": "event",
           "user_id": "user-abc123",
-          "item_id": "7f3a2c9e",
-          "type": "purchase",
+          "item_id": 3187,
+          "event_id": 42,
           "purchase": {
             "amount": 4999,
             "currency": "usd"
           },
           "session_id": "4a93",
           "request_id": "c7f0d2bb-56b1-4ca7-8f09-84d8e4ed02b4",
-          "context_id": "101",
+          "context_id": 101,
           "placement": "home_feed",
           "metadata": {
-            "context_id": "101",
+            "context_id": 101,
             "purchase": {
               "amount": 4999,
               "currency": "usd"
@@ -3134,18 +3099,18 @@
           "object": "list",
           "data": [
             {
-              "id": "12345",
+              "id": 12345,
               "object": "event",
               "user_id": "user-abc123",
-              "item_id": "7f3a2c9e",
-              "type": "click",
+              "item_id": 3187,
+              "event_id": 41,
               "click": {},
               "session_id": null,
               "request_id": null,
-              "context_id": "101",
+              "context_id": 101,
               "placement": null,
               "metadata": {
-                "context_id": "101",
+                "context_id": 101,
                 "click": {}
               },
               "occurred_at": 1777478400,
@@ -3163,22 +3128,22 @@
           "object": "list",
           "data": [
             {
-              "id": "12345",
+              "id": 12345,
               "object": "event",
               "user_id": "user-abc123",
-              "item_id": "7f3a2c9e",
-              "type": "purchase",
+              "item_id": 3187,
+              "event_id": 42,
               "purchase": {
                 "amount": 4999,
                 "currency": "usd"
               },
               "session_id": null,
               "request_id": null,
-              "context_id": "101",
+              "context_id": 101,
               "placement": null,
               "metadata": {
                 "surface": "home_feed",
-                "context_id": "101",
+                "context_id": 101,
                 "purchase": {
                   "amount": 4999,
                   "currency": "usd"
@@ -3213,13 +3178,13 @@
           "url": "/v1/recommendations",
           "data": [
             {
-              "id": "7f3a2c9e",
+              "id": 3187,
               "object": "recommendation",
-              "item_id": "7f3a2c9e",
+              "item_id": 3187,
               "rank": 1,
               "score": 0.94,
               "item": {
-                "id": "7f3a2c9e",
+                "id": 3187,
                 "object": "item",
                 "name": "Wireless Headphones",
                 "description": "Noise-cancelling Bluetooth headphones.",

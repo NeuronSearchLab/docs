@@ -72,7 +72,7 @@ For query-driven product search, call the Core API search endpoint from the same
 curl -X POST "https://api.neuronsearchlab.com/v1/search" \
   -H "Authorization: Bearer <your_access_token>" \
   -H "Content-Type: application/json" \
-  -d '{"query":"waterproof trail shoes","user_id":"user-123","context_id":"101","limit":"10"}'
+  -d '{"query":"waterproof trail shoes","user_id":"user-123","context_id":101,"limit":10}'
 ```
 
 If you prefer higher level abstractions, use one of the official SDKs from your backend:
