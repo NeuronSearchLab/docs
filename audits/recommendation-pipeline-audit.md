@@ -167,7 +167,7 @@ Audit result: separation exists in schema and serving resolution. Unknown: there
 
 | Requirement | Evidence | Result |
 | --- | --- | --- |
-| Custom event types | API accepts `type`, `eventType`, `event_id`, etc. and stores normalized `event_id`. | `events-lambda.ts:81-130`, `events-lambda.ts:405` | Implemented |
+| Custom event types | API accepts only non-zero integer event IDs (through `event_id`/`eventId` aliases) that exist for the tenant. | `events-lambda.ts` | Implemented |
 | Tenant event weights | Ranker weighted engagement joins `event_types` on event ID and tenant ID, with `value / 100`. | `recommendation-lambda.ts:2056-2076` | Implemented |
 | Training weights | Retrieval training reads `weight`, clamps to `[-1, 1]`, and applies it as `sample_weight` with freshness decay. | `train.py:322-330`, `train.py:393-430`, `train.py:643-647` | Implemented |
 | Event-sequence model impact | Positive weighted events generate target examples; hard negatives are optional. | `train.py:376-453` | Implemented |
@@ -179,7 +179,7 @@ A recommendation item explanation is expected to include:
 
 ```json
 {
-  "item_id": "example",
+  "item_id": 3187,
   "rank": 1,
   "source": "model",
   "score": {
@@ -309,4 +309,3 @@ Create a repeatable fixture under `nsl_admin_console_next/__tests__/recommendati
 | Risk register | Yes | Risk Register |
 | Recommended engineering changes | Yes | Recommended Engineering Changes |
 | Every claim backed or marked assumption/unknown | Yes | Tables include evidence or Unknown/Gap markers |
-

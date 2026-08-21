@@ -373,7 +373,8 @@
             "group": "JavaScript SDK",
             "icon": "js",
             "pages": [
-              "sdk/introduction"
+              "sdk/introduction",
+              "sdk/integer-id-migration"
             ]
           },
           {
