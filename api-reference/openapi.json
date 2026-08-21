@@ -619,7 +619,7 @@
       "post": {
         "operationId": "submitEvents",
         "summary": "Submit events",
-        "description": "Submit one or more user interaction events. event_id, item_id, and context_id are positive integer IDs created by NeuronSearchLab.",
+        "description": "Submit one or more user interaction events. event_id is a non-zero integer from dashboard Event configuration; item_id and context_id are positive integer IDs created by NeuronSearchLab.",
         "tags": [
           "Events"
         ],
@@ -1579,7 +1579,7 @@
       },
       "EventCreate": {
         "type": "object",
-        "description": "A user ID plus NSL-generated positive integer event_id and item_id values are required. context_id is also an NSL-generated integer when supplied.",
+        "description": "A user ID, a non-zero dashboard event_id, and a positive NSL-generated item_id are required. context_id is also a positive NSL-generated integer when supplied.",
         "properties": {
           "user_id": {
             "type": "string",
@@ -1603,12 +1603,12 @@
           },
           "event_id": {
             "type": "integer",
-            "minimum": 1,
-            "description": "Event ID shown in dashboard Event configuration."
+            "not": { "enum": [0] },
+            "description": "Non-zero event ID shown in dashboard Event configuration."
           },
           "eventId": {
             "type": "integer",
-            "minimum": 1,
+            "not": { "enum": [0] },
             "description": "CamelCase alias for event_id."
           },
           "session_id": {
@@ -1767,7 +1767,7 @@
           },
           "event_id": {
             "type": "integer",
-            "minimum": 1,
+            "not": { "enum": [0] },
             "example": 42
           },
           "session_id": {
