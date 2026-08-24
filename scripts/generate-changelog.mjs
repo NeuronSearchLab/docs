@@ -10,6 +10,7 @@ const sources = [
     label: "Admin console",
     env: "NSL_CONSOLE_REPO",
     defaultPath: "../nsl_admin_console_next",
+    ref: "master",
     description: "Platform UI, tenant operations, ranking workflows, billing, analytics, and model lifecycle controls.",
   },
   {
@@ -17,6 +18,7 @@ const sources = [
     label: "TypeScript SDK",
     env: "NSL_TYPESCRIPT_SDK_REPO",
     defaultPath: "../neuronsearchlab-sdk",
+    ref: "main",
     description: "Browser and server JavaScript client for recommendations, events, catalog items, and API contract updates.",
   },
   {
@@ -24,6 +26,7 @@ const sources = [
     label: "PHP SDK",
     env: "NSL_PHP_SDK_REPO",
     defaultPath: "../neuronsearchlab-php-sdk",
+    ref: "main",
     description: "PHP client library and release flow for backend recommendation integrations.",
   },
   {
@@ -31,6 +34,7 @@ const sources = [
     label: "MCP server",
     env: "NSL_MCP_REPO",
     defaultPath: "../neuronsearchlab-mcp",
+    ref: "main",
     description: "Model Context Protocol tools for assistant-led platform management and analytics.",
   },
   {
@@ -38,6 +42,7 @@ const sources = [
     label: "Next.js SDK",
     env: "NSL_NEXTJS_SDK_REPO",
     defaultPath: "../neuronsearchlab-nextjs",
+    ref: "main",
     description: "Server-first Next.js bindings for recommendations, catalogue sync, and event tracking.",
   },
   {
@@ -45,6 +50,7 @@ const sources = [
     label: "Vercel integration",
     env: "NSL_VERCEL_INTEGRATION_REPO",
     defaultPath: "../nsl-vercel-integration",
+    ref: "main",
     description: "Native Vercel Marketplace provisioning, plans, secrets, resource lifecycle, and SSO.",
   },
   {
@@ -52,6 +58,7 @@ const sources = [
     label: "Next.js personalized starter",
     env: "NSL_NEXTJS_STARTER_REPO",
     defaultPath: "../nsl-nextjs-personalized-starter",
+    ref: "main",
     description: "Deployable example for catalogue sync, behavioral events, and personalized ranking.",
   },
 ];
@@ -201,6 +208,60 @@ function repoPath(source) {
   return path.resolve(ROOT, process.env[source.env] ?? source.defaultPath);
 }
 
+function refFor(source) {
+  return process.env[`${source.env}_REF`] ?? source.ref;
+}
+
+function revParse(cwd, rev) {
+  try {
+    return execFileSync("git", ["rev-parse", "--verify", "--quiet", `${rev}^{commit}`], {
+      cwd,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    return null;
+  }
+}
+
+// Read history from the published branch, not from whatever happens to be checked out.
+// A local clone parked on a feature branch, or behind its remote, otherwise produces a
+// changelog that silently disagrees with the one CI publishes.
+function resolveRev(source) {
+  const cwd = repoPath(source);
+  const ref = refFor(source);
+
+  if (process.env.NSL_CHANGELOG_FETCH === "1") {
+    try {
+      execFileSync("git", ["fetch", "--quiet", "origin", ref], {cwd, stdio: "ignore"});
+    } catch {
+      console.warn(`  ! ${source.label}: could not fetch origin/${ref}; using the refs already present.`);
+    }
+  }
+
+  const head = revParse(cwd, "HEAD");
+
+  for (const candidate of [`refs/remotes/origin/${ref}`, `refs/heads/${ref}`]) {
+    const sha = revParse(cwd, candidate);
+    if (!sha) {
+      continue;
+    }
+
+    if (sha !== head) {
+      const behind = execFileSync("git", ["rev-list", "--count", `HEAD..${candidate}`], {cwd, encoding: "utf8"}).trim();
+      console.warn(
+        `  ! ${source.label}: reading ${candidate.replace("refs/remotes/", "").replace("refs/heads/", "")} (${sha.slice(0, 7)}); ` +
+          `the checkout at HEAD (${head?.slice(0, 7)}) is missing ${behind} of its commits.`,
+      );
+    }
+
+    return candidate;
+  }
+
+  console.warn(`  ! ${source.label}: no ${ref} branch found; falling back to the checked-out HEAD.`);
+  return "HEAD";
+}
+
 function gitLog(source) {
   const cwd = repoPath(source);
   if (!existsSync(path.join(cwd, ".git"))) {
@@ -209,8 +270,8 @@ function gitLog(source) {
 
   const output = execFileSync(
     "git",
-    ["log", "--date=short", "--pretty=format:%H%x1f%h%x1f%ad%x1f%s%x1f%b%x1e", "--reverse"],
-    {cwd, encoding: "utf8"},
+    ["log", "--date=short", "--pretty=format:%H%x1f%h%x1f%ad%x1f%s%x1f%b%x1e", "--reverse", resolveRev(source)],
+    {cwd, encoding: "utf8", maxBuffer: 64 * 1024 * 1024},
   );
 
   return output
