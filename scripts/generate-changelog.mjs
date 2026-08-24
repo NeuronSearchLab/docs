@@ -150,7 +150,7 @@ const topics = [
   {
     id: "reliability",
     label: "Reliability and CI",
-    match: /(fix|ci|test|vitest|playwright|qa|build|type|typescript|error|harden|stabilize|lockfile|node|vercel|workflow|migration|cast|rds|aurora|compat|revert|remove node_modules|gitignore|security alerts)/i,
+    match: /\b(fix(es|ed)?|ci|tests?|vitest|playwright|qa|build|types?|typescript|errors?|harden(ed|ing)?|stabili[sz]e|lockfile|node|vercel|workflow|migrations?|cast|rds|aurora|compat|revert|remove node_modules|gitignore|security alerts)\b/i,
     summary: "Hardened CI, test coverage, build compatibility, database type handling, migration paths, API errors, and production runtime behavior.",
   },
   {
@@ -180,13 +180,13 @@ const sourceTopics = {
     "controlled-distribution",
     "intent-onboarding",
     "generative-ranking",
-    "platform-foundation",
     "auth-billing",
     "data-exploration",
     "analytics",
     "ranking-controls",
     "model-lifecycle",
     "assistant-mcp",
+    "platform-foundation",
     "reliability",
   ],
   "typescript-sdk": ["sdk-contract", "sdk-distribution", "reliability"],
@@ -209,7 +209,7 @@ function gitLog(source) {
 
   const output = execFileSync(
     "git",
-    ["log", "--date=short", "--pretty=format:%H%x1f%h%x1f%ad%x1f%s%x1e", "--reverse"],
+    ["log", "--date=short", "--pretty=format:%H%x1f%h%x1f%ad%x1f%s%x1f%b%x1e", "--reverse"],
     {cwd, encoding: "utf8"},
   );
 
@@ -218,8 +218,8 @@ function gitLog(source) {
     .map((row) => row.trim())
     .filter(Boolean)
     .map((row) => {
-      const [sha, shortSha, date, subject] = row.split("\x1f");
-      return {sha, shortSha, date, subject};
+      const [sha, shortSha, date, subject, body = ""] = row.split("\x1f");
+      return {sha, shortSha, date, subject, body};
     });
 }
 
@@ -235,7 +235,7 @@ function isNoise(subject) {
 
 function normalizeSubject(subject) {
   return subject
-    .replace(/^(feat|fix|docs|test|ci|chore|redesign|refactor|rename|agents)(\([^)]+\))?:\s*/i, "")
+    .replace(/^(feat|fix|docs|test|ci|chore|redesign|refactor|rename|agents)(\([^)]+\))?!?:\s*/i, "")
     .replace(/\s+\u2014\s+/g, ": ")
     .trim();
 }
@@ -273,64 +273,132 @@ function topicFor(source, commit) {
     .find((topic) => topic?.match.test(commit.subject));
 }
 
+const MAX_ITEMS = 8;
+const BREAKING_SUBJECT = /^[a-z]+(\([^)]*\))?!:/i;
+const BREAKING_BODY = /^BREAKING[ -]CHANGE(S)?:/im;
+const REVERT_SUBJECT = /^revert(\([^)]*\))?[:!"\s]/i;
+const MAINTENANCE_SUBJECT = /^(chore|ci|test|docs|refactor|rename|style|build)(\([^)]*\))?[:!]/i;
+const FIX_SUBJECT = /^(fix|fixes|fixed|hotfix|bugfix)\b/i;
+const FEATURE_SUBJECT = /^(feat|feature)(\([^)]*\))?!?:/i;
+const ADDITIVE_SUBJECT = /^(add|added|introduce|introduced|launch|launched|implement|implemented|ship|shipped|support|enable)\b/i;
+const TEST_ONLY_SUBJECT = /^(add|added|update|updated|expand|expanded)\s+([a-z-]+\s+)?tests?\b/i;
+
+function isBreaking(record) {
+  return BREAKING_SUBJECT.test(record.rawSubject.trim()) || BREAKING_BODY.test(record.body ?? "");
+}
+
 function changeTypeFor(record) {
-  if (/^(chore|ci|test|docs|refactor|rename)\b/i.test(record.rawSubject)) {
+  const subject = record.rawSubject.trim();
+
+  if (isBreaking(record)) {
+    return "Breaking changes";
+  }
+
+  if (REVERT_SUBJECT.test(subject)) {
+    return "Bug fixes";
+  }
+
+  if (MAINTENANCE_SUBJECT.test(subject)) {
     return "Maintenance";
   }
 
-  if (record.topic?.id === "reliability" || /^fix\b|fix|error|bug|compat|harden|stabilize/i.test(record.rawSubject)) {
+  if (TEST_ONLY_SUBJECT.test(subject)) {
+    return "Maintenance";
+  }
+
+  if (FEATURE_SUBJECT.test(subject) || ADDITIVE_SUBJECT.test(subject)) {
+    return "Features";
+  }
+
+  if (FIX_SUBJECT.test(subject) || record.topic?.id === "reliability") {
     return "Bug fixes";
   }
 
   return "Features";
 }
 
-function summarizeChanges(records, type) {
-  const items = records
-    .filter((record) => changeTypeFor(record) === type)
-    .map((record) => (type === "Bug fixes" ? sentenceCase(record.title) : record.topic?.summary))
-    .filter(Boolean);
-  const unique = [...new Set(items)];
-  return unique.slice(0, 5);
-}
-
 function sentenceCase(value) {
   return value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
 }
 
-function sourceLine(source, records) {
-  const features = summarizeChanges(records, "Features");
-  const bugs = summarizeChanges(records, "Bug fixes");
-  const featureLines = features.length
-    ? features.map((item) => `- ${mdEscape(item)}`).join("\n")
-    : "- No major feature changes in this period.";
-  const bugSection = bugs.length
-    ? `
-#### Bug fixes
-
-${bugs.map((item) => `- ${mdEscape(item)}`).join("\n")}`
-    : "";
-
-  return `### ${source.label}
-
-#### Features
-
-${featureLines}
-${bugSection}`;
+function overflowLine(hidden) {
+  return hidden > 0 ? [`- \u2026and ${hidden} more ${hidden === 1 ? "change" : "changes"}.`] : [];
 }
 
-function updateEntry(group) {
+function plainLines(records, type) {
+  const unique = [...new Set(records.filter((record) => changeTypeFor(record) === type).map((record) => sentenceCase(record.title)))];
+  const shown = unique.slice(0, MAX_ITEMS);
+  return [...shown.map((item) => `- ${mdEscape(item)}`), ...overflowLine(unique.length - shown.length)];
+}
+
+function featureLines(records, seenSummaries) {
+  const byTopic = new Map();
+
+  for (const record of records.filter((entry) => changeTypeFor(entry) === "Features")) {
+    const key = record.topic?.id ?? "\u0000other";
+    const group = byTopic.get(key) ?? {topic: record.topic, titles: []};
+    group.titles.push(sentenceCase(record.title));
+    byTopic.set(key, group);
+  }
+
+  const lines = [];
+  let hidden = 0;
+
+  for (const {topic, titles} of byTopic.values()) {
+    const prefix = topic ? `**${mdEscape(topic.label)}** \u2014 ` : "";
+
+    if (topic && !seenSummaries.has(topic.id)) {
+      seenSummaries.add(topic.id);
+      lines.push(`- ${prefix}${mdEscape(topic.summary)}`);
+    }
+
+    const unique = [...new Set(titles)];
+    const shown = unique.slice(0, MAX_ITEMS);
+    hidden += unique.length - shown.length;
+
+    for (const title of shown) {
+      lines.push(`- ${prefix}${mdEscape(title)}`);
+    }
+  }
+
+  return [...lines, ...overflowLine(hidden)];
+}
+
+function sourceLine(source, records, seenSummaries) {
+  const sections = [
+    ["Breaking changes", plainLines(records, "Breaking changes")],
+    ["Features", featureLines(records, seenSummaries)],
+    ["Bug fixes", plainLines(records, "Bug fixes")],
+  ].filter(([, lines]) => lines.length);
+
+  if (!sections.length) {
+    return null;
+  }
+
+  const body = sections.map(([heading, lines]) => `#### ${heading}\n\n${lines.join("\n")}`).join("\n\n");
+
+  return `### ${source.label}\n\n${body}`;
+}
+
+function updateEntry(group, seenSummaries) {
   const sourceIds = [...new Set(group.records.map((record) => record.source.id))];
-  const monthSources = sources.filter((source) => sourceIds.includes(source.id));
-  const descriptionSources = monthSources.map((source) => source.label).join(", ");
-  const rss = `${dateLabel(group.key)}: ${descriptionSources}.`;
-  const body = monthSources
-    .map((source) => sourceLine(source, group.records.filter((record) => record.source.id === source.id)))
-    .join("\n\n");
+  const rendered = sources
+    .filter((source) => sourceIds.includes(source.id))
+    .map((source) => ({
+      source,
+      block: sourceLine(source, group.records.filter((record) => record.source.id === source.id), seenSummaries),
+    }))
+    .filter((entry) => entry.block);
+
+  if (!rendered.length) {
+    return null;
+  }
+
+  const rss = `${dateLabel(group.key)}: ${rendered.map((entry) => entry.source.label).join(", ")}.`;
 
   return `<Update label="${dateLabel(group.key)}" rss="${mdEscape(rss)}">
 
-${body}
+${rendered.map((entry) => entry.block).join("\n\n")}
 
 </Update>`;
 }
@@ -346,7 +414,11 @@ function dateGroupsFor(nextRecords) {
 }
 
 function renderPage({title, description, icon, outputPath, pageRecords, links = ""}) {
-  const updates = dateGroupsFor(pageRecords).map(updateEntry).join("\n\n");
+  const seenSummaries = new Set();
+  const updates = dateGroupsFor(pageRecords)
+    .map((group) => updateEntry(group, seenSummaries))
+    .filter(Boolean)
+    .join("\n\n");
   const body = [links, updates].filter(Boolean).join("\n\n");
   const mdx = `---
 title: ${JSON.stringify(title)}
@@ -375,6 +447,7 @@ const records = sourceCommits.flatMap(({source, commits}) =>
       source,
       date: commit.date,
       rawSubject: commit.subject,
+      body: commit.body,
       title: normalizeSubject(commit.subject),
       topic: topicFor(source, commit),
     }))

@@ -13,6 +13,9 @@ env:
   CHANGELOG_TYPESCRIPT_SDK_REPOSITORY: NeuronSearchLab/neuronsearchlab-sdk-js
   CHANGELOG_PHP_SDK_REPOSITORY: NeuronSearchLab/neuronsearchlab-sdk-php
   CHANGELOG_MCP_REPOSITORY: NeuronSearchLab/mcp
+  CHANGELOG_NEXTJS_SDK_REPOSITORY: NeuronSearchLab/neuronsearchlab-nextjs
+  CHANGELOG_VERCEL_INTEGRATION_REPOSITORY: NeuronSearchLab/nsl-vercel-integration
+  CHANGELOG_NEXTJS_STARTER_REPOSITORY: NeuronSearchLab/nsl-nextjs-personalized-starter
 
 jobs:
   refresh:
@@ -28,7 +31,7 @@ jobs:
           NSL_CHANGELOG_TOKEN: ${{ secrets.NSL_CHANGELOG_TOKEN }}
         run: |
           if [ -z "$NSL_CHANGELOG_TOKEN" ]; then
-            echo "::error title=Missing NSL_CHANGELOG_TOKEN::Refresh changelog needs a token with Contents: read access to $CHANGELOG_CONSOLE_REPOSITORY, $CHANGELOG_TYPESCRIPT_SDK_REPOSITORY, $CHANGELOG_PHP_SDK_REPOSITORY, and $CHANGELOG_MCP_REPOSITORY."
+            echo "::error title=Missing NSL_CHANGELOG_TOKEN::Refresh changelog needs a token with Contents: read access to $CHANGELOG_CONSOLE_REPOSITORY, $CHANGELOG_TYPESCRIPT_SDK_REPOSITORY, $CHANGELOG_PHP_SDK_REPOSITORY, $CHANGELOG_MCP_REPOSITORY, $CHANGELOG_NEXTJS_SDK_REPOSITORY, $CHANGELOG_VERCEL_INTEGRATION_REPOSITORY, and $CHANGELOG_NEXTJS_STARTER_REPOSITORY."
             exit 1
           fi
 
@@ -36,7 +39,10 @@ jobs:
             "$CHANGELOG_CONSOLE_REPOSITORY" \
             "$CHANGELOG_TYPESCRIPT_SDK_REPOSITORY" \
             "$CHANGELOG_PHP_SDK_REPOSITORY" \
-            "$CHANGELOG_MCP_REPOSITORY"
+            "$CHANGELOG_MCP_REPOSITORY" \
+            "$CHANGELOG_NEXTJS_SDK_REPOSITORY" \
+            "$CHANGELOG_VERCEL_INTEGRATION_REPOSITORY" \
+            "$CHANGELOG_NEXTJS_STARTER_REPOSITORY"
           do
             status="$(curl -sSL -o /tmp/changelog-repo.json -w "%{http_code}" \
               -H "Accept: application/vnd.github+json" \
@@ -87,6 +93,33 @@ jobs:
           ref: main
           fetch-depth: 0
 
+      - name: Check out Next.js SDK
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.CHANGELOG_NEXTJS_SDK_REPOSITORY }}
+          path: neuronsearchlab-nextjs
+          token: ${{ secrets.NSL_CHANGELOG_TOKEN }}
+          ref: main
+          fetch-depth: 0
+
+      - name: Check out Vercel integration
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.CHANGELOG_VERCEL_INTEGRATION_REPOSITORY }}
+          path: nsl-vercel-integration
+          token: ${{ secrets.NSL_CHANGELOG_TOKEN }}
+          ref: main
+          fetch-depth: 0
+
+      - name: Check out Next.js personalized starter
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.CHANGELOG_NEXTJS_STARTER_REPOSITORY }}
+          path: nsl-nextjs-personalized-starter
+          token: ${{ secrets.NSL_CHANGELOG_TOKEN }}
+          ref: main
+          fetch-depth: 0
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -95,6 +128,14 @@ jobs:
       - name: Regenerate changelog
         run: node scripts/generate-changelog.mjs
         working-directory: docs
+        env:
+          NSL_CONSOLE_REPO: ${{ github.workspace }}/nsl_admin_console_next
+          NSL_TYPESCRIPT_SDK_REPO: ${{ github.workspace }}/neuronsearchlab-sdk-js
+          NSL_PHP_SDK_REPO: ${{ github.workspace }}/neuronsearchlab-php-sdk
+          NSL_MCP_REPO: ${{ github.workspace }}/neuronsearchlab-mcp
+          NSL_NEXTJS_SDK_REPO: ${{ github.workspace }}/neuronsearchlab-nextjs
+          NSL_VERCEL_INTEGRATION_REPO: ${{ github.workspace }}/nsl-vercel-integration
+          NSL_NEXTJS_STARTER_REPO: ${{ github.workspace }}/nsl-nextjs-personalized-starter
 
       - name: Commit changelog update
         uses: stefanzweifel/git-auto-commit-action@v5
