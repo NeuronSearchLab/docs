@@ -20,28 +20,44 @@ rss: true
   </Card>
 </CardGroup>
 
+<Update label="August 24, 2026" rss="August 24, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Model lifecycle** — Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
+- **Model lifecycle** — Rewrite the model detail sheet for the person choosing a model
+- **Catalog, users, and events** — Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- **Catalog, users, and events** — Add a 2D embedding map view to the users and items pages
+
+</Update>
+
 <Update label="August 23, 2026" rss="August 23, 2026: Admin console.">
 
 ### Admin console
 
 #### Features
 
-- **Catalog, users, and events** — Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
 - **Catalog, users, and events** — Launch multi-tenant recommender catalog
 - **Catalog, users, and events** — Simplify events training workflow
 - **Catalog, users, and events** — Refine event presets and recommender selection
-- **Catalog, users, and events** — Add gradient heatmap color scale to recommender catalog metric columns
+- **Catalog, users, and events** — Rework the models page and the events signal library
+- **Catalog, users, and events** — Give the models table the same full-page treatment as Items
+- **Catalog, users, and events** — Drop the catalog counts strip and simplify the Compute column
 - **Assistant and MCP** — Introduced the in-console assistant, connected MCP tools, hardened transport options, and routed analytics and management actions through platform APIs.
 - **Assistant and MCP** — Install pinned release development tooling
 - Use current pinned CDK executable
 - Bind recommender builds to organization connection
 - Remove duplicate template badge
-- **Model lifecycle** — Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
+- Show p95 as a ten-bar latency meter instead of a number
 - **Model lifecycle** — Surface remote CodeBuild failures
 - **Model lifecycle** — Allow CodeBuild to use repository connection
 - **Model lifecycle** — Grant CodeBuild GitHub App token access
 - **Model lifecycle** — Restore training settings popout
 - **Model lifecycle** — Keep training popout open for recommender selection
+- **Model lifecycle** — Add a tenant seeding script for demo and training data
+- **Model lifecycle** — Colour the models table by where each row sits in the field
 
 #### Bug fixes
 
@@ -90,19 +106,28 @@ rss: true
 
 #### Breaking changes
 
-- Require integer NSL resource IDs
+- Require integer NSL resource IDs (#13)
+
+#### Features
+
+- **SDK distribution** — Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
+- **SDK distribution** — Version packages (#14)
 
 ### PHP SDK
 
 #### Breaking changes
 
-- Require integer NSL resource IDs
+- Require integer NSL resource IDs (#1)
 
 ### MCP server
 
 #### Breaking changes
 
-- Require integer NSL resource IDs
+- Require integer NSL resource IDs (#9)
+
+#### Features
+
+- **SDK distribution** — Version packages (#10)
 
 ### Next.js SDK
 
@@ -333,7 +358,6 @@ rss: true
 - **MCP plan and usage tools** — Added hosted MCP tools for effective plan, usage-limit, exact overage, and context cleanup visibility.
 - **MCP plan and usage tools** — Expose context deletion in hosted MCP (#5)
 - **MCP plan and usage tools** — Expose account plan and usage limits
-- **SDK distribution** — Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
 - **SDK distribution** — Release MCP 0.6.1 (#6)
 - **SDK distribution** — Release MCP 0.6.2
 
