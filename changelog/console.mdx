@@ -5,13 +5,83 @@ description: "Release history for the NeuronSearchLab admin console."
 rss: true
 ---
 
+<Update label="August 23, 2026" rss="August 23, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Catalog, users, and events** — Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- **Catalog, users, and events** — Launch multi-tenant recommender catalog
+- **Catalog, users, and events** — Simplify events training workflow
+- **Catalog, users, and events** — Refine event presets and recommender selection
+- **Catalog, users, and events** — Add gradient heatmap color scale to recommender catalog metric columns
+- **Assistant and MCP** — Introduced the in-console assistant, connected MCP tools, hardened transport options, and routed analytics and management actions through platform APIs.
+- **Assistant and MCP** — Install pinned release development tooling
+- Use current pinned CDK executable
+- Bind recommender builds to organization connection
+- Remove duplicate template badge
+- **Model lifecycle** — Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
+- **Model lifecycle** — Surface remote CodeBuild failures
+- **Model lifecycle** — Allow CodeBuild to use repository connection
+- **Model lifecycle** — Grant CodeBuild GitHub App token access
+- **Model lifecycle** — Restore training settings popout
+- **Model lifecycle** — Keep training popout open for recommender selection
+
+#### Bug fixes
+
+- Pin remote migration runner
+- Smoke test recommender release on production domain
+- Fix recommender workspace layout
+
+</Update>
+
+<Update label="August 22, 2026" rss="August 22, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Catalog, users, and events** — Fold the explainable profile into the user Details tab
+
+#### Bug fixes
+
+- Stop deleting behavioural history for analytics retention
+
+</Update>
+
+<Update label="August 21, 2026" rss="August 21, 2026: Admin console.">
+
+### Admin console
+
+#### Breaking changes
+
+- Enforce integer public resource IDs
+
+#### Features
+
+- **Catalog, users, and events** — Add explainable user profiles
+
+#### Bug fixes
+
+- Complete integer ID serving migration
+- Migrate item IDs in targeting configuration
+- Satisfy production build type contracts
+- Quarantine dangling item targeting rules
+- Close remaining integer ID surfaces
+- Deploy integer-aware hosted MCP runtime
+
+</Update>
+
 <Update label="August 20, 2026" rss="August 20, 2026: Admin console.">
 
 ### Admin console
 
 #### Features
 
-- Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
+- **Vercel integration** — Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
+- **Vercel integration** — Add native Vercel resource provisioning and SSO
+- **Vercel integration** — Add Vercel onboarding attribution and intent
 
 #### Bug fixes
 
@@ -25,8 +95,8 @@ rss: true
 
 #### Features
 
-- Added intent-aware onboarding so starter guidance and follow-up steps reflect what each customer is building.
-
+- **Intent-aware onboarding** — Added intent-aware onboarding so starter guidance and follow-up steps reflect what each customer is building.
+- **Intent-aware onboarding** — Add booking-aware onboarding demo follow-up
 
 </Update>
 
@@ -36,16 +106,19 @@ rss: true
 
 #### Features
 
-- Added staged content distribution controls, rollout metrics, and hardened ranker deployment behavior.
-- Added intent-aware onboarding so starter guidance and follow-up steps reflect what each customer is building.
+- **Controlled distribution** — Added staged content distribution controls, rollout metrics, and hardened ranker deployment behavior.
+- **Controlled distribution** — Add controlled content distribution runtime
+- **Controlled distribution** — Harden staged distribution and ranker rollout
+- **Intent-aware onboarding** — Capture signup build intent
 
 #### Bug fixes
 
 - Type controlled distribution metrics
-- Harden staged distribution and ranker rollout
 - Close distribution rollout edge cases
 - Align recommendation contract tests
 - Type partial distribution stage overrides
+- Import signup step navigation icon
+- Handle optional blank provisioning result
 
 </Update>
 
@@ -55,8 +128,8 @@ rss: true
 
 #### Features
 
-- Added ChatGPT activation, OAuth onboarding, starter catalogues, recommendation prompts, and handoff from the in-console assistant.
-
+- **ChatGPT integration** — Added ChatGPT activation, OAuth onboarding, starter catalogues, recommendation prompts, and handoff from the in-console assistant.
+- **ChatGPT integration** — Complete ChatGPT marketplace activation
 
 </Update>
 
@@ -66,8 +139,11 @@ rss: true
 
 #### Features
 
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Added ChatGPT activation, OAuth onboarding, starter catalogues, recommendation prompts, and handoff from the in-console assistant.
+- **Access and billing** — Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- **Access and billing** — Never let Stripe or a post-signup step block a free account
+- **Access and billing** — Add read-only listing of signups abandoned by the billing fault
+- Record why a registration failed where it can be read
+- **ChatGPT integration** — Hand the assistant conversation over to ChatGPT
 
 #### Bug fixes
 
@@ -81,8 +157,13 @@ rss: true
 
 #### Features
 
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Added ChatGPT activation, OAuth onboarding, starter catalogues, recommendation prompts, and handoff from the in-console assistant.
+- **Access and billing** — Add free billing plan card
+- **Access and billing** — Ensure free signups create Stripe customers
+- **Access and billing** — Add Stripe customer backfill workflow
+- **Access and billing** — Clarify Stripe-managed billing details
+- **Access and billing** — Strengthen billing upgrade flow
+- **ChatGPT integration** — Improve ChatGPT marketplace activation flow
+- **ChatGPT integration** — Add ChatGPT activation onboarding
 
 #### Bug fixes
 
@@ -99,8 +180,8 @@ rss: true
 
 #### Features
 
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Introduced the in-console assistant, connected MCP tools, hardened transport options, and routed analytics and management actions through platform APIs.
+- **Access and billing** — Improve signup source attribution
+- **Assistant and MCP** — Remove context MCP demo prompt control
 
 #### Bug fixes
 
@@ -115,8 +196,8 @@ rss: true
 
 #### Features
 
-- Added an experimental generative catalogue ranker for evaluating model-driven ordering strategies.
-
+- **Generative ranking** — Added an experimental generative catalogue ranker for evaluating model-driven ordering strategies.
+- **Generative ranking** — Add experimental generative catalogue ranker
 
 </Update>
 
@@ -126,9 +207,12 @@ rss: true
 
 #### Features
 
-- Added period-aware dashboards, usage gauges, KPI cards, multi-series charts, saved analytic views, and production data refresh paths.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- **Analytics and reporting** — Added period-aware dashboards, usage gauges, KPI cards, multi-series charts, saved analytic views, and production data refresh paths.
+- **Analytics and reporting** — Add acquisition attribution and server analytics
+- **Analytics and reporting** — Require strict overage for usage alerts
+- **Platform foundation** — Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
+- **Platform foundation** — Enable onboarding email sequence for new customers
+- **Access and billing** — Guard team page against missing invitations table
 
 #### Bug fixes
 
@@ -142,13 +226,14 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- **Catalog, users, and events** — Support event IDs across legacy schemas (#18)
+- **Catalog, users, and events** — Standardize missing-value dashes and Mailtrap email metadata
+- **Access and billing** — Host account plan MCP tool
+- **Access and billing** — Harden authentication and tenant security boundaries
 
 #### Bug fixes
 
 - Fix Basic plan resource cleanup (#17)
-- Harden authentication and tenant security boundaries
 - Fix platform admin impersonation session handoff
 
 </Update>
@@ -159,9 +244,9 @@ rss: true
 
 #### Features
 
-- Introduced the in-console assistant, connected MCP tools, hardened transport options, and routed analytics and management actions through platform APIs.
-- Added period-aware dashboards, usage gauges, KPI cards, multi-series charts, saved analytic views, and production data refresh paths.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- **Assistant and MCP** — Add context MCP demo prompt
+- **Analytics and reporting** — Add PostHog analytics
+- **Access and billing** — Enable PostHog session recording
 
 #### Bug fixes
 
@@ -175,8 +260,8 @@ rss: true
 
 #### Features
 
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-
+- **Model lifecycle** — Deploy submission-safe hosted MCP profile (#15)
+- Serve OpenAI domain verification challenge (#16)
 
 </Update>
 
@@ -186,10 +271,14 @@ rss: true
 
 #### Features
 
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Introduced the in-console assistant, connected MCP tools, hardened transport options, and routed analytics and management actions through platform APIs.
+- Redesign context configuration editor
+- Refine context basics and lifecycle controls
+- **Ranking controls** — Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
+- **Ranking controls** — Remove recommendation type from context UI
+- **Model lifecycle** — Add hosted Streamable HTTP MCP endpoint at /api/mcp
+- **Access and billing** — Add OAuth 2.1 + dynamic client registration for the MCP endpoint
+- **Access and billing** — Serve OAuth discovery documents from app/.well-known routes
+- **Assistant and MCP** — Bump @neuronsearchlab/mcp to 0.5.0 for annotated tools on /api/mcp
 
 #### Bug fixes
 
@@ -203,7 +292,8 @@ rss: true
 
 #### Features
 
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
+- **Ranking controls** — Restore full ranking draft in context editor
+- **Ranking controls** — Flatten context recommendation settings
 
 #### Bug fixes
 
@@ -217,7 +307,7 @@ rss: true
 
 #### Features
 
-- No major feature changes in this period.
+- Changes from 5.6 sol
 
 #### Bug fixes
 
@@ -231,18 +321,13 @@ rss: true
 
 #### Features
 
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-
+- **Access and billing** — Polish API key and signup notifications
 
 </Update>
 
 <Update label="July 1, 2026" rss="July 1, 2026: Admin console.">
 
 ### Admin console
-
-#### Features
-
-- No major feature changes in this period.
 
 #### Bug fixes
 
@@ -256,8 +341,7 @@ rss: true
 
 #### Features
 
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-
+- **Access and billing** — Notify founder on signup
 
 </Update>
 
@@ -267,8 +351,14 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- Visualise competitor capital and investor overlap
+- Enhance competitor intelligence workspace
+- **Catalog, users, and events** — Include event-only users in users listing
+- **Access and billing** — Add Free tier with frictionless signup and in-app upsell
+- **Access and billing** — Polish free signup: frosted card + visible blurred console
+- **Access and billing** — Make signup console teaser actually visible
+- **Access and billing** — Render the real console shell behind free signup, blurred
+- **Access and billing** — Apply blurred console preview + frosted card to login page
 
 #### Bug fixes
 
@@ -283,12 +373,16 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- **Catalog, users, and events** — Consolidate NSL Resolve UI into Users + Integrations
+- **Catalog, users, and events** — Make user/item slideover tabs horizontally scrollable on mobile
+- Make LiveRamp + Partner IDs standard integration cards
+- Add tenant-isolated identity backfill script
+- Expand competitor intelligence dossiers
+- Add consented data collaboration overlap
 
 #### Bug fixes
 
 - Run competitor research nightly and fix scans
-- Make LiveRamp + Partner IDs standard integration cards
 
 </Update>
 
@@ -298,8 +392,11 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
+- Add competitive landscape intelligence
+- Add NSL Resolve: consented, tenant-scoped identity layer
+- Redesign competitive intelligence workspace
+- **Catalog, users, and events** — Wire IDENTITY_HMAC_SECRET into the events + recommendation lambdas
+- **Model lifecycle** — Source IDENTITY_HMAC_SECRET from Secrets Manager (shared by both lambdas)
 
 #### Bug fixes
 
@@ -315,8 +412,7 @@ rss: true
 
 #### Features
 
-- No major feature changes in this period.
-
+- Add competitor tracking to admin console
 
 </Update>
 
@@ -325,10 +421,6 @@ rss: true
 ### Admin console
 
 #### Features
-
-- No major feature changes in this period.
-
-#### Bug fixes
 
 - Recipe tab: template dropdown stages full configs for comparison
 
@@ -340,14 +432,13 @@ rss: true
 
 #### Features
 
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-
-#### Bug fixes
-
+- Unify context slideover chrome: one header with status chips, constant footer
 - Fold the recipe editor into the context surface
-- Add tests for the unified context slideover chrome
+- Basics tab: retrieval algorithm is a dropdown in a uniform 3-select grid
+- Upgrade Next.js and shadcn
 - Fold recipe setup into context tabs
+- **Ranking controls** — Pipeline tab edits the context's single pipeline directly
+- **Catalog, users, and events** — Recipe editor: one staged draft, explore without saving, tighter layout
 
 </Update>
 
@@ -357,13 +448,16 @@ rss: true
 
 #### Features
 
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- **Model lifecycle** — Surface resolved serving model on context; dedupe DEFAULT_ARCHITECTURE
+- Make sliders neutral and actually visible
+- **Ranking controls** — Render context pipeline editor inline; enforce one pipeline per context
+- **Catalog, users, and events** — Add permanent per-user seen-item exclusion to a context's pipeline
+- **Catalog, users, and events** — Add "don't re-show seen items" control on the context (Advanced tab)
 
 #### Bug fixes
 
 - Fix recipe editor tab strip overflowing the context sheet
+- Revert "Add permanent per-user seen-item exclusion to a context's pipeline"
 
 </Update>
 
@@ -373,9 +467,15 @@ rss: true
 
 #### Features
 
-- Added period-aware dashboards, usage gauges, KPI cards, multi-series charts, saved analytic views, and production data refresh paths.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- **Analytics and reporting** — Add analytics journey Sankey widget
+- **Analytics and reporting** — Refine usage limit notice
+- **Analytics and reporting** — Move usage warning into topbar popover
+- Refine contexts table and slideover UX
+- **Access and billing** — Reveal API keys and SDK credentials in a one-time modal
+- **Access and billing** — Add in-product integration Quickstart on SDK Credentials
+- **Platform foundation** — Merge integration quickstart onboarding
+- **Platform foundation** — Refine sidebar navigation groups
+- **Platform foundation** — Merge sidebar navigation IA
 
 #### Bug fixes
 
@@ -389,12 +489,13 @@ rss: true
 
 #### Features
 
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
+- Remove legacy prefixed resource IDs
+- **Ranking controls** — Edit the context pipeline inline in the slideover
+- **Ranking controls** — Refine context pipeline workflow
 
 #### Bug fixes
 
 - Keep search as selectable event signal
-- Remove legacy prefixed resource IDs
 - Fix production avatar uploads
 
 </Update>
@@ -405,9 +506,15 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
+- **Catalog, users, and events** — Add embedding visualization
+- **Catalog, users, and events** — Improve embedding explorer interactions
+- **Catalog, users, and events** — Record app searches as events
+- Add public Terms of Service page
+- Enable custom avatar uploads
+- Make search a context-backed surface
+- **Platform foundation** — Use existing S3 profile picture bucket for avatars
+- **Ranking controls** — Configure pipelines per-context from the Context surface
+- **Ranking controls** — Add hybrid search pipeline
 
 #### Bug fixes
 
@@ -416,6 +523,8 @@ rss: true
 - Unblock registration bootstrap
 - Paginate embeddings without row id
 - Remove console search surface
+- Honor store scope
+- Tolerate legacy context schema
 
 </Update>
 
@@ -425,7 +534,7 @@ rss: true
 
 #### Features
 
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
+- **Assistant and MCP** — Instant page switching with animated matrix loader + dashboard streaming
 
 #### Bug fixes
 
@@ -441,7 +550,7 @@ rss: true
 
 #### Features
 
-- No major feature changes in this period.
+- Refine mobile alert and chrome icon surfaces
 
 #### Bug fixes
 
@@ -455,7 +564,7 @@ rss: true
 
 #### Features
 
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
+- **Platform foundation** — Polish topbar controls and alerts
 
 #### Bug fixes
 
@@ -469,16 +578,27 @@ rss: true
 
 #### Features
 
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
+- Move recipe editor into context slideover
+- Add audit log UI and responsive headers
+- Improve recipe readiness validation
+- Remove mobile search icon border
+- Remove mobile top bar search icon background
+- **Ranking controls** — Add recipe readiness and explain replay
+- **Platform foundation** — Move sidebar toggle into nav
+- **Platform foundation** — Place sidebar toggle beside page title
+- **Platform foundation** — Move mobile sidebar controls to top bar
+- **Platform foundation** — Tune sidebar toggle divider position
+- **Platform foundation** — Adjust sidebar toggle divider resting position
+- **Platform foundation** — Use shadcn primitives and Geist styling
+- **Platform foundation** — Move sidebar toggle divider further left
+- **Platform foundation** — Refine mobile search and theme selector
 
 #### Bug fixes
 
-- Move recipe editor into context slideover
 - Fix context audit update tests
-- Improve recipe readiness validation
 - Fix sidebar controls and assistant label
 - Fix CI expectations after UI label updates
+- Fix production theme picker crash
 
 </Update>
 
@@ -487,10 +607,6 @@ rss: true
 ### Admin console
 
 #### Features
-
-- No major feature changes in this period.
-
-#### Bug fixes
 
 - Refine context recipe table state
 
@@ -502,10 +618,6 @@ rss: true
 
 #### Features
 
-- No major feature changes in this period.
-
-#### Bug fixes
-
 - Merge feed builder into contexts
 
 </Update>
@@ -516,12 +628,9 @@ rss: true
 
 #### Features
 
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-
-#### Bug fixes
-
+- **Access and billing** — Render login form immediately; send real verification emails in dev
 - Redo Feed Builder visual hierarchy
+- **Catalog, users, and events** — Unify Feed Builder Objectives with /events polarity
 
 </Update>
 
@@ -531,17 +640,18 @@ rss: true
 
 #### Features
 
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-
-#### Bug fixes
-
 - Add Feed Builder with five algorithm presets
 - Wire Feed Builder Phase 2 primitives
 - Improve feed builder UX
 - Refine feed builder creation UI
 - Polish feed builder status cards
+- Refine feed builder UX
+- **Access and billing** — Wire Feed Builder Phase 3: session state, cold start, blueprint experiments
+- **Catalog, users, and events** — Add Rules Engine metadata for the seven new Phase 2 rule types
+- **Catalog, users, and events** — Frame the Feed Builder as an explicit override layer over Events
+- **Catalog, users, and events** — Frame presets as event suggestions, not phantom overrides
+- **Platform foundation** — Polish feed builder layout and switches
+- **Platform foundation** — Add sidebar active rail marker
 
 </Update>
 
@@ -551,9 +661,14 @@ rss: true
 
 #### Features
 
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Added period-aware dashboards, usage gauges, KPI cards, multi-series charts, saved analytic views, and production data refresh paths.
+- **Analytics and reporting** — Add customizable analytics dashboards
+- **Analytics and reporting** — Enforce analytics data retention
+- Meter all core API requests
+- **Access and billing** — Wire data add-ons to Stripe
+- **Access and billing** — Consolidate billing plan comparison cards
+- **Access and billing** — Refine billing plan controls
+- **Access and billing** — Handle billing add-on response errors
+- **Access and billing** — Use Stripe subscription as entitlement source
 
 #### Bug fixes
 
@@ -562,6 +677,7 @@ rss: true
 - Fix usage limits and data add-ons
 - Fix client build imports
 - Fix recommendation request metering
+- Fix Stripe subscription expansion depth
 
 </Update>
 
@@ -571,11 +687,24 @@ rss: true
 
 #### Features
 
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-- Introduced the in-console assistant, connected MCP tools, hardened transport options, and routed analytics and management actions through platform APIs.
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- **Platform foundation** — Audit README for accuracy
+- **Platform foundation** — Add Twelve Labs enrichment to README workflow diagrams
+- **Assistant and MCP** — Remove dead AssistantPanel and Anthropic chat route
+- **Ranking controls** — Add pluggable recommendation architecture support
+- **Ranking controls** — Add neural ranker training support
+- **Ranking controls** — Update README for pluggable recommendation algorithms
+- **Ranking controls** — Add retrieval ranking announcement post
+- **Ranking controls** — Avoid ranker registry replacement on deploy
+- **Model lifecycle** — Route family exports by retrieval architecture
+- **Model lifecycle** — Train gSASRec with sequential transformer objective
+- **Model lifecycle** — Mark retrieval architecture endpoints live
+- **Model lifecycle** — Clarify tenant model training surfaces
+- Materialize learned semantic ID codebooks
+- Add semantic ID code transition generator
+- Complete pluggable architecture operations plumbing
+- **Catalog, users, and events** — Scope tenant fine-tunes to templates
+- **Catalog, users, and events** — Route fine-tunes through event templates
+- **Analytics and reporting** — Upgrade analytics workbench
 
 #### Bug fixes
 
@@ -589,8 +718,9 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-
+- Finish Twelve Labs enrichment integration
+- **Catalog, users, and events** — Document ingest workflow diagram
+- **Catalog, users, and events** — Make Twelve Labs retries event driven
 
 </Update>
 
@@ -600,9 +730,19 @@ rss: true
 
 #### Features
 
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- **Ranking controls** — Regroup pipeline editor into 5 phases and unify toggles
+- **Ranking controls** — Update pipeline editor tests for renamed stages
+- Add Twelve Labs video understanding integration
+- Expose integrations page and sync local updates
+- Refine integrations UI and badge styling
+- Refine Twelve Labs integration UI
+- Add remaining integration logos
+- Use Mailtrap live SMTP in production
+- Restore admin impersonation utilities
+- Persist avatars with S3-backed options
+- **Platform foundation** — Wire onboarding preferences and avatars
+- **Access and billing** — Prefer SMTP password for Mailtrap auth
+- …and 4 more changes.
 
 #### Bug fixes
 
@@ -619,9 +759,20 @@ rss: true
 
 #### Features
 
-- Added period-aware dashboards, usage gauges, KPI cards, multi-series charts, saved analytic views, and production data refresh paths.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- **Analytics and reporting** — Add usage and marketing email notifications
+- **Analytics and reporting** — Improve usage alert email design
+- **Analytics and reporting** — Group usage alerts and add thresholds
+- Use marketing site Mailchimp defaults
+- Support Mailtrap live API token
+- Use notifications sender address
+- Redirect super admins to admin page
+- Add platform admin page
+- Make admin customer query schema tolerant
+- Clarify admin impersonation UI
+- **Platform foundation** — Clarify profile contact preferences
+- **Access and billing** — Use billing period in usage digests
+- **Access and billing** — Allow admin impersonation through any team user
+- **Access and billing** — Add platform admin invite flow
 
 #### Bug fixes
 
@@ -639,14 +790,14 @@ rss: true
 
 #### Features
 
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
-- Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- **Catalog, users, and events** — Allow unprefixed item IDs
+- **Ranking controls** — Add recommendation pipeline audit coverage
+- **Vercel integration** — Pin Vercel CLI in deploy workflow
+- **Model lifecycle** — Add tier-based limits and feature gating
+- **Access and billing** — Show tier limits during signup
 
 #### Bug fixes
 
-- Allow unprefixed item IDs
 - Fix recommendation validation build target
 - Fix tier limit test harnesses
 - Fix billing usage and limit UI
@@ -659,10 +810,10 @@ rss: true
 
 #### Features
 
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
-
+- **Model lifecycle** — Gate Intelligence Layer with staged-rollout flag and add BGE deploy script
+- **Catalog, users, and events** — Move Catalog Intelligence controls into pipeline editor
+- Ignore generated local artifacts
+- **Ranking controls** — Add core API recommendation contract coverage
 
 </Update>
 
@@ -672,9 +823,8 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
-
+- **Catalog, users, and events** — Tolerate unknown event item ids
+- **Ranking controls** — Add intelligence layer pipeline stage
 
 </Update>
 
@@ -684,8 +834,8 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- **Catalog, users, and events** — Add context catalog intelligence
+- **Access and billing** — Unblock CI from billing auth guard
 
 #### Bug fixes
 
@@ -702,7 +852,7 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- **Catalog, users, and events** — Polish user event history and trim item slideover
 
 #### Bug fixes
 
@@ -713,10 +863,6 @@ rss: true
 <Update label="April 29, 2026" rss="April 29, 2026: Admin console.">
 
 ### Admin console
-
-#### Features
-
-- No major feature changes in this period.
 
 #### Bug fixes
 
@@ -730,8 +876,8 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- **Catalog, users, and events** — Batch item embeddings and backfill comments
+- **Access and billing** — Add item-level recommendation explanations
 
 #### Bug fixes
 
@@ -745,8 +891,9 @@ rss: true
 
 #### Features
 
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
-
+- **Ranking controls** — Honor scope.filters on recommendation lambda
+- **Ranking controls** — Make recommendation filter != NULL-safe via IS DISTINCT FROM
+- **Ranking controls** — Support shorthand recommendation filters
 
 </Update>
 
@@ -756,7 +903,7 @@ rss: true
 
 #### Features
 
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
+- **Ranking controls** — Add configurable weighted-topic rule inputs
 
 #### Bug fixes
 
@@ -770,9 +917,12 @@ rss: true
 
 #### Features
 
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
-
+- **Model lifecycle** — Add base-publish kickoff script
+- **Model lifecycle** — Add serverless endpoint deploy script for base publishes
+- **Model lifecycle** — Refine context and model selection flows
+- **Ranking controls** — Namespace family pipeline S3 paths by execution id
+- **Ranking controls** — Rename model families as recommendation types
+- **Ranking controls** — Tighten recommendation type spacing
 
 </Update>
 
@@ -782,14 +932,18 @@ rss: true
 
 #### Features
 
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
-
-#### Bug fixes
-
-- Simplify Context form and fix login autofill
+- **Access and billing** — Handle SNS SubscriptionConfirmation before token check
+- **Access and billing** — Auto-confirm SNS subscription in webhook handler
+- **Access and billing** — Simplify Context form and fix login autofill
+- **Model lifecycle** — Make endpointName optional in nsl-publish
+- **Model lifecycle** — Complete model family follow-ups
+- **Model lifecycle** — Move model families into models slideover
+- **Model lifecycle** — Simplify model family slideover
+- **Model lifecycle** — Models table ui update
+- **Model lifecycle** — Tighten models table and model details slideover
+- **Catalog, users, and events** — Add catalogue ingest scheduler toggle
+- **Catalog, users, and events** — Add model lifecycle workflow and deployment history
+- **Vercel integration** — Upload Vercel deploy as tarball to avoid flaky per-file upload
 
 </Update>
 
@@ -799,7 +953,10 @@ rss: true
 
 #### Features
 
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
+- **Model lifecycle** — Add model families with NSL base models and tenant fine-tunes
+- **Model lifecycle** — Guard active-model fetch against undefined in tests
+- **Model lifecycle** — Defer active-model fetch so tests read PATCH as first fetch call
+- **Model lifecycle** — Skip model-families fetch under NODE_ENV=test
 
 #### Bug fixes
 
@@ -813,8 +970,7 @@ rss: true
 
 #### Features
 
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-
+- **Platform foundation** — Rewrite admin console README
 
 </Update>
 
@@ -824,8 +980,10 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
+- **Catalog, users, and events** — Cap fatigue deficit at 7 serves to prevent scores collapsing to 0%
+- **Ranking controls** — Add exploration slots, trending backfill, and impression fatigue toggles
+- **Ranking controls** — Make all discovery feature defaults configurable per pipeline
+- **Ranking controls** — Add interactive visualizations to all pipeline discovery features
 
 #### Bug fixes
 
@@ -840,8 +998,10 @@ rss: true
 
 #### Features
 
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- Simplify cmd+k results to title, id, and date only
+- **Ranking controls** — Full learned_ranking stage controls with facet selector
+- **Ranking controls** — Simplify learned_ranking panel to facet fields only
+- **Catalog, users, and events** — Impression fatigue: demote items served without engagement
 
 #### Bug fixes
 
@@ -858,9 +1018,18 @@ rss: true
 
 #### Features
 
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- **Ranking controls** — Implement learned second-stage ranker
+- **Ranking controls** — Resolve ranker endpoint from managed target
+- **Ranking controls** — Use CodeBuild runtime image for ranker pipeline
+- **Ranking controls** — Allow SageMaker ranker jobs to reach Aurora
+- **Ranking controls** — Show learned ranking on existing pipelines
+- **Ranking controls** — Merge branch 'codex/learned-ranker' into master
+- **Ranking controls** — Use dedicated ranker inference image
+- **Ranking controls** — Handle SageMaker serve entrypoint for ranker
+- **Model lifecycle** — Preserve model package env when promoting endpoints
+- **Model lifecycle** — Support image tag override in CodeBuild
+- **Catalog, users, and events** — Disable inline embedding refresh on events path
+- …and 2 more changes.
 
 #### Bug fixes
 
@@ -878,12 +1047,18 @@ rss: true
 
 #### Features
 
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
+- **Model lifecycle** — Refine model training workflow and fix test deps
+- **Model lifecycle** — Tighten model target workflow
+- **Model lifecycle** — Handle OCI image indexes during promotion
+- **Model lifecycle** — Show live elapsed time for active training jobs
+- **Model lifecycle** — Simplify training jobs layout
+- **Model lifecycle** — Refine models and training jobs detail layouts
+- **Model lifecycle** — Show active versions for legacy SageMaker endpoints
+- **Model lifecycle** — Refine models layout and serving target details
+- Minor changes
 
 #### Bug fixes
 
-- Refine model training workflow and fix test deps
 - Fix dashboard period refresh and reconcile model deployments
 - Fix SageMaker inference image manifest handling
 - Fix training gate test mock for image resolver
@@ -896,10 +1071,12 @@ rss: true
 
 #### Features
 
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
-- Introduced the in-console assistant, connected MCP tools, hardened transport options, and routed analytics and management actions through platform APIs.
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
+- **Access and billing** — Add retraining automation planner to training jobs
+- **Model lifecycle** — Add tenant model endpoints and move deployment controls
+- **Model lifecycle** — Implement model-scoped retraining and deployment targets
+- **Assistant and MCP** — Tune assistant glow motion
+- **Assistant and MCP** — Remove assistant glow motion tuning
+- **Ranking controls** — Clarify training pipeline status labels
 
 #### Bug fixes
 
@@ -913,8 +1090,8 @@ rss: true
 
 #### Features
 
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-
+- **Analytics and reporting** — Integrate TanStack Query for dashboard data fetching
+- **Ranking controls** — Update sidebar icons for explainability, rerank, and rules
 
 </Update>
 
@@ -924,16 +1101,22 @@ rss: true
 
 #### Features
 
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
+- **Analytics and reporting** — ML pipeline improvements: AdamW, temporal split, early stopping, freshness decay, cold-start fallbacks, training config UI, metrics dashboard
+- **Model lifecycle** — Use SageMaker status consistently for summary stats and row logic
+- **Model lifecycle** — Custom training image, tenant-isolated outputs, fix type error
+- **Model lifecycle** — Add missing training-data mocks to gate tests
+- **Model lifecycle** — Pin numpy&lt;2 in training image to fix TF 2.13 compatibility
+- **Model lifecycle** — Remove requirements.txt from training source bundle
+- **Model lifecycle** — Use --no-deps for tensorflow-recommenders in training image
+- **Model lifecycle** — Bake Universal Sentence Encoder into training image
 
 #### Bug fixes
 
 - Fix JSONB cast for training_options insert via RDS Data API
 - Fix training jobs status badge to show SageMaker execution status
-- Custom training image, tenant-isolated outputs, fix type error
-- Pin numpy&lt;2 in training image to fix TF 2.13 compatibility
 - Pin tf-keras and tensorflow-hub versions for TF 2.13 compat
+- Fix mkdir for USE model directory in training Dockerfile
+- Fix timestamp parsing for short timezone offsets in train.py
 
 </Update>
 
@@ -943,9 +1126,10 @@ rss: true
 
 #### Features
 
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-- Introduced the in-console assistant, connected MCP tools, hardened transport options, and routed analytics and management actions through platform APIs.
-- Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
+- **Catalog, users, and events** — Reorder sidebar: move Events into Configuration, swap Explore/Advanced positions
+- **Assistant and MCP** — Wire assistant to npx MCP server
+- **Assistant and MCP** — Sync MCP npm lockfile
+- **Vercel integration** — Use in-memory MCP transport on Vercel
 
 #### Bug fixes
 
@@ -960,13 +1144,17 @@ rss: true
 
 #### Features
 
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
-- Introduced the in-console assistant, connected MCP tools, hardened transport options, and routed analytics and management actions through platform APIs.
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- **Ranking controls** — Move post-scoring context controls into rules engine
+- **Ranking controls** — Refine rules action previews
+- **Ranking controls** — Trim rules preview chrome
+- **Ranking controls** — Make rules previews reflect action state
+- Restore rainbow preview palette
+- **Access and billing** — Harden route auth header handling
+- **Assistant and MCP** — Use @neuronsearchlab/mcp in-process instead of spawning child process
+- **Catalog, users, and events** — Add GET and DELETE endpoints for event types
 
 #### Bug fixes
 
-- Harden route auth header handling
 - Fix serverExternalPackages for Next.js 14
 - Fix MCP build resolution and use Layers icon for Context
 - Fix tenantId parameter type in GET event-types endpoint
@@ -979,17 +1167,26 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Introduced the in-console assistant, connected MCP tools, hardened transport options, and routed analytics and management actions through platform APIs.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
+- **Catalog, users, and events** — Add per-user and per-item analytics tools to MCP assistant
+- **Platform foundation** — Add debug overlay toggle to TopBar with profile page debug panel
+- **Platform foundation** — Regroup admin sidebar navigation
+- **Platform foundation** — Add animated AI sidebar label
+- **Access and billing** — Refactor MCP tools to use NeuronClient API instead of direct DB queries
+- **Assistant and MCP** — Remove background from assistant logo avatars, show logo only
+- **Assistant and MCP** — Add assistant starter prompt buttons
+- **Assistant and MCP** — Refine assistant shimmer motion
+- **Assistant and MCP** — Remove global assistant overlay and soften empty state
+- **Assistant and MCP** — Refine assistant aurora edge glow
+- **Assistant and MCP** — Polish assistant aurora and sidebar profile tile
+- **Assistant and MCP** — Route assistant through standalone MCP
 
 #### Bug fixes
 
 - Fix failing tests for new streaming chat API and renamed assistant route
-- Add debug overlay toggle to TopBar with profile page debug panel
 - Revert "Add debug overlay toggle to TopBar with profile page debug panel"
 - Fix assistant MCP auth and UI polish
 - Fix CI MCP imports and production build
+- Fix assistant sidebar shimmer color
 
 </Update>
 
@@ -999,15 +1196,21 @@ rss: true
 
 #### Features
 
-- Introduced the in-console assistant, connected MCP tools, hardened transport options, and routed analytics and management actions through platform APIs.
+- **Reliability and CI** — Hardened CI, test coverage, build compatibility, database type handling, migration paths, API errors, and production runtime behavior.
+- **Reliability and CI** — Add Studio workflow, search, and verification test
+- **Assistant and MCP** — Replace studio with assistant chat interface
+- **Assistant and MCP** — Modernize assistant chat UI with AI SDK v6, add platform tools, rename to NeuronSearchLab AI
 
 #### Bug fixes
 
-- Add Studio workflow, search, and verification test
 - Fail fast when CI tests hang
 - Stabilize Vitest execution in CI
 - Fix hanging component tests in CI
 - Fix Studio context row typing for build
+- Use normalized context rows in Studio build
+- Pin project to Node 24.14.1
+- Refresh lockfile for Node 24 CI
+- Coalesce optional context json in Studio build
 
 </Update>
 
@@ -1017,10 +1220,16 @@ rss: true
 
 #### Features
 
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
+- **Access and billing** — Add migration for team_integrations and embedding_models tables
+- **Access and billing** — Rename "API Keys" to "Platform API Keys"
+- **Model lifecycle** — Remove temporary migration endpoint, add context/editor utilities
+- **Platform foundation** — Consolidate contexts infra, add setup checklist, improve onboarding UX
+- **Platform foundation** — Restore Quick Actions grid on dashboard alongside Setup Checklist
+- **Ranking controls** — Add include_rule_ids config override to experiment variants
+- **Ranking controls** — Wire pipeline config to recommendations proxy, redesign segments/rerank/integrations
+- **Ranking controls** — Wire pipeline context_id into Lambda: resolve context-specific pipeline before global fallback
+- **Ranking controls** — Remove pipeline position breadcrumbs from rules, experiments, and rerank pages
+- **Ranking controls** — Add migration to add context_id column to ranking_pipelines
 
 #### Bug fixes
 
@@ -1029,6 +1238,8 @@ rss: true
 - Fix timestamp cast error, add typeHint support, unify pipeline dots
 - Fix TypeHint type error: use SDK enum instead of plain string
 - Fix rules engine status toggle visual alignment
+- Fix context creation 500 error with empty response body
+- Fix json_data column type mismatch in context creation
 
 </Update>
 
@@ -1038,9 +1249,17 @@ rss: true
 
 #### Features
 
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
+- **Ranking controls** — Wire ranking rules engine into DB + Lambda
+- **Ranking controls** — Wire A/B experiments into recommendation Lambda
+- **Ranking controls** — Wire pipeline config into recommendation Lambda
+- **Ranking controls** — Wire real explainability data through Lambda and Explain page
+- **Ranking controls** — Add time-based scheduling to ranking rules
+- **Catalog, users, and events** — Wire user segments into ranking rules engine
+- **Catalog, users, and events** — Add item-level behavioral conditions to user segments
+- **Catalog, users, and events** — Add real experiment metrics computation from served + event data
+- **Catalog, users, and events** — Reorder sidebar: Ranking first, merge org items into Settings
+- **Catalog, users, and events** — Build complete catalogue ingest system end-to-end
+- Wire all aspirational UI to real backends, remove mock data
 
 #### Bug fixes
 
@@ -1055,12 +1274,9 @@ rss: true
 
 #### Features
 
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
-- Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
-
-#### Bug fixes
-
-- Remove Start Training button from training-jobs page; fix infra tsconfig exclusion
+- **Model lifecycle** — Remove Start Training button from training-jobs page; fix infra tsconfig exclusion
+- **Model lifecycle** — Port Laravel training jobs table design + add SSE log streaming
+- **Ranking controls** — Add ranking platform workstreams: Rules Engine, Pipeline Builder, Segmentation, A/B Testing, Explainability
 
 </Update>
 
@@ -1070,10 +1286,12 @@ rss: true
 
 #### Features
 
-- Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
+- Regenerate package-lock.json without legacy-peer-deps
+- Add infra directory from Laravel app
+- **Vercel integration** — Deploy to Vercel only after CI passes
+- **Catalog, users, and events** — Reorganize sidebar: move items into Configuration and Settings groups
+- **Access and billing** — Reduce items page size to 50, align SDK Credentials with API Keys design
+- **Model lifecycle** — Trigger redeploy with SAGEMAKER_INFERENCE_IMAGE env var
 
 #### Bug fixes
 
@@ -1091,8 +1309,10 @@ rss: true
 
 #### Features
 
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
+- Convert context modal to right-side slideover
+- **Access and billing** — Add rerank controls, API keys management, and recommendations proxy
+- **Access and billing** — SDK Credentials: auto-generate on click, remove name input step
+- **Platform foundation** — Standardise full-width flex layout across all pages
 
 #### Bug fixes
 
@@ -1101,16 +1321,16 @@ rss: true
 - Fix tenant_id type mismatches against text columns
 - Fix int4 type mismatches in templates queries via explicit SQL casts
 - Fix SDK Credentials: show credentials without page reload
+- Fix Aurora Data API cast: use column::text = :param not :param::type
+- Fix event_id bigint = text cast in training start queries
+- Paginate RDS Data API queries to avoid 1MB result limit
+- …and 1 more change.
 
 </Update>
 
 <Update label="March 28, 2026" rss="March 28, 2026: Admin console.">
 
 ### Admin console
-
-#### Features
-
-- No major feature changes in this period.
 
 #### Bug fixes
 
@@ -1124,8 +1344,9 @@ rss: true
 
 #### Features
 
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- **Analytics and reporting** — Render themed multi-series usage chart
+- **Analytics and reporting** — Update dashboard chart data by usage type
+- **Access and billing** — Update metered Stripe price IDs
 
 #### Bug fixes
 
@@ -1140,7 +1361,10 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- Port Laravel context modal advanced fields
+- Tabbed process-driven context modal
+- **Catalog, users, and events** — Wire catalogue-ingest Lambda worker and add live-run polling
+- **Reliability and CI** — Add error-logging instrumentation and runtime error API
 
 #### Bug fixes
 
@@ -1149,6 +1373,8 @@ rss: true
 - Run CI on staging branch with tests
 - Keep dashboard gauge stable across period changes
 - Resolve TypeScript error in ContextClient Select value prop
+- Use longValue for tenant_id params in events API routes
+- Import afterEach from vitest in ContextClient test
 
 </Update>
 
@@ -1158,7 +1384,10 @@ rss: true
 
 #### Features
 
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
+- **Access and billing** — Use real Stripe billing period for dashboard gauge and reset countdown
+- Improve context modal and dedupe controls
+- Add existing-context edit flow
+- Improve context modal mobile usability
 
 #### Bug fixes
 
@@ -1174,7 +1403,7 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- **Catalog, users, and events** — Bound QA proof media and improve events proof reporting
 
 #### Bug fixes
 
@@ -1190,10 +1419,12 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-- Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
+- **Catalog, users, and events** — Server-side item search API with metadata text filter
+- **Catalog, users, and events** — Add sortable columns and sticky pagination
+- **Catalog, users, and events** — Port usage metrics and top items from Laravel
+- **Access and billing** — Wip: push current billing and events work
+- **Analytics and reporting** — Port usage gauge from Laravel to Next.js dashboard
+- **Model lifecycle** — Port full training kickoff workflow from Laravel to Next.js
 
 #### Bug fixes
 
@@ -1202,6 +1433,10 @@ rss: true
 - Widen subscription price typing for schedules
 - Use production templates schema with correct tenant_id
 - Bind tenant ids as integers for templates
+- Align template loader tenant types
+- Use text tenant ids for usage queries
+- Return event ids as text for availability counts
+- …and 2 more changes.
 
 </Update>
 
@@ -1211,8 +1446,9 @@ rss: true
 
 #### Features
 
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- **Catalog, users, and events** — Restore full filters section on catalogue items page
+- **Access and billing** — Refactor security page to use shadcn table
+- **Access and billing** — Refactor security page to shadcn table with inline edit, env select, copy/revoke
 
 #### Bug fixes
 
@@ -1226,18 +1462,37 @@ rss: true
 
 #### Features
 
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
+- **Access and billing** — Redesign register flow UI
+- **Access and billing** — Register flow - viewport-fit, login-consistent, mobile-first
+- **Access and billing** — Remove @aws-sdk/client-ses, move @types/nodemailer to devDependencies
+- **Access and billing** — Add inline name editing and editable environment dropdown to SecurityClient
+- **Access and billing** — Add PATCH /api/security/update-client route
+- **Access and billing** — Wire handleInvite to POST /api/team/invite with error/loading state
+- **Access and billing** — Add POST /api/team/invite route
+- **Access and billing** — Wire ContextClient create form to POST /api/context/create
+- **Reliability and CI** — Add nodemailer to serverExternalPackages to fix ESM bundling
+- **Platform foundation** — Update favicon to NSL logo
+- **Platform foundation** — Update favicon to white NSL logo
+- **Platform foundation** — Table layout instead of cards, Linear/shadcn style
+- **Analytics and reporting** — Dashboard API route for period-based usage data
+- **Catalog, users, and events** — Rewrite catalogue-ingest page with ingest method cards
+- **Catalog, users, and events** — Stats row, event type filter pills, clean table with shadcn
+- Add POST /api/context/create route
+- Read files before modifying, never assume contents
+- **Vercel integration** — Linear/Vercel/shadcn aesthetic: clean table, stat bar, mono IDs, badge for model
+- **Vercel integration** — Clean Linear/Vercel style, proper nsl CSS vars, shadcn invoice table
 
 #### Bug fixes
 
 - Remove header copy, drop all-caps, fix step indicator, fix verify code pattern
 - Switch email from SES to Mailtrap SMTP via nodemailer
-- Add nodemailer to serverExternalPackages to fix ESM bundling
 - Wrap Stripe calls in try/catch to return JSON errors
 - Safe JSON error handling, adaptive layout, clear errors on step change
+- Cast payload fields to string to satisfy TypeScript
+- Handle already-succeeded PaymentIntent gracefully instead of showing error
+- Wrap complete route in try/catch to surface actual errors
+- Handle boolean params in toParam (boolean columns were cast to text)
+- …and 10 more changes.
 
 </Update>
 
@@ -1247,14 +1502,20 @@ rss: true
 
 #### Features
 
-- Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
-- Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-- Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
-- Added period-aware dashboards, usage gauges, KPI cards, multi-series charts, saved analytic views, and production data refresh paths.
+- **Vercel integration** — Add Vercel/Linear theme, switch to Geist font, sharpen active states
+- **Access and billing** — Add NextAuth.js Cognito authentication
+- **Access and billing** — Add NextAuth credentials auth via RDS Data API
+- **Access and billing** — Wire real session/DB data into sidebar, topbar, dashboard, profile, team, billing
+- **Access and billing** — Wire real data into analytics, security/API keys, and dashboard chart
+- **Access and billing** — Build NSL signup and Stripe billing flow
+- **Catalog, users, and events** — Wire real DB data into context, training-jobs, events, explore, users, settings pages
+- **Catalog, users, and events** — Add user and item detail slide-over panels with event history tabs
+- **Analytics and reporting** — Full analytics port: time toolbar, KPI cards, dynamic widget builder, drilldown filters
+- **Analytics and reporting** — Full analytics rebuild: metric cards, multi-metric charts, saved views, draggable grid, Sankey funnel, KPI tiles
 
 #### Bug fixes
 
+- Revert "feat: add NextAuth.js Cognito authentication"
 - Normalise PHP &#36;2y&#36; bcrypt prefix to &#36;2b&#36; for bcryptjs compatibility
 - Use numeric teamId for embeddings tenant_id, fix entity_type casing (Item/User)
 - Embeddings tenant_id is text type, use stringValue not longValue
@@ -1269,7 +1530,6 @@ rss: true
 
 #### Features
 
-- Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
-
+- **Platform foundation** — Initial commit
 
 </Update>
