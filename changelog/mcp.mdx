@@ -5,15 +5,39 @@ description: "Release history for the NeuronSearchLab MCP server."
 rss: true
 ---
 
+<Update label="August 21, 2026" rss="August 21, 2026: MCP server.">
+
+### MCP server
+
+#### Breaking changes
+
+- Require integer NSL resource IDs
+
+</Update>
+
+<Update label="August 16, 2026" rss="August 16, 2026: MCP server.">
+
+### MCP server
+
+#### Features
+
+- **MCP tools** — Expanded MCP coverage from the first server release into contexts, pipelines, rules, event types, analytics, install paths, and clearer API error handling.
+- **MCP tools** — Release hosted recommendation tools v0.6.3
+
+</Update>
+
 <Update label="August 6, 2026" rss="August 6, 2026: MCP server.">
 
 ### MCP server
 
 #### Features
 
-- Added hosted MCP tools for effective plan, usage-limit, exact overage, and context cleanup visibility.
-- Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
-
+- **MCP plan and usage tools** — Added hosted MCP tools for effective plan, usage-limit, exact overage, and context cleanup visibility.
+- **MCP plan and usage tools** — Expose context deletion in hosted MCP (#5)
+- **MCP plan and usage tools** — Expose account plan and usage limits
+- **SDK distribution** — Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
+- **SDK distribution** — Release MCP 0.6.1 (#6)
+- **SDK distribution** — Release MCP 0.6.2
 
 </Update>
 
@@ -23,7 +47,9 @@ rss: true
 
 #### Features
 
-- Added a submission-safe hosted profile for ChatGPT with explicit OAuth requirements and restricted credential operations.
+- **Hosted MCP profile** — Added a submission-safe hosted profile for ChatGPT with explicit OAuth requirements and restricted credential operations.
+- **Hosted MCP profile** — Release hosted OpenAI submission profile (#2)
+- **Hosted MCP profile** — Add OpenAI skill submission bundle (#3)
 
 #### Bug fixes
 
@@ -37,9 +63,10 @@ rss: true
 
 #### Features
 
-- Expanded MCP coverage from the first server release into contexts, pipelines, rules, event types, analytics, install paths, and clearer API error handling.
-- Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
-
+- **MCP tools** — Add tool titles and MCP annotations; single-source server version
+- **SDK distribution** — Remote-first README, mcpName registry metadata, and release changeset
+- **SDK distribution** — Add MCP Registry entry and automated registry publishing
+- **SDK distribution** — Version packages (#1)
 
 </Update>
 
@@ -49,8 +76,8 @@ rss: true
 
 #### Features
 
-- Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
-
+- **SDK distribution** — Improve mcp package positioning
+- Link ai agents operations article
 
 </Update>
 
@@ -60,11 +87,7 @@ rss: true
 
 #### Features
 
-- No major feature changes in this period.
-
-#### Bug fixes
-
-- Improve MCP API error handling
+- **MCP tools** — Improve MCP API error handling
 
 </Update>
 
@@ -74,8 +97,10 @@ rss: true
 
 #### Features
 
-- Expanded MCP coverage from the first server release into contexts, pipelines, rules, event types, analytics, install paths, and clearer API error handling.
-
+- **MCP tools** — Add ./server subpath export
+- **MCP tools** — Add prepare script to build on GitHub install
+- **MCP tools** — Include dist in repo for GitHub dependency installs
+- **MCP tools** — Add event type management MCP tools
 
 </Update>
 
@@ -85,8 +110,7 @@ rss: true
 
 #### Features
 
-- Expanded MCP coverage from the first server release into contexts, pipelines, rules, event types, analytics, install paths, and clearer API error handling.
-
+- **MCP tools** — Expand internal admin MCP tools
 
 </Update>
 
@@ -96,9 +120,12 @@ rss: true
 
 #### Features
 
-- Expanded MCP coverage from the first server release into contexts, pipelines, rules, event types, analytics, install paths, and clearer API error handling.
-- Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
+- **MCP tools** — Add platform management tools (contexts, pipelines, rules): v0.2.0
+- **SDK distribution** — Bump to v0.4.0 for npm publish
 
+#### Bug fixes
+
+- Revert version to 0.3.0: already published
 
 </Update>
 
@@ -108,7 +135,8 @@ rss: true
 
 #### Features
 
-- Expanded MCP coverage from the first server release into contexts, pipelines, rules, event types, analytics, install paths, and clearer API error handling.
-
+- **MCP tools** — Initial release: NeuronSearchLab MCP server v0.1.0
+- **MCP tools** — Add .gitignore, remove node_modules and dist from tracking
+- **MCP tools** — Add full docs and live test results
 
 </Update>
