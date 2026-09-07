@@ -5,6 +5,86 @@ description: "Release history for the NeuronSearchLab admin console."
 rss: true
 ---
 
+<Update label="September 6, 2026" rss="September 6, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Platform foundation** — Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
+- **Platform foundation** — Restore the dashboard intro banner with a tactile identity surface
+- **Ranking controls** — Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
+- **Ranking controls** — Rank scenario boards over the whole 23-system field
+
+#### Bug fixes
+
+- Revert "Restore the dashboard intro banner with a tactile identity surface"
+
+</Update>
+
+<Update label="September 5, 2026" rss="September 5, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Platform foundation** — Refine dashboard context and add tactile primary buttons
+
+</Update>
+
+<Update label="September 3, 2026" rss="September 3, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Ranking controls** — Serve recommendations through a model-agnostic provider chain
+
+</Update>
+
+<Update label="September 2, 2026" rss="September 2, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Catalog, users, and events** — Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- **Catalog, users, and events** — Scheduled retraining with a promotion gate
+- **Catalog, users, and events** — Provision catalogues from the database, not the network
+- **ChatGPT integration** — Added ChatGPT activation, OAuth onboarding, starter catalogues, recommendation prompts, and handoff from the in-console assistant.
+- **ChatGPT integration** — Add interactive sample onboarding
+- **ChatGPT integration** — Add interactive recommendation widget
+
+#### Bug fixes
+
+- Materialise finished trainings the pipeline webhook missed
+- Apply the sample workspace migration and keep it off the signup path
+- Upsert catalogue items on the constraint that actually exists
+- Make onboarding handler exhaustive
+- Keep an undispatchable run queued instead of failed
+- Accept OpenAI relay state length
+- Allow ChatGPT connector token exchange
+- Fix get_demo_recommendations read-only hint and ship MCP 1.1.0 output schemas (#22)
+
+</Update>
+
+<Update label="September 1, 2026" rss="September 1, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Model lifecycle** — Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
+- **Model lifecycle** — Provision interest-based sample workspaces
+
+#### Bug fixes
+
+- Keep run status live instead of stuck on Started
+- Grant pipeline role the data bucket and unclip job details
+- Use the SageMaker.RESOURCE_LIMIT retry enum
+
+</Update>
+
 <Update label="August 25, 2026" rss="August 25, 2026: Admin console.">
 
 ### Admin console
@@ -22,10 +102,8 @@ rss: true
 
 #### Features
 
-- **Model lifecycle** — Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
 - **Model lifecycle** — Rewrite the model detail sheet for the person choosing a model
 - **Model lifecycle** — Fold model selection into Details and strip the editor back
-- **Catalog, users, and events** — Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
 - **Catalog, users, and events** — Add a 2D embedding map view to the users and items pages
 
 #### Bug fixes
@@ -47,6 +125,7 @@ rss: true
 - **Catalog, users, and events** — Rework the models page and the events signal library
 - **Catalog, users, and events** — Give the models table the same full-page treatment as Items
 - **Catalog, users, and events** — Drop the catalog counts strip and simplify the Compute column
+- **Catalog, users, and events** — Add gradient heatmap color scale to recommender catalog metric columns
 - **Assistant and MCP** — Introduced the in-console assistant, connected MCP tools, hardened transport options, and routed analytics and management actions through platform APIs.
 - **Assistant and MCP** — Install pinned release development tooling
 - Use current pinned CDK executable
@@ -161,7 +240,6 @@ rss: true
 
 #### Features
 
-- **ChatGPT integration** — Added ChatGPT activation, OAuth onboarding, starter catalogues, recommendation prompts, and handoff from the in-console assistant.
 - **ChatGPT integration** — Complete ChatGPT marketplace activation
 
 </Update>
@@ -243,7 +321,6 @@ rss: true
 - **Analytics and reporting** — Added period-aware dashboards, usage gauges, KPI cards, multi-series charts, saved analytic views, and production data refresh paths.
 - **Analytics and reporting** — Add acquisition attribution and server analytics
 - **Analytics and reporting** — Require strict overage for usage alerts
-- **Platform foundation** — Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
 - **Platform foundation** — Enable onboarding email sequence for new customers
 - **Access and billing** — Guard team page against missing invitations table
 
@@ -306,7 +383,6 @@ rss: true
 
 - Redesign context configuration editor
 - Refine context basics and lifecycle controls
-- **Ranking controls** — Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
 - **Ranking controls** — Remove recommendation type from context UI
 - **Model lifecycle** — Add hosted Streamable HTTP MCP endpoint at /api/mcp
 - **Access and billing** — Add OAuth 2.1 + dynamic client registration for the MCP endpoint
