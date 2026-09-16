@@ -1,0 +1,107 @@
+---
+title: 'Instant start'
+icon: 'wand-magic-sparkles'
+description: 'Get recommendations over your own content by pasting a URL - no SDK, no feed, no events.'
+---
+
+## The short version
+
+Paste your website address. NeuronSearchLab reads your public pages, builds a catalogue from them, and starts serving recommendations over your own content.
+
+There is nothing to install, no feed to export, and no event schema to design. If you only want to see whether this works for your site, you do not even need an account - go to [neuronsearchlab.com/try](https://www.neuronsearchlab.com/try).
+
+This is the fastest path to a working recommendation. The [Quickstart](/quickstart) covers the API path, which gives you more control and is where most teams end up once they are past evaluating.
+
+---
+
+## Connect your site
+
+<Steps>
+  <Step title="Open Integrations">
+    In the console, go to **Integrations**. The **Connect your website** panel is at the top.
+  </Step>
+  <Step title="Paste your address">
+    Enter your site's address, for example `https://your-shop.com`, and select **Connect**.
+  </Step>
+  <Step title="Watch it build">
+    The crawl usually takes a minute or two. The panel reports pages read, items created, and how many pages had structured data.
+  </Step>
+</Steps>
+
+That last number matters more than the item count. See [What gets read](#what-gets-read).
+
+---
+
+## What gets read
+
+We look for machine-readable content before we look at HTML, in this order.
+
+| Source | What it gives us |
+| --- | --- |
+| A product or RSS feed | A complete, clean catalogue. If you publish one we use it and never crawl. |
+| Your sitemap | An authoritative list of the pages you want indexed. |
+| Homepage links | Only when there is no sitemap, and only one level deep. |
+
+From each page we take, in order of preference:
+
+1. **JSON-LD** - the `Product`, `Article`, `Recipe` or `VideoObject` markup you already publish for search engines.
+2. **OpenGraph** - `og:title`, `og:description`, `og:image`.
+3. **Title and meta description** - the fallback.
+
+<Note>
+  Pages that reach the third tier without enough distinct description text are **skipped rather than imported**. On a templated site, every page's title and meta description are near-identical, which produces near-identical embeddings and makes related items close to random. A smaller catalogue that ranks well is worth more than a larger one that does not.
+</Note>
+
+The console tells you the split, for example *"142 of 200 pages had structured data"*. If that ratio is low, adding [schema.org](https://schema.org) markup to your pages will improve your recommendations more than anything else you could do.
+
+---
+
+## What you get without any events
+
+A crawled catalogue supports recommendations immediately, with no click history:
+
+- **Related items** - "more like this" on a detail page, ranked by content similarity.
+- **Search** - free-text queries ranked against the same catalogue.
+
+Behavioural surfaces - a personalized homepage feed, or anything that adapts to an individual - need events. Those arrive on their own once you add [the embed](/embed), or you can [import history you already have](/guides/backfill).
+
+---
+
+## Respecting your site
+
+We read your `robots.txt` before anything else and follow it, including `noai` and `noindex`. Requests are paced and capped, and we never submit forms or read anything a logged-out visitor could not.
+
+Our crawler identifies itself as `NeuronSearchLab-Ingest` and links to [neuronsearchlab.com/bot](https://www.neuronsearchlab.com/bot), which explains how to block it.
+
+---
+
+## Limits
+
+<Warning>
+  **Sites that render entirely in JavaScript will return little or nothing.** We read the HTML your server sends, not the page after your framework has run. If your catalogue is client-rendered, publish a product feed and connect that instead - it is better data anyway.
+</Warning>
+
+- A single crawl reads up to 200 pages. Connect a feed for a larger catalogue.
+- One crawl configuration per workspace. Connecting a second address replaces the first.
+- Scheduled re-crawls are a paid feature. A one-off crawl works on every plan, including Free.
+
+---
+
+## Where items come from
+
+Crawled items are keyed on their canonical URL, so re-crawling updates them rather than duplicating them.
+
+If you later connect a feed keyed on SKU, those items are **adopted in place**: the existing item keeps its NeuronSearchLab id and gains the feed's identifier, so nothing you have already sent - events, recommendations served - stops referring to the right thing.
+
+---
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Add the embed" icon="code" href="/embed">
+    Render recommendations and collect behaviour with one script tag.
+  </Card>
+  <Card title="Import your history" icon="clock-rotate-left" href="/guides/backfill">
+    Start with a trained model instead of waiting for one.
+  </Card>
+</CardGroup>

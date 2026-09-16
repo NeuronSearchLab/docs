@@ -57,9 +57,11 @@
             "pages": [
               "introduction",
               "quickstart",
+              "instant-start",
               "connect-your-data",
               "generate-recommendations",
               "generate-search-results",
+              "embed",
               "authentication"
             ]
           },
@@ -103,7 +105,8 @@
               "guides/integrations",
               "guides/vercel",
               "guides/users-and-items",
-              "guides/events"
+              "guides/events",
+              "guides/backfill"
             ]
           },
           {
