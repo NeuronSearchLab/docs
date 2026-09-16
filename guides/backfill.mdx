@@ -1,0 +1,92 @@
+---
+title: 'Importing history'
+icon: 'clock-rotate-left'
+description: 'Start with a trained model by importing behaviour you already have.'
+---
+
+## Why
+
+The [embed](/embed) collects behaviour from the moment it renders - but only going forward. If you already have a year of orders in Shopify or pageviews in GA4, importing them means your first model is trained on real customers instead of waiting a month to accumulate one.
+
+Everything here maps onto the same three questions: which item, which event, and when.
+
+---
+
+## CSV
+
+The simplest path, and the one that works regardless of which tools you use.
+
+```csv
+user_id,item_id,event,timestamp
+u-1042,SKU-9,view,2026-03-04T10:30:00Z
+u-1042,SKU-9,purchase,2026-03-04T10:32:11Z
+```
+
+Upload it under **Integrations → Import history**.
+
+**Columns are matched by name, not position**, so you do not need to reorder your export. These are all recognised:
+
+| Field | Accepted column names |
+| --- | --- |
+| User | `user_id`, `user`, `customer_id`, `visitor_id` |
+| Item | `item_id`, `product_id`, `sku`, `url`, `item_url` |
+| Event | `event`, `event_type`, `event_name`, `action` |
+| Time | `timestamp`, `time`, `occurred_at`, `created_at`, `date` |
+
+Timestamps can be ISO 8601, epoch seconds, or epoch milliseconds.
+
+Event names are mapped for you - `view_item`, `page_view` and `impression` all become `view`; `add_to_cart` and `select_item` become `click`; `order` and `transaction` become `purchase`.
+
+---
+
+## Shopify
+
+Under **Integrations → Shopify**, paste an Admin API access token with the `read_orders` scope. Create it from a custom app in your own Shopify admin - there is no app to install or review.
+
+Order line items become `purchase` events. Shopify does not expose product views, so this gives you conversions, which is the signal the embed cannot collect.
+
+---
+
+## Google Analytics
+
+GA4 comes in two shapes, and the difference decides what you actually get.
+
+### BigQuery export - real training data
+
+If you have linked GA4 to BigQuery, we can read per-user rows: every `view_item`, `add_to_cart` and `purchase` with the pseudonymous user id attached. **This trains a model.**
+
+### Data API - a popularity prior only
+
+Without the BigQuery export, GA4's reporting API returns aggregated item metrics with no user dimension at all. We import those as a popularity signal, which genuinely helps cold start - but there is no *who* in it, so it cannot train personalisation.
+
+<Note>
+  The console tells you which of these it is running. If you want GA4 to be more than a popularity prior, [link GA4 to BigQuery](https://support.google.com/analytics/answer/9823238) first and re-import.
+</Note>
+
+---
+
+## What happens to your rows
+
+Item references resolve against both the identifier a feed supplied and the canonical URL a crawl recorded, so an import works whether your catalogue was built by crawling or by ingesting a feed.
+
+Rejections are reported by cause, because the two mean different things:
+
+| Reported as | What it means |
+| --- | --- |
+| Unknown item | Your catalogue and your export disagree on identifiers. Usually the export uses SKUs and the catalogue was crawled by URL, or the reverse. |
+| Unknown event | An event name we could not map. Rename it to one of the accepted names above. |
+| Malformed | A missing field or an unreadable timestamp. |
+
+<Warning>
+  An import that silently discarded 40% of its rows would be worse than one that never ran. Check the rejection counts before treating an import as finished - a high unknown-item count means almost nothing landed.
+</Warning>
+
+Imports are safe to re-run. Every row carries a deterministic identifier derived from its own content, so importing the same export twice will not double-count anything.
+
+---
+
+## After importing
+
+Imported events are marked with their origin, so they can be weighted or excluded during training independently of live traffic.
+
+Once you have history in place, start a training run from **Events → Training**, or leave scheduled retraining to pick it up.
