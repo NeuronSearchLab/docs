@@ -24,14 +24,17 @@ That is the whole integration.
 ## Get a publishable key
 
 <Steps>
-  <Step title="Open Security">
-    In the console, go to **Security** and find **Embed key**.
+  <Step title="Open Website embed">
+    In the console, go to **Developers → Website embed**.
   </Step>
   <Step title="List your origins">
     Add every origin that will render the widget, including staging. A key with no origins does nothing.
   </Step>
   <Step title="Copy the snippet">
-    The console gives you the script tag with your key already in it.
+    The console gives you the script tag with your key already in it. The key is shown once, when you create it.
+  </Step>
+  <Step title="Check it is live">
+    The same page shows the origins we have received requests from - including any we turned away because they were not on your list.
   </Step>
 </Steps>
 
@@ -101,11 +104,120 @@ No cookies, no third-party storage, no personal data. Visitor and session ids ar
 
 ---
 
+## How the widget knows which item the page is
+
+`data-nsl-item-url="auto"` reads the page's `<link rel="canonical">`, and the widget also reads the page's JSON-LD for a `sku`, `mpn`, `productID` or `isbn`. Both are sent, and whichever resolves against your catalogue wins - an identifier your feed asserted first, then one the crawler scraped, then the URL.
+
+That second path matters more than it sounds. A canonical URL is only stable if the one a visitor's browser sees matches the one we crawled, and locale prefixes, per-market canonicalisation and AMP copies all break that. When they do, the strip used to quietly render unrelated items. Now the page's own `sku` resolves it, with no change to your markup.
+
+You never need to send our ids. If you want to override what the page says, set `data-nsl-item-sku` or a literal `data-nsl-item-url`.
+
+---
+
+## When a strip is empty
+
+Add `?nsl_debug=1` to any page carrying the widget. A panel appears listing every placeholder, what it resolved to, the request id, how many items came back, and how many events were sent - and names the cause when something is wrong:
+
+- **Request failed** - the key is not valid for this origin. Check the origin list in the console.
+- **This page is not in your catalogue** - the URL and sku matched nothing, so the strip is not related to anything.
+- **No request_id** - the strip rendered but views and clicks are not being recorded.
+
+`data-nsl-debug` on the script tag does the same thing permanently. The query parameter is usually what you want: the tag is typically baked into a theme, and it needs no deploy.
+
+---
+
+## Telling the widget what is happening
+
+The crawl can see your product pages. It cannot see a basket, it does not know
+whether anyone is signed in, and it never sees a thank-you page - those are
+`noindex`, and correctly skipped. So the page may say, through a small command
+queue:
+
+```html
+<script>window.nsl=window.nsl||function(){(nsl.q=nsl.q||[]).push(arguments)}</script>
+<script src="https://cdn.neuronsearchlab.com/embed/1.1.0/nsl.min.js"
+        data-nsl-key="nsl_pk_YOUR_KEY" async></script>
+
+<script>
+  nsl('page',     { type: 'product', item: { sku: 'AW-1042' } })
+  nsl('cart',     { items: [{ sku: 'AW-9', quantity: 1 }], total: 98, currency: 'GBP' })
+  nsl('customer', { id: 'cust-8821' })
+</script>
+```
+
+| Command | Effect |
+| --- | --- |
+| `nsl('page', …)` | What this page is about |
+| `nsl('cart', …)` | What is in the basket |
+| `nsl('customer', …)` | Who is signed in. Hashed per workspace; the raw id is never stored |
+| `nsl('order', …)` | A completed sale. The only command that writes |
+| `nsl('consent', false)` | Withhold cart and customer |
+| `nsl('refresh')` | Re-read placeholders after a client-side navigation |
+
+Commands **replace** rather than accumulate: calling `nsl('cart', …)` twice
+describes one basket. You can mix them freely with JSON-LD - unlike a
+tag-based integration, there is no mode to choose between.
+
+If you cannot run script, one element does the same job:
+
+```html
+<script type="application/json" data-nsl-context>
+  {"page":{"type":"product","item":{"sku":"AW-1042"}}}
+</script>
+```
+
+<Note>
+  Context resolves against your catalogue or it is dropped and counted. **It can never create an item.** That is what keeps a key published in page source from being a way to write to your catalogue.
+</Note>
+
+---
+
+## Conversions
+
+```js
+nsl('order', {
+  id: 'SO-1001',
+  currency: 'GBP',
+  items: [{ sku: 'AW-1042', quantity: 1, value: 49.99 }],
+})
+```
+
+These arrive as **`purchase_reported`**, not `purchase`. A browser cannot prove
+a sale happened, and `purchase` is the highest-weighted signal your models
+train on, so the two are kept apart: `purchase_reported` is weighted 0 and
+excluded from training, and exists for attribution and revenue reporting.
+
+Order lines are keyed on the order id, so a reloaded thank-you page cannot
+count a sale twice. If you also connect Shopify, the verified order **replaces**
+the browser's report in place rather than adding to it.
+
+An order id is required - without one there is nothing to deduplicate on.
+
+---
+
+## Placements
+
+Give a strip a name, and what it serves becomes a console setting rather than a
+markup change:
+
+```html
+<div data-nsl-rec="related" data-nsl-placement="pdp-related" data-nsl-item-url="auto"></div>
+```
+
+In **Developers → Website embed** a placement sets the context, the item count,
+the layout (`grid` or `list`), which fields show, and an optional heading.
+Per-placement click-through then appears without any extra instrumentation.
+
+A placement the console does not recognise **still renders**, on your defaults.
+Renaming one never blanks a live page.
+
+---
+
 ## Events it will not send
 
-The embed reports `view` and `click` only.
+The embed reports `view`, `click` and `purchase_reported` only.
 
-`purchase` carries the highest weight in training and cannot be verified from a browser, so the API rejects it from a publishable key. Send conversions from your server with the [Events API](/api-reference/endpoint/create-events), or import them with a [backfill](/guides/backfill).
+`purchase` carries the highest weight in training and cannot be verified from a browser, so the API rejects it from a publishable key. Send conversions from your server with the [Events API](/api-reference/endpoint/submit-events), or import them with a [backfill](/guides/backfill).
 
 Every event is also checked against the recommendations we actually served, so a key copied from your page source cannot be used to invent engagement for arbitrary items.
 
