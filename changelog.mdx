@@ -20,15 +20,115 @@ rss: true
   </Card>
 </CardGroup>
 
+<Update label="September 20, 2026" rss="September 20, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Catalog, users, and events** — Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- **Catalog, users, and events** — Summon the crawled catalogue into a rebuilt page of their own site
+- Find the pictures that were already there, and the right pages to crawl
+- Say what the sign-up is for in the button that asks for it
+
+</Update>
+
+<Update label="September 19, 2026" rss="September 19, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Catalog, users, and events** — Refresh the catalogue: pipeline names now use + rather than an arrow
+
+</Update>
+
+<Update label="September 18, 2026" rss="September 18, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Catalog, users, and events** — Refresh the model catalogue from benchmark v3.2
+
+</Update>
+
+<Update label="September 17, 2026" rss="September 17, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Model lifecycle** — Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
+- **Model lifecycle** — Show which models are new in the benchmark release, and carry the new family
+- **Model lifecycle** — Make two model descriptions read without the one above them
+- **Catalog, users, and events** — Update the model catalogue to benchmark v3.2
+- Follow the benchmark's key rename, and stop pinning the size of the field
+
+</Update>
+
+<Update label="September 16, 2026" rss="September 16, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Model lifecycle** — Add publishable keys so a browser can call NSL without a backend
+- **Model lifecycle** — Pin the CDN certificate so the custom domain survives a redeploy
+- **Model lifecycle** — Drop the VPC for outbound lambdas so egress costs nothing
+- Add the CDN that serves the embed script
+- Let an agent connect a site, and share one implementation with the console
+- Dress the preview in the visitor's brand, not ours
+- Stop the preview rate limit locking people out of their own product
+- Read the head of a big homepage instead of refusing it
+- Email when someone starts a preview
+- Tell people which thing actually went wrong
+- Let a brand stored before the icon pass be retried, exactly once
+- **Catalog, users, and events** — Import historical events so day one starts warm
+- **Catalog, users, and events** — Spend the budget on items first, and stop scoring every sitemap as one
+- **Catalog, users, and events** — Stop reading "index" in a sitemap name as "a list of index pages"
+- **Platform foundation** — Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
+- **Platform foundation** — Merge: zero-integration onboarding
+- **Platform foundation** — Take the brand colour from the favicon, and actually use it
+- **Ranking controls** — Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
+- **Ranking controls** — Give a preview the identity it needs to rank anything
+- …and 7 more changes.
+
+#### Bug fixes
+
+- Build a workspace for a domain before anyone signs up
+- Fix two things production surfaced during deployment
+- Fix the type errors adding a metered bucket surfaced
+- Make the website a connector, fix the marks, and get Twelve Labs actually working
+- Read the visitor's own brand, and fix two Twelve Labs bugs the live run found
+- Accept a site address typed the way people type one
+- Move the claim button into the header, and fix a type error I shipped
+- Fix three things a real preview showed up
+
+</Update>
+
+<Update label="September 15, 2026" rss="September 15, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Catalog, users, and events** — Seed recommendations from an item so related-items needs no events
+- Configure a tenant from its own website instead of asking
+
+#### Bug fixes
+
+- Fix embeddings upserts and crawl a site into a catalogue
+
+</Update>
+
 <Update label="September 6, 2026" rss="September 6, 2026: Admin console.">
 
 ### Admin console
 
 #### Features
 
-- **Platform foundation** — Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
 - **Platform foundation** — Restore the dashboard intro banner with a tactile identity surface
-- **Ranking controls** — Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
 - **Ranking controls** — Rank scenario boards over the whole 23-system field
 
 #### Bug fixes
@@ -63,7 +163,6 @@ rss: true
 
 #### Features
 
-- **Catalog, users, and events** — Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
 - **Catalog, users, and events** — Scheduled retraining with a promotion gate
 - **Catalog, users, and events** — Provision catalogues from the database, not the network
 - **ChatGPT integration** — Added ChatGPT activation, OAuth onboarding, starter catalogues, recommendation prompts, and handoff from the in-console assistant.
@@ -104,7 +203,6 @@ rss: true
 
 #### Features
 
-- **Model lifecycle** — Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
 - **Model lifecycle** — Provision interest-based sample workspaces
 
 #### Bug fixes
