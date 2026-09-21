@@ -65,7 +65,8 @@
                 "group": "Website embed",
                 "pages": [
                   "embed",
-                  "embed/shopify"
+                  "embed/shopify",
+                  "embed/platforms"
                 ]
               },
               "authentication"
