@@ -147,8 +147,8 @@ queue:
 
 | Command | Effect |
 | --- | --- |
-| `nsl('page', …)` | What this page is about |
-| `nsl('cart', …)` | What is in the basket |
+| `nsl('page', …)` | Which item this page is about. `type` is recorded for attribution and does not change ranking |
+| `nsl('cart', …)` | What is in the basket. Nothing already in it is recommended, and on a page with no item of its own the basket seeds the strip |
 | `nsl('customer', …)` | Who is signed in. Hashed per workspace; the raw id is never stored |
 | `nsl('order', …)` | A completed sale. The only command that writes |
 | `nsl('consent', false)` | Withhold cart and customer |
@@ -168,6 +168,10 @@ If you cannot run script, one element does the same job:
 
 <Note>
   Context resolves against your catalogue or it is dropped and counted. **It can never create an item.** That is what keeps a key published in page source from being a way to write to your catalogue.
+</Note>
+
+<Note>
+  There is no category or search tagging yet. If you need a strip scoped to a category, put the filter on the **context** the placement points at rather than on the page - a context carries pre-query filters and one context can serve many placements.
 </Note>
 
 ---
