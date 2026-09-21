@@ -61,7 +61,13 @@
               "connect-your-data",
               "generate-recommendations",
               "generate-search-results",
-              "embed",
+              {
+                "group": "Website embed",
+                "pages": [
+                  "embed",
+                  "embed/shopify"
+                ]
+              },
               "authentication"
             ]
           },

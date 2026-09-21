@@ -1,0 +1,87 @@
+---
+title: "Shopify"
+description: "Recommendations on a Shopify storefront without writing any tagging."
+---
+
+Shopify already knows which product a page is about, what is in the basket,
+who is signed in and what was bought. The app reads all of it, so there is no
+tagging to write and nothing to keep correct as your theme changes.
+
+<Note>
+  This replaces the manual steps entirely. If you install the app you do not need [page context](/embed#telling-the-widget-what-is-happening), [category and search](/embed#category-and-search-pages) or [conversions](/embed#conversions) — the extensions send all of them.
+</Note>
+
+## Install
+
+<Steps>
+  <Step title="Add the app">
+    Install **NeuronSearchLab** from the Shopify app store.
+  </Step>
+  <Step title="Create an embed key">
+    In the console, **Developers → Website embed**. Add every storefront
+    domain to the key's origins, including any you preview from.
+  </Step>
+  <Step title="Turn on the app embed">
+    **Theme editor → App embeds → NeuronSearchLab.** Paste the key and save.
+    That is the whole installation — the widget now loads on every page and
+    reports context.
+  </Step>
+  <Step title="Place a strip">
+    Drag **Recommendations** into any template. Give it a placement name if
+    you want to configure it from the console later.
+  </Step>
+</Steps>
+
+## What the app sends
+
+None of this is hand-written; it all comes from Shopify.
+
+| Shopify | Becomes |
+| --- | --- |
+| `product.selected_or_first_available_variant.sku` | the item this page is about |
+| `collection.handle` | the category a listing page is showing |
+| `search.terms` | the search a visitor just ran |
+| `cart.items` | the basket, on every page |
+| `customer.id` | who is signed in, hashed per workspace before anything is stored |
+| `checkout_completed` | the sale |
+
+## Conversions
+
+Orders are reported by a web pixel, because Shopify's checkout is not your
+theme and no theme code runs there.
+
+They arrive as `purchase_reported` — a separate, zero-weight signal excluded
+from model training, because a browser cannot prove a sale. They are for
+attribution and revenue reporting.
+
+To have verified orders as well, connect Shopify in **Integrations** with
+`read_orders`. The verified order then **supersedes** the browser's report
+rather than adding to it: both key on the same order id, so a sale is never
+counted twice.
+
+## Placements
+
+A strip placed in the theme decides only *where* it appears. What it serves,
+how many items, and how the card reads are decided by the placement in the
+console — so those change without a theme edit or a deploy.
+
+A placement the console does not recognise still renders, on your workspace
+defaults. Renaming one never blanks a live page.
+
+## Privacy
+
+Where your shop has Shopify's customer privacy API and a visitor has not
+allowed analytics, the widget keeps rendering recommendations but stops
+describing the visitor: cart and customer are withheld.
+
+Only the customer **id** is ever sent, and it is hashed with a per-workspace
+key before storage. No name, email or address leaves the page.
+
+## Troubleshooting
+
+| Symptom | Cause |
+| --- | --- |
+| No strip renders | The app embed is off, or the key is missing from it |
+| Strip renders on some domains only | A storefront domain is not on the key's origins — the console's **Website embed** page lists any it turned away |
+| Strip looks unrelated to the product | The product's SKU is not in your catalogue. Add `?nsl_debug=1` to the page and the overlay says so |
+| Conversions not appearing | The web pixel needs the same embed key; check **Settings → Customer events** |
