@@ -11,7 +11,7 @@ The SDK path asks you to render recommendations yourself and then send events ba
 The embed collapses all of it. The widget that draws the recommendations is the widget that reports which ones were seen and clicked, so behavioural data arrives as a by-product of showing recommendations rather than as a prerequisite for getting any.
 
 ```html
-<script src="https://cdn.neuronsearchlab.com/embed/1.1.0/nsl.min.js"
+<script src="https://cdn.neuronsearchlab.com/embed/1.2.0/nsl.min.js"
         data-nsl-key="nsl_pk_YOUR_KEY" async></script>
 
 <div data-nsl-rec="related" data-nsl-item-url="auto" data-nsl-limit="6"></div>
@@ -135,7 +135,7 @@ queue:
 
 ```html
 <script>window.nsl=window.nsl||function(){(nsl.q=nsl.q||[]).push(arguments)}</script>
-<script src="https://cdn.neuronsearchlab.com/embed/1.1.0/nsl.min.js"
+<script src="https://cdn.neuronsearchlab.com/embed/1.2.0/nsl.min.js"
         data-nsl-key="nsl_pk_YOUR_KEY" async></script>
 
 <script>
@@ -149,6 +149,8 @@ queue:
 | --- | --- |
 | `nsl('page', …)` | Which item this page is about. `type` is recorded for attribution and does not change ranking |
 | `nsl('cart', …)` | What is in the basket. Nothing already in it is recommended, and on a page with no item of its own the basket seeds the strip |
+| `nsl('page', { category })` | Scopes a listing page to its category |
+| `nsl('page', { query })` | Turns a results page into query-driven retrieval |
 | `nsl('customer', …)` | Who is signed in. Hashed per workspace; the raw id is never stored |
 | `nsl('order', …)` | A completed sale. The only command that writes |
 | `nsl('consent', false)` | Withhold cart and customer |
@@ -170,8 +172,29 @@ If you cannot run script, one element does the same job:
   Context resolves against your catalogue or it is dropped and counted. **It can never create an item.** That is what keeps a key published in page source from being a way to write to your catalogue.
 </Note>
 
+---
+
+## Category and search pages
+
+A listing page says what it is listing, and a results page says what was
+searched:
+
+```js
+nsl('page', { type: 'category', category: 'footwear' })
+nsl('page', { type: 'search',   query: 'running shoes' })
+```
+
+`category` filters on the `category` field of your item metadata. Catalogues
+do not agree on what that field is called, so a value carrying its own field
+wins - `topic:Health` filters on `topic`, a bare `Health` filters on
+`category`.
+
+`query` turns the request into query-driven retrieval. If the workspace has no
+query embedder the request is retried without it, so the strip still renders
+rather than leaving a hole in the page.
+
 <Note>
-  There is no category or search tagging yet. If you need a strip scoped to a category, put the filter on the **context** the placement points at rather than on the page - a context carries pre-query filters and one context can serve many placements.
+  These scope a single strip from the page. To scope every strip on a surface, put the filter on the **context** the placement points at instead - one context can serve many placements.
 </Note>
 
 ---
