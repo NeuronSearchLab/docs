@@ -1,15 +1,16 @@
 ---
 title: "Magento, Shopware, PrestaShop, BigCommerce"
-description: "Recommendations on the other major storefronts, with no tagging to write."
+description: "Platform adapters that load the recommendation widget and supply it with storefront context."
 ---
 
-Each of these reads what the platform already knows — the product, the
-category, the search term, the basket, the customer and the order — and hands
-it to the widget. None of them asks you to maintain hidden markup on your
-templates.
+Each of these platforms has an adapter that installs the recommendation widget
+and feeds it context from the storefront: the product a page shows, the
+category being listed, the search term, the basket, the signed-in customer and
+the completed order.
 
-They all do the same three things; only how each platform exposes its data
-differs. Source and install steps are in
+All four adapters do the same three things — load the widget, describe what
+the visitor is looking at, and report the sale. What differs between them is
+only how each platform exposes that data. Source and install steps are in
 [nsl-platforms](https://github.com/NeuronSearchLab/nsl-platforms).
 
 <Note>
@@ -59,27 +60,27 @@ Set the key in the plugin's configuration. Place a strip anywhere in Twig:
 Upload the module under **Modules → Module Manager**, install it, and paste
 your embed key in its configuration.
 
-SKUs use the product `reference` and fall back to the product id, because
-plenty of catalogues leave `reference` empty.
+SKUs come from the product `reference`, falling back to the product id where
+`reference` is empty, as it is in many catalogues.
 
 ## BigCommerce
 
-BigCommerce gives an app no template hook, so this one is a storefront script
-rather than a plugin. Paste it under **Settings → Advanced → Script
+BigCommerce gives an app no template hook, so this adapter is a storefront
+script rather than a plugin. Paste it under **Settings → Advanced → Script
 Manager**, in the header, on all pages, with your key filled in.
 
 It reads the basket and the order from BigCommerce's Storefront API, which is
-same-origin and unauthenticated — there is no API account to create and no
+same-origin and unauthenticated, so there is no API account to create and no
 token in the page.
 
-Two limits worth knowing before you install it:
+Two limits are worth knowing before you install it:
 
 - **Categories come from the breadcrumb.** BigCommerce category URLs carry no
-  marker, so there is nothing else reliable across themes. Where a theme has
-  no breadcrumb, no category is sent rather than a guess.
-- **The order id is not in a consistent place.** The script tries the query
-  string, session storage and the URL path. If none has it, the sale is not
-  reported — a sale that cannot be keyed is one that would be counted again
+  marker, and nothing else is reliable across themes. Where a theme has no
+  breadcrumb, no category is sent.
+- **The order id is not in a consistent place.** The script looks in the query
+  string, session storage and the URL path. If none of them has it, the sale
+  is not reported, because a sale that cannot be keyed would be counted again
   on the next page reload.
 
 ## What every adapter sends
@@ -93,18 +94,19 @@ Two limits worth knowing before you install it:
 | customer id | personalisation across devices, hashed per workspace |
 | order | attribution, as `purchase_reported` |
 
-Your own identifiers throughout. A SKU is resolved against your catalogue
-server-side, so there is no id mapping to maintain.
+These are your own identifiers throughout. A SKU is resolved against your
+catalogue server-side, so there is no id mapping to maintain.
 
-## Conversions are reported, not trusted
+## Conversions
 
-Orders arrive as `purchase_reported`: weighted 0 and excluded from model
-training, because a browser cannot prove a sale. They are for attribution.
+Orders from an adapter arrive as `purchase_reported`: weighted 0 and excluded
+from model training, because a browser cannot prove a sale took place. They
+are used for attribution.
 
 Connect the same platform under **Integrations** and the verified order
-supersedes the browser's report on the same order id, rather than adding to
-it.
+supersedes the browser's report on the same order id, rather than adding a
+second record.
 
 <Warning>
-  None of these adapters has yet been exercised against a live store of its platform. They are structurally valid and the endpoints they call are covered by tests, but install each on a staging store before it reaches a merchant.
+  None of these adapters has yet been exercised against a live store of its platform. They install and run against real platform builds in continuous integration, but install each on a staging store before it reaches a merchant.
 </Warning>

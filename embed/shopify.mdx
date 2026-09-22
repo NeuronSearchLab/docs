@@ -1,14 +1,19 @@
 ---
 title: "Shopify"
-description: "Recommendations on a Shopify storefront without writing any tagging."
+description: "The Shopify app: recommendations in your theme, with context and conversions supplied by the platform."
 ---
 
-Shopify already knows which product a page is about, what is in the basket,
-who is signed in and what was bought. The app reads all of it, so there is no
-tagging to write and nothing to keep correct as your theme changes.
+The NeuronSearchLab Shopify app installs the recommendation widget into your
+theme and supplies it with context from the storefront. Shopify already knows
+which product a page shows, what is in the basket, who is signed in and what
+was bought; the app reads each of those and passes them to the widget.
+
+It has two parts: a theme app embed that loads the widget and reports page,
+cart and customer context, and a web pixel that reports completed orders from
+checkout.
 
 <Note>
-  This replaces the manual steps entirely. If you install the app you do not need [page context](/embed#telling-the-widget-what-is-happening), [category and search](/embed#category-and-search-pages) or [conversions](/embed#conversions) — the extensions send all of them.
+  The app covers the manual steps described on the main embed page. With it installed you do not need [page context](/embed#page-context), [category and search](/embed#category-and-search-pages) or [conversions](/embed#conversions).
 </Note>
 
 ## Install
@@ -23,8 +28,7 @@ tagging to write and nothing to keep correct as your theme changes.
   </Step>
   <Step title="Turn on the app embed">
     **Theme editor → App embeds → NeuronSearchLab.** Paste the key and save.
-    That is the whole installation — the widget now loads on every page and
-    reports context.
+    The widget now loads on every page and reports context.
   </Step>
   <Step title="Place a strip">
     Drag **Recommendations** into any template. Give it a placement name if
@@ -34,7 +38,8 @@ tagging to write and nothing to keep correct as your theme changes.
 
 ## What the app sends
 
-None of this is hand-written; it all comes from Shopify.
+Each value comes from Shopify's own objects, so there is no tagging to write
+and nothing to keep correct as your theme changes.
 
 | Shopify | Becomes |
 | --- | --- |
@@ -47,31 +52,31 @@ None of this is hand-written; it all comes from Shopify.
 
 ## Conversions
 
-Orders are reported by a web pixel, because Shopify's checkout is not your
-theme and no theme code runs there.
+Orders are reported by a web pixel rather than by theme code, because
+Shopify's checkout is not part of your theme and no theme code runs there.
 
-They arrive as `purchase_reported` — a separate, zero-weight signal excluded
-from model training, because a browser cannot prove a sale. They are for
-attribution and revenue reporting.
+They arrive as `purchase_reported`: a separate event, weighted 0 and excluded
+from model training, because a browser cannot prove a sale took place. They
+are used for attribution and revenue reporting.
 
-To have verified orders as well, connect Shopify in **Integrations** with
-`read_orders`. The verified order then **supersedes** the browser's report
-rather than adding to it: both key on the same order id, so a sale is never
+For verified orders as well, connect Shopify in **Integrations** with
+`read_orders`. Both paths key on the same order id, so the verified order
+supersedes the browser's report rather than adding to it, and a sale is never
 counted twice.
 
 ## Placements
 
-A strip placed in the theme decides only *where* it appears. What it serves,
-how many items, and how the card reads are decided by the placement in the
-console — so those change without a theme edit or a deploy.
+A strip placed in the theme decides where recommendations appear. What it
+serves, how many items it shows and how each card reads are set by the
+placement in the console, so those change without a theme edit or a deploy.
 
-A placement the console does not recognise still renders, on your workspace
-defaults. Renaming one never blanks a live page.
+A placement the console does not recognise still renders, using your workspace
+defaults, so renaming one does not blank a live page.
 
 ## Privacy
 
-Where your shop has Shopify's customer privacy API and a visitor has not
-allowed analytics, the widget keeps rendering recommendations but stops
+Where your shop uses Shopify's customer privacy API and a visitor has not
+allowed analytics, the widget continues to render recommendations but stops
 describing the visitor: cart and customer are withheld.
 
 Only the customer **id** is ever sent, and it is hashed with a per-workspace

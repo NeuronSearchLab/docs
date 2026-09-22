@@ -4,13 +4,11 @@ icon: 'wand-magic-sparkles'
 description: 'Get recommendations over your own content by pasting a URL - no SDK, no feed, no events.'
 ---
 
-## The short version
+Instant start builds your catalogue from your public website. You give the console your site's address; it reads your pages, creates an item from each one, and begins serving recommendations over that content.
 
-Paste your website address. NeuronSearchLab reads your public pages, builds a catalogue from them, and starts serving recommendations over your own content.
+There is nothing to install, no feed to export and no event schema to design, which makes it the quickest way to get recommendations running. The [Quickstart](/quickstart) covers the API path instead, which gives you more control and is where most teams end up once they are past evaluating.
 
-There is nothing to install, no feed to export, and no event schema to design. If you only want to see whether this works for your site, you do not even need an account - go to [neuronsearchlab.com/try](https://www.neuronsearchlab.com/try).
-
-This is the fastest path to a working recommendation. The [Quickstart](/quickstart) covers the API path, which gives you more control and is where most teams end up once they are past evaluating.
+To see whether this works for your site before committing to anything, you do not need an account - go to [neuronsearchlab.com/try](https://www.neuronsearchlab.com/try).
 
 ---
 
@@ -28,7 +26,7 @@ This is the fastest path to a working recommendation. The [Quickstart](/quicksta
   </Step>
 </Steps>
 
-That last number matters more than the item count. See [What gets read](#what-gets-read).
+The structured-data count is the one to watch, because it governs how well the catalogue ranks. See [What gets read](#what-gets-read).
 
 ---
 
@@ -49,14 +47,14 @@ From each page we take, in order of preference:
 3. **Title and meta description** - the fallback.
 
 <Note>
-  Pages that reach the third tier without enough distinct description text are **skipped rather than imported**. On a templated site, every page's title and meta description are near-identical, which produces near-identical embeddings and makes related items close to random. A smaller catalogue that ranks well is worth more than a larger one that does not.
+  Pages that reach the third tier without enough distinct description text are **skipped rather than imported**. On a templated site, every page's title and meta description are near-identical, which produces near-identical embeddings and makes related items close to random.
 </Note>
 
 The console tells you the split, for example *"142 of 200 pages had structured data"*. If that ratio is low, adding [schema.org](https://schema.org) markup to your pages will improve your recommendations more than anything else you could do.
 
 ---
 
-## What you get without any events
+## Recommendations before you have events
 
 A crawled catalogue supports recommendations immediately, with no click history:
 
@@ -78,7 +76,7 @@ Our crawler identifies itself as `NeuronSearchLab-Ingest` and links to [neuronse
 ## Limits
 
 <Warning>
-  **Sites that render entirely in JavaScript will return little or nothing.** We read the HTML your server sends, not the page after your framework has run. If your catalogue is client-rendered, publish a product feed and connect that instead - it is better data anyway.
+  **Sites that render entirely in JavaScript will return little or nothing.** We read the HTML your server sends, not the page after your framework has run. If your catalogue is client-rendered, publish a product feed and connect that instead.
 </Warning>
 
 - A single crawl reads up to 200 pages. Connect a feed for a larger catalogue.
