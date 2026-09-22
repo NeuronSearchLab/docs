@@ -183,6 +183,8 @@ how many events were sent, and names the cause when something is wrong:
   an item, so there is nothing for the strip to be related to.
 - **No request_id** — the strip rendered, but views and clicks are not being
   recorded.
+- **No context to serve from** — the workspace has no contexts. Create one
+  under **Contexts**.
 
 `data-nsl-debug` on the script tag enables the panel permanently. The query
 parameter is usually more practical: the script tag is normally baked into a
@@ -303,6 +305,23 @@ instrumentation.
 
 A placement the console does not recognise still renders, using your workspace
 defaults, so renaming one does not blank a live page.
+
+### Which context serves a strip
+
+Every strip is served by a context, which is what decides the recipe, the
+pipeline, the rules and the filters behind it. The context is chosen in this
+order:
+
+1. The placement's context, if the strip names a placement that has one.
+2. Your workspace's default context.
+
+So a strip with no placement is served by the default context — which means
+that until you create placements, every strip on your site behaves the same
+way. Giving two surfaces different behaviour is what placements are for.
+
+Set the default under **Contexts**; it starts as the Homepage context created
+with your workspace. A workspace with no contexts at all cannot serve the
+embed, and the debug panel says so rather than rendering an empty strip.
 
 ---
 
