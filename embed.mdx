@@ -1,18 +1,22 @@
 ---
 title: 'The embed'
 icon: 'code'
-description: 'One script tag that renders recommendations and collects the behaviour needed to improve them.'
+description: 'A script tag that renders recommendations on your site and records how visitors interact with them.'
 ---
 
 <Note>
-  **On a shop platform?** Install the adapter instead — [Shopify](/embed/shopify), or [Magento, Shopware, PrestaShop and BigCommerce](/embed/platforms). Each sends every kind of context below from what the platform already knows, so there is nothing on this page left for you to write. Read on only if you are integrating by hand.
+  **On a shop platform?** Install the adapter instead — [Shopify](/embed/shopify), or [Magento, Shopware, PrestaShop and BigCommerce](/embed/platforms). The adapters send page, cart, customer and order context from what the platform already knows, so the manual steps on this page do not apply.
 </Note>
 
-## Why this exists
+The embed is a JavaScript widget you add to your site with a single script
+tag. Wherever you put a placeholder element, it renders a strip of
+recommendations drawn from your catalogue.
 
-The SDK path asks you to render recommendations yourself and then send events back. That is two integrations, a backend to hold your credentials, and a mapping between your product ids and ours.
-
-The embed collapses all of it. The widget that draws the recommendations is the widget that reports which ones were seen and clicked, so behavioural data arrives as a by-product of showing recommendations rather than as a prerequisite for getting any.
+The same widget measures what it renders. Once a card has been on screen long
+enough to have been seen, it records an impression; when a visitor clicks one,
+it records that too. Those signals are what your models learn from, so
+rendering and measurement arrive together rather than as two separate pieces
+of work.
 
 ```html
 <script src="https://cdn.neuronsearchlab.com/embed/1.2.0/nsl.min.js"
@@ -21,7 +25,28 @@ The embed collapses all of it. The widget that draws the recommendations is the 
 <div data-nsl-rec="related" data-nsl-item-url="auto" data-nsl-limit="6"></div>
 ```
 
-That is the whole integration.
+Nothing else is required to render a strip. The sections below cover styling,
+telling the widget about the basket and the customer, reporting sales, and
+configuring what each strip serves from the console.
+
+---
+
+## Choosing between the embed and the SDK
+
+Both serve the same recommendations from the same contexts.
+
+| | Embed | SDK |
+| --- | --- | --- |
+| Renders the cards | Yes | You render them |
+| Impressions and clicks | Recorded automatically | You send events |
+| Credential | Publishable key, in the page | Client secret, on your server |
+| Item identifiers | Resolved from the page | You map your ids to ours |
+| Styling | CSS custom properties, or a console layout | Entirely yours |
+
+The embed suits a website where you want recommendations rendered for you. The
+SDK suits cases where you need full control of the markup, or where you are
+serving somewhere a browser script cannot run — a mobile app, an email, a
+server-rendered page you assemble yourself.
 
 ---
 
@@ -38,21 +63,24 @@ That is the whole integration.
     The console gives you the script tag with your key already in it. The key is shown once, when you create it.
   </Step>
   <Step title="Check it is live">
-    The same page shows the origins we have received requests from - including any we turned away because they were not on your list.
+    The same page shows the origins we have received requests from, including any we turned away because they were not on your list.
   </Step>
 </Steps>
 
-<Note>
-  A publishable key (`nsl_pk_...`) is **designed to be readable** by anyone who views your page source. It can only read recommendations and report impressions - it can never administer your workspace, read your catalogue, or create credentials. This is not the same kind of secret as your Client Secret, and it is the only NeuronSearchLab credential that belongs in a browser.
-</Note>
+A publishable key (`nsl_pk_…`) is readable by anyone who views your page
+source, and is built for that. Its permissions are limited to reading
+recommendations and reporting impressions: it cannot administer your
+workspace, read your catalogue, or create other credentials.
 
 <Warning>
-  **Never put a Client Secret or an `nsl_` secret key in browser code.** Those grant full access to your workspace. Publishable keys exist precisely so you never have to.
+  **Never put a Client Secret or an `nsl_` secret key in browser code.** Those grant full access to your workspace. The publishable key is the only NeuronSearchLab credential intended for a browser.
 </Warning>
 
 ---
 
 ## Placeholders
+
+A placeholder is an empty element that marks where a strip should render.
 
 | Attribute | Values | Notes |
 | --- | --- | --- |
@@ -60,15 +88,20 @@ That is the whole integration.
 | `data-nsl-item-url` | `auto` or a URL | `related` only. `auto` reads the page's `<link rel="canonical">`. |
 | `data-nsl-limit` | 1-24 | Defaults to 6. |
 
-`auto` is why no integration code is needed. Your catalogue is keyed on canonical URLs, so the page already knows which item it is - you never map your ids onto ours.
+`auto` is what removes the need for integration code: your catalogue is keyed
+on canonical URLs, so the page already carries the identifier for the item it
+is about.
 
-Placeholders added after load are picked up automatically, so single-page apps work without re-initialising anything.
+Placeholders added to the DOM after load are picked up automatically, so
+single-page applications work without re-initialising anything.
 
 ---
 
 ## Styling
 
-The strip renders in a shadow root, so your stylesheet cannot break it and it cannot leak styles into your page. CSS custom properties cross that boundary and are the supported way to restyle it:
+The strip renders inside a shadow root. Your stylesheet cannot reach into it,
+and its styles cannot leak out into your page. CSS custom properties cross
+that boundary, and are how you restyle it:
 
 ```css
 [data-nsl-rec] {
@@ -83,59 +116,86 @@ The strip renders in a shadow root, so your stylesheet cannot break it and it ca
 
 ---
 
-## Which URL to load
+## Choosing a script URL
 
-Subresource integrity and automatic updates cannot coexist on one URL, so both are offered rather than pretending otherwise.
+Two URLs are published. A versioned URL supports Subresource Integrity,
+because its contents never change; a rolling URL updates itself, which is
+incompatible with a fixed integrity hash.
 
 | URL | Updates | `integrity` |
 | --- | --- | --- |
-| `/embed/<version>/nsl.min.js` | When you choose | Yes - **recommended** |
+| `/embed/<version>/nsl.min.js` | When you choose | Yes — **recommended** |
 | `/embed/v1.js` | Automatic within v1 | No |
 
 Per-version integrity hashes are published with each release.
 
 ---
 
-## What it sends
+## What the widget sends
 
-- A recommendation request with the page's canonical URL and a random first-party visitor id. Your key travels as a header, never in the URL.
-- **Impressions**, once a card has been at least 50% visible for two seconds. Scrolling past quickly is not an impression, and scrolling back does not double-count.
-- **Clicks**, delivered with `sendBeacon` so they survive the navigation.
+- A recommendation request carrying the page's canonical URL and a random
+  first-party visitor id. Your key travels as a header, never in the URL.
+- **Impressions**, once a card has been at least 50% visible for two seconds.
+  Scrolling past quickly is not an impression, and scrolling back does not
+  count a second one.
+- **Clicks**, delivered with `sendBeacon` so they survive the navigation. The
+  widget does not intercept or delay the click itself.
 
-The widget never intercepts or delays a click. Your navigation happens exactly as it would without it.
-
-No cookies, no third-party storage, no personal data. Visitor and session ids are random values in first-party `localStorage` and `sessionStorage`. Where storage is unavailable - private browsing, blocked site data - the widget still works and simply does not remember the visitor between pages.
-
----
-
-## How the widget knows which item the page is
-
-`data-nsl-item-url="auto"` reads the page's `<link rel="canonical">`, and the widget also reads the page's JSON-LD for a `sku`, `mpn`, `productID` or `isbn`. Both are sent, and whichever resolves against your catalogue wins - an identifier your feed asserted first, then one the crawler scraped, then the URL.
-
-That second path matters more than it sounds. A canonical URL is only stable if the one a visitor's browser sees matches the one we crawled, and locale prefixes, per-market canonicalisation and AMP copies all break that. When they do, the strip used to quietly render unrelated items. Now the page's own `sku` resolves it, with no change to your markup.
-
-You never need to send our ids. If you want to override what the page says, set `data-nsl-item-sku` or a literal `data-nsl-item-url`.
+It sets no cookies and uses no third-party storage. Visitor and session ids
+are random values held in first-party `localStorage` and `sessionStorage`.
+Where that storage is unavailable — private browsing, blocked site data — the
+widget still renders and simply does not recognise the visitor on the next
+page.
 
 ---
 
-## When a strip is empty
+## How an item is resolved
 
-Add `?nsl_debug=1` to any page carrying the widget. A panel appears listing every placeholder, what it resolved to, the request id, how many items came back, and how many events were sent - and names the cause when something is wrong:
+A `related` strip needs to know which catalogue item the page is about. The
+widget reads two things and sends both:
 
-- **Request failed** - the key is not valid for this origin. Check the origin list in the console.
-- **This page is not in your catalogue** - the URL and sku matched nothing, so the strip is not related to anything.
-- **No request_id** - the strip rendered but views and clicks are not being recorded.
+- the canonical URL, from `data-nsl-item-url="auto"`
+- an identifier from the page's JSON-LD: `sku`, `mpn`, `productID` or `isbn`
 
-`data-nsl-debug` on the script tag does the same thing permanently. The query parameter is usually what you want: the tag is typically baked into a theme, and it needs no deploy.
+Whichever resolves against your catalogue wins, in order of how much the
+identifier is trusted: one your feed asserted, then one the crawler scraped,
+then the URL.
+
+Reading the identifier matters on sites where the canonical URL a visitor's
+browser sees differs from the one we crawled — locale prefixes, per-market
+canonicalisation and AMP copies all cause this. Where the URL does not match,
+the page's own `sku` still resolves the item, with no change to your markup.
+
+You never send NeuronSearchLab's identifiers. To override what the page says,
+set `data-nsl-item-sku` or a literal `data-nsl-item-url`.
 
 ---
 
-## Telling the widget what is happening
+## Debugging an empty strip
 
-The crawl can see your product pages. It cannot see a basket, it does not know
-whether anyone is signed in, and it never sees a thank-you page - those are
-`noindex`, and correctly skipped. So the page may say, through a small command
-queue:
+Add `?nsl_debug=1` to any page carrying the widget. A panel lists every
+placeholder, what it resolved to, the request id, how many items came back and
+how many events were sent, and names the cause when something is wrong:
+
+- **Request failed** — the key is not valid for this origin. Check the origin
+  list in the console.
+- **This page is not in your catalogue** — neither the URL nor the sku matched
+  an item, so there is nothing for the strip to be related to.
+- **No request_id** — the strip rendered, but views and clicks are not being
+  recorded.
+
+`data-nsl-debug` on the script tag enables the panel permanently. The query
+parameter is usually more practical: the script tag is normally baked into a
+theme, and the parameter needs no deploy.
+
+---
+
+## Page context
+
+The crawler reads your product pages, but it cannot see a basket, it does not
+know whether anyone is signed in, and it never reaches a thank-you page —
+those are `noindex` and are skipped. Your page can supply that context through
+a command queue:
 
 ```html
 <script>window.nsl=window.nsl||function(){(nsl.q=nsl.q||[]).push(arguments)}</script>
@@ -152,7 +212,7 @@ queue:
 | Command | Effect |
 | --- | --- |
 | `nsl('page', …)` | Which item this page is about. `type` is recorded for attribution and does not change ranking |
-| `nsl('cart', …)` | What is in the basket. Nothing already in it is recommended, and on a page with no item of its own the basket seeds the strip |
+| `nsl('cart', …)` | What is in the basket. Its contents are excluded from results, and on a page with no item of its own the basket seeds the strip |
 | `nsl('page', { category })` | Scopes a listing page to its category |
 | `nsl('page', { query })` | Turns a results page into query-driven retrieval |
 | `nsl('customer', …)` | Who is signed in. Hashed per workspace; the raw id is never stored |
@@ -160,11 +220,11 @@ queue:
 | `nsl('consent', false)` | Withhold cart and customer |
 | `nsl('refresh')` | Re-read placeholders after a client-side navigation |
 
-Commands **replace** rather than accumulate: calling `nsl('cart', …)` twice
-describes one basket. You can mix them freely with JSON-LD - unlike a
-tag-based integration, there is no mode to choose between.
+Each command replaces the previous value for that slot rather than adding to
+it, so calling `nsl('cart', …)` twice describes one basket. Commands and
+JSON-LD can be mixed freely — there is no mode to select between them.
 
-If you cannot run script, one element does the same job:
+Where you cannot run script, one element does the same job:
 
 ```html
 <script type="application/json" data-nsl-context>
@@ -173,7 +233,7 @@ If you cannot run script, one element does the same job:
 ```
 
 <Note>
-  Context resolves against your catalogue or it is dropped and counted. **It can never create an item.** That is what keeps a key published in page source from being a way to write to your catalogue.
+  Context resolves against your catalogue or it is dropped and counted. It can never create an item, which is what keeps a key published in page source from being a route into your catalogue.
 </Note>
 
 ---
@@ -189,16 +249,15 @@ nsl('page', { type: 'search',   query: 'running shoes' })
 ```
 
 `category` filters on the `category` field of your item metadata. Catalogues
-do not agree on what that field is called, so a value carrying its own field
-wins - `topic:Health` filters on `topic`, a bare `Health` filters on
+disagree about what that field is called, so a value may carry its own field
+name: `topic:Health` filters on `topic`, while a bare `Health` filters on
 `category`.
 
 `query` turns the request into query-driven retrieval. If the workspace has no
-query embedder the request is retried without it, so the strip still renders
-rather than leaving a hole in the page.
+query embedder, the request is retried without it, so the strip still renders.
 
 <Note>
-  These scope a single strip from the page. To scope every strip on a surface, put the filter on the **context** the placement points at instead - one context can serve many placements.
+  These scope a single strip from the page. To scope every strip on a surface, put the filter on the **context** the placement points at — one context can serve many placements.
 </Note>
 
 ---
@@ -213,55 +272,69 @@ nsl('order', {
 })
 ```
 
-These arrive as **`purchase_reported`**, not `purchase`. A browser cannot prove
-a sale happened, and `purchase` is the highest-weighted signal your models
-train on, so the two are kept apart: `purchase_reported` is weighted 0 and
-excluded from training, and exists for attribution and revenue reporting.
+Sales reported this way arrive as **`purchase_reported`**, a distinct event
+from `purchase`. `purchase` is the highest-weighted signal your models train
+on, and a browser cannot prove that a sale happened, so the two are kept
+apart: `purchase_reported` is weighted 0, excluded from training, and used for
+attribution and revenue reporting.
 
 Order lines are keyed on the order id, so a reloaded thank-you page cannot
-count a sale twice. If you also connect Shopify, the verified order **replaces**
-the browser's report in place rather than adding to it.
+count a sale twice. An order id is therefore required — without one there is
+nothing to deduplicate on.
 
-An order id is required - without one there is nothing to deduplicate on.
+If you also connect Shopify, the verified order replaces the browser's report
+in place rather than adding a second record.
 
 ---
 
 ## Placements
 
-Give a strip a name, and what it serves becomes a console setting rather than a
-markup change:
+A placement is a name you give a strip. What that strip serves then becomes a
+console setting rather than a markup change:
 
 ```html
 <div data-nsl-rec="related" data-nsl-placement="pdp-related" data-nsl-item-url="auto"></div>
 ```
 
-In **Developers → Website embed** a placement sets the context, the item count,
-the layout (`grid` or `list`), which fields show, and an optional heading.
-Per-placement click-through then appears without any extra instrumentation.
+In **Developers → Website embed**, a placement sets the context, the item
+count, the layout (`grid` or `list`), which fields appear and an optional
+heading. Click-through for each placement is then reported without further
+instrumentation.
 
-A placement the console does not recognise **still renders**, on your defaults.
-Renaming one never blanks a live page.
+A placement the console does not recognise still renders, using your workspace
+defaults, so renaming one does not blank a live page.
 
 ---
 
-## Events it will not send
+## Events the embed cannot send
 
-The embed reports `view`, `click` and `purchase_reported` only.
+The embed reports `view`, `click` and `purchase_reported`.
 
-`purchase` carries the highest weight in training and cannot be verified from a browser, so the API rejects it from a publishable key. Send conversions from your server with the [Events API](/api-reference/endpoint/submit-events), or import them with a [backfill](/guides/backfill).
+It cannot send `purchase`. That event carries the highest weight in training
+and cannot be verified from a browser, so the API rejects it from a
+publishable key. Send verified conversions from your server with the
+[Events API](/api-reference/endpoint/submit-events), or import them with a
+[backfill](/guides/backfill).
 
-Every event is also checked against the recommendations we actually served, so a key copied from your page source cannot be used to invent engagement for arbitrary items.
+Every event is checked against the recommendations actually served, so a key
+copied from your page source cannot be used to report engagement for arbitrary
+items.
 
 ---
 
 ## Quota
 
-Embed traffic is metered separately from API requests, because a recommendation strip makes one request per pageview.
+Embed traffic is metered separately from API requests, because a strip makes
+one request per pageview.
 
-When the allowance runs out the widget **keeps working** and serves cached results, with `X-NSL-Quota: exceeded` on the response. It does not start failing on your live site.
+When the allowance is exhausted the widget continues to render, serving cached
+results, and the response carries `X-NSL-Quota: exceeded`. It does not begin
+failing on your live site.
 
 ---
 
 ## Failure behaviour
 
-Every failure path renders nothing and leaves the page untouched. The script sits in your critical render path, so it never throws, never blocks, and never shows an error to your visitors. It is under 4 kB gzipped.
+Every failure path renders nothing and leaves the page as it was. The script
+sits in your critical render path, so it does not throw, does not block, and
+does not surface errors to your visitors. It is under 4 kB gzipped.

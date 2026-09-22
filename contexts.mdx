@@ -8,7 +8,7 @@ A context is a named recommendation surface, such as a homepage feed, related ar
 
 Contexts are how NeuronSearchLab separates the intent of one surface from another. A homepage can optimize for discovery, a product page can optimize for similarity, and a checkout surface can optimize for conversion without forcing every request through the same ranking setup.
 
-## Why contexts matter
+## What a context controls
 
 A context gives operators one place to control the recommendation behavior for a surface:
 
@@ -19,7 +19,7 @@ A context gives operators one place to control the recommendation behavior for a
 - which rules should reshape already-scored results
 - which model is currently serving after fallback resolution
 
-This is what turns NSL from a generic recommendation endpoint into a controllable ranking platform. Applications keep sending a stable `context_id`; operators can then tune the surface without changing application code every time.
+Applications keep sending a stable `context_id`, so operators can tune any of the above without a change to application code.
 
 ## How context control fits together
 
