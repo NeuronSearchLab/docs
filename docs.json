@@ -67,7 +67,8 @@
                   "embed",
                   "embed/shopify",
                   "embed/platforms"
-                ]
+                ],
+                "icon": "code"
               },
               "authentication"
             ]
@@ -83,7 +84,8 @@
                   "guides/contexts",
                   "guides/how-to-launch-a-new-context",
                   "guides/recommendation-control-demo"
-                ]
+                ],
+                "icon": "sliders"
               },
               {
                 "group": "Ranking controls",
@@ -93,14 +95,16 @@
                   "guides/rerank-controls",
                   "guides/explainability",
                   "guides/ab-testing"
-                ]
+                ],
+                "icon": "arrow-down-short-wide"
               },
               {
                 "group": "Audience and scenarios",
                 "pages": [
                   "guides/user-segments",
                   "guides/scenarios"
-                ]
+                ],
+                "icon": "users"
               }
             ]
           },
@@ -136,7 +140,8 @@
               "guides/how-to-measure-recommendation-performance"
             ]
           }
-        ]
+        ],
+        "icon": "book"
       },
       {
         "tab": "Core API",
@@ -145,13 +150,15 @@
             "group": "Overview",
             "pages": [
               "api-reference/introduction"
-            ]
+            ],
+            "icon": "book-open"
           },
           {
             "group": "Authentication",
             "pages": [
               "api-reference/endpoint/authenticate"
-            ]
+            ],
+            "icon": "lock"
           },
           {
             "group": "Items",
@@ -162,7 +169,8 @@
               "api-reference/endpoint/update-item",
               "api-reference/endpoint/patch-item",
               "api-reference/endpoint/delete-item"
-            ]
+            ],
+            "icon": "box"
           },
           {
             "group": "Events",
@@ -170,21 +178,25 @@
               "api-reference/endpoint/submit-events",
               "api-reference/endpoint/list-events",
               "api-reference/endpoint/retrieve-event"
-            ]
+            ],
+            "icon": "signal"
           },
           {
             "group": "Recommendations",
             "pages": [
               "api-reference/endpoint/get-recommendations"
-            ]
+            ],
+            "icon": "sparkles"
           },
           {
             "group": "Search",
             "pages": [
               "api-reference/endpoint/search"
-            ]
+            ],
+            "icon": "magnifying-glass"
           }
-        ]
+        ],
+        "icon": "code"
       },
       {
         "tab": "Platform API",
@@ -193,7 +205,8 @@
             "group": "Overview",
             "pages": [
               "api-reference/platform-api/introduction"
-            ]
+            ],
+            "icon": "book-open"
           },
           {
             "group": "Identity and Collaboration",
@@ -204,7 +217,8 @@
                   "api-reference/platform-api/identity/resolveIdentity",
                   "api-reference/platform-api/identity/listConsentRecords",
                   "api-reference/platform-api/identity/recordConsent"
-                ]
+                ],
+                "icon": "id-card"
               },
               {
                 "group": "Partners",
@@ -212,7 +226,8 @@
                   "api-reference/platform-api/identity/listIdentityPartners",
                   "api-reference/platform-api/identity/createIdentityPartner",
                   "api-reference/platform-api/identity/mintNslId"
-                ]
+                ],
+                "icon": "handshake"
               },
               {
                 "group": "Data collaborations",
@@ -224,9 +239,11 @@
                   "api-reference/platform-api/identity/revokeDataCollaboration",
                   "api-reference/platform-api/identity/contributeDataCollaboration",
                   "api-reference/platform-api/identity/calculateDataCollaborationOverlap"
-                ]
+                ],
+                "icon": "share-nodes"
               }
-            ]
+            ],
+            "icon": "fingerprint"
           },
           {
             "group": "Catalog",
@@ -240,7 +257,8 @@
               "api-reference/platform-api/segments/createSegment",
               "api-reference/platform-api/segments/updateSegment",
               "api-reference/platform-api/segments/deleteSegment"
-            ]
+            ],
+            "icon": "database"
           },
           {
             "group": "Events",
@@ -254,7 +272,8 @@
               "api-reference/platform-api/events/updateTrainingTemplate",
               "api-reference/platform-api/events/deleteTrainingTemplate",
               "api-reference/platform-api/events/saveEventValues"
-            ]
+            ],
+            "icon": "signal"
           },
           {
             "group": "Ranking",
@@ -266,7 +285,8 @@
                   "api-reference/platform-api/contexts/createContext",
                   "api-reference/platform-api/contexts/updateContext",
                   "api-reference/platform-api/contexts/getContextActiveModel"
-                ]
+                ],
+                "icon": "sliders"
               },
               {
                 "group": "Rules",
@@ -276,7 +296,8 @@
                   "api-reference/platform-api/rules/createRule",
                   "api-reference/platform-api/rules/updateRule",
                   "api-reference/platform-api/rules/deleteRule"
-                ]
+                ],
+                "icon": "scale-balanced"
               },
               {
                 "group": "Pipelines",
@@ -286,14 +307,16 @@
                   "api-reference/platform-api/pipelines/createPipeline",
                   "api-reference/platform-api/pipelines/updatePipeline",
                   "api-reference/platform-api/pipelines/deletePipeline"
-                ]
+                ],
+                "icon": "diagram-project"
               },
               {
                 "group": "Rerank controls",
                 "pages": [
                   "api-reference/platform-api/rerank-controls/getRerankControls",
                   "api-reference/platform-api/rerank-controls/saveRerankControls"
-                ]
+                ],
+                "icon": "arrows-up-down"
               },
               {
                 "group": "Experiments",
@@ -304,9 +327,11 @@
                   "api-reference/platform-api/experiments/updateExperiment",
                   "api-reference/platform-api/experiments/deleteExperiment",
                   "api-reference/platform-api/experiments/refreshExperimentMetrics"
-                ]
+                ],
+                "icon": "flask"
               }
-            ]
+            ],
+            "icon": "arrow-down-short-wide"
           },
           {
             "group": "Models and Training",
@@ -335,7 +360,8 @@
               "api-reference/platform-api/training/getTrainingJobMetrics",
               "api-reference/platform-api/training/getTrainingJobLogs",
               "api-reference/platform-api/training/streamTrainingJobLogs"
-            ]
+            ],
+            "icon": "brain"
           },
           {
             "group": "Analytics and Insights",
@@ -350,7 +376,8 @@
               "api-reference/platform-api/explainability/explainRecommendation",
               "api-reference/platform-api/assistant/assistantChat",
               "api-reference/platform-api/assistant/studioChat"
-            ]
+            ],
+            "icon": "chart-line"
           },
           {
             "group": "Administration",
@@ -372,9 +399,11 @@
               "api-reference/platform-api/catalog-ingest/triggerCatalogueIngest",
               "api-reference/platform-api/catalog-ingest/getCatalogueIngestScheduler",
               "api-reference/platform-api/catalog-ingest/updateCatalogueIngestScheduler"
-            ]
+            ],
+            "icon": "user-gear"
           }
-        ]
+        ],
+        "icon": "gear"
       },
       {
         "tab": "SDK",
@@ -401,7 +430,8 @@
               "sdk/mcp"
             ]
           }
-        ]
+        ],
+        "icon": "cube"
       },
       {
         "tab": "Changelog",
@@ -423,7 +453,8 @@
               "changelog/integrations"
             ]
           }
-        ]
+        ],
+        "icon": "clock-rotate-left"
       }
     ],
     "global": {
