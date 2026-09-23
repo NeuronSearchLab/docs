@@ -56,9 +56,10 @@ and nothing to keep correct as your theme changes.
 Orders are reported by a web pixel rather than by theme code, because
 Shopify's checkout is not part of your theme and no theme code runs there.
 
-They arrive as `purchase_reported`: a separate event, weighted 0 and excluded
-from model training, because a browser cannot prove a sale took place. They
-are used for attribution and revenue reporting.
+They arrive as the `order_reported` signal, bound by default to a zero-weight
+event, because a browser cannot prove a sale took place. They are used for
+attribution and revenue reporting. Product views and basket additions come from
+the app embed as `view` and `add_to_cart`; see [Events](/embed#events).
 
 For verified orders as well, connect Shopify in **Integrations** with
 `read_orders`. Both paths key on the same order id, so the verified order

@@ -19,7 +19,7 @@ rendering and measurement arrive together rather than as two separate pieces
 of work.
 
 ```html
-<script src="https://cdn.neuronsearchlab.com/embed/1.2.0/nsl.min.js"
+<script src="https://cdn.neuronsearchlab.com/embed/1.3.0/nsl.min.js"
         data-nsl-key="nsl_pk_YOUR_KEY" async></script>
 
 <div data-nsl-rec="related" data-nsl-item-url="auto" data-nsl-limit="6"></div>
@@ -201,7 +201,7 @@ a command queue:
 
 ```html
 <script>window.nsl=window.nsl||function(){(nsl.q=nsl.q||[]).push(arguments)}</script>
-<script src="https://cdn.neuronsearchlab.com/embed/1.2.0/nsl.min.js"
+<script src="https://cdn.neuronsearchlab.com/embed/1.3.0/nsl.min.js"
         data-nsl-key="nsl_pk_YOUR_KEY" async></script>
 
 <script>
@@ -274,11 +274,11 @@ nsl('order', {
 })
 ```
 
-Sales reported this way arrive as **`purchase_reported`**, a distinct event
-from `purchase`. `purchase` is the highest-weighted signal your models train
-on, and a browser cannot prove that a sale happened, so the two are kept
-apart: `purchase_reported` is weighted 0, excluded from training, and used for
-attribution and revenue reporting.
+Sales reported this way arrive as the **`order_reported`** signal, never as
+`purchase`. A browser cannot prove that a sale happened, so the event type the
+embed creates for it has weight 0: it is for attribution and revenue reporting,
+not training. You can change that weight like any other, but a publishable key
+is readable from your page source, so anyone could report sales against it.
 
 Order lines are keyed on the order id, so a reloaded thank-you page cannot
 count a sale twice. An order id is therefore required — without one there is
@@ -325,19 +325,52 @@ embed, and the debug panel says so rather than rendering an empty strip.
 
 ---
 
-## Events the embed cannot send
+## Events
 
-The embed reports `view`, `click` and `purchase_reported`.
+The embed never sends an event name. It reports **signals**, and your
+workspace decides which event ID each one lands on:
 
-It cannot send `purchase`. That event carries the highest weight in training
-and cannot be verified from a browser, so the API rejects it from a
-publishable key. Send verified conversions from your server with the
+| Signal | When | Default weight |
+| --- | --- | --- |
+| `rec_impression` | A recommended card was at least half visible for two seconds | 5 |
+| `rec_click` | A recommended card was clicked | 60 |
+| `view` | A product page was opened (`nsl('page', { type: 'product', … })` or JSON-LD) | 20 |
+| `add_to_cart` | The basket from `nsl('cart', …)` gained an item since the last page | 70 |
+| `order_reported` | A line of `nsl('order', …)` | 0 |
+
+Creating an embed key creates an event type for each of these — an integer ID,
+a label and a weight — and binds the signal to it. `view` uses the **View**
+event your workspace already has. The event types count toward your plan's
+event-type limit like any other; the Free plan has room for the defaults plus
+the embed.
+
+These are ordinary event types. Rename them, change their weights, and choose
+which ones a training template uses on the [Events page](/guides/events). To
+send a signal to an event you already track — say your server already records
+product views — open **Events → Integration signals** and pick that event.
+Nothing is ever matched by name, so a workspace whose events are called
+something else entirely works the same way.
+
+Recommendation impressions are kept apart from `view` on purpose. An item the
+model chose to show is much weaker evidence of interest than someone opening
+it, and counting the two as one event teaches the model to agree with itself.
+
+### What a browser cannot send
+
+The embed cannot send `purchase` or any event ID directly. Send verified
+conversions from your server with the
 [Events API](/api-reference/endpoint/submit-events), or import them with a
 [backfill](/guides/backfill).
 
-Every event is checked against the recommendations actually served, so a key
-copied from your page source cannot be used to report engagement for arbitrary
-items.
+Strip events are checked against the recommendations actually served, so a key
+copied from your page source cannot report engagement for arbitrary items.
+`view` and `add_to_cart` must come from an allowlisted origin, name an item in
+your catalogue, and count once per visitor, item and session. Neither is sent
+while `nsl('consent', false)` is in effect.
+
+Embed events go through the same pipeline as the Events API, so they are
+metered, stitched to identities and reflected in the next recommendation the
+same way.
 
 ---
 
