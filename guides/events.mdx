@@ -80,6 +80,42 @@ curl -X POST https://api.neuronsearchlab.com/v1/events \
 
 ---
 
+## Searches are events
+
+When a user searches, their intent is unusually clear, so a search is recorded as an event like any other: an event with a `query` and no item, on the event type your `search` signal is bound to. It carries that event type's weight, so a search weighted 25 counts a quarter of a purchase weighted 100, exactly as a click weighted 25 would.
+
+Send one in any of three ways:
+
+| Call | Who ran the search | What comes back |
+| --- | --- | --- |
+| `POST /v1/search` with `query` | NSL | Ranked search results |
+| `POST /v1/search` with `query` and `result_item_ids` | Your own search engine | Recommendations that complement your results |
+| `POST /v1/events` with `query` and no `item_id` | Your own search engine | The recorded event |
+
+```ts
+await sdk.trackSearch({
+  userId: "user-123",
+  query: "waterproof trail shoes",
+  resultItemIds: [3187, 3190, 3201], // what your engine showed, optional
+});
+```
+
+The items a search showed are kept as impressions. They are never counted as items the user chose, so they do not reach training, "exclude viewed items", or popularity. When the user then opens a result, send that as a normal click with the item and, optionally, the `query` it came from.
+
+### How searches steer recommendations
+
+On each later recommendation request for that user, NSL weighs their searches from the last 14 days against their item events. Each signal counts its event weight and halves every 72 hours. The searches' share of that total is how far the recommendations lean towards them:
+
+- the items closest to each search join the candidates, with slots split between searches by weight, so three different searches bring three kinds of item rather than one blurred average;
+- after ranking, the order is blended towards whichever search each item matches best, by that share, whatever model produced the rest;
+- your rules still apply afterwards, so a boost or pin you configured wins.
+
+A request that already states a narrower intent (a search, an `item_id` seed, a basket or an auto section) is left alone. The response says what the searches contributed in `search_intent`, and each user's drawer in [Console > Users](https://console.neuronsearchlab.com/users) shows the same breakdown under **Event History**.
+
+To tune it, change the weight of your Search event. Set it to 0 to stop searches steering recommendations while still recording them, or turn off **Search intent** in a pipeline's scoring stage to exclude one pipeline.
+
+---
+
 ## Integration signals
 
 The [embed](/embed), the Shopify app, the storefront adapters and the order and GA4 importers record behaviour for you. None of them send an event name. Each reports a **signal** - a fixed concept NSL defines, such as `rec_click`, `add_to_cart` or `purchase` - and your workspace binds every signal to one of your event IDs.

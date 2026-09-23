@@ -32,16 +32,33 @@ POST /v1/events
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `user_id` | string | yes | End-user identifier. |
-| `item_id` | integer | yes | Item ID returned by NSL ingestion, such as `3187`. |
+| `item_id` | integer | yes, except on a search event | Item ID returned by NSL ingestion, such as `3187`. |
 | `context_id` | integer | no | Context ID generated when the context is created in the dashboard. |
-| `event_id` | integer | yes | Event ID generated when the event is created in dashboard Event configuration. |
+| `event_id` | integer | yes, except on a search event | Event ID generated when the event is created in dashboard Event configuration. |
+| `query` | string | no | What the user searched for. With no `item_id`, the event is a search event. With an `item_id`, it is kept as the search the user reached the item from. |
+| `result_item_ids` | integer[] | no | Search events only: item IDs your engine showed for `query`, in rank order. |
 | `session_id` | string | no | Session identifier for attribution and analytics. |
 | `request_id` | string | no | Recommendation request ID returned by `GET /v1/recommendations`. |
 | `placement` | string | no | Surface or placement where the event occurred. |
 | `occurred_at` | integer | no | Unix timestamp for when the action happened. Defaults to ingestion time. |
 | `metadata` | object | no | Additional event context. |
 
-Camel-case aliases `userId`, `itemId`, `eventId`, `contextId`, `sessionId`, and `requestId` remain available, but all identifier aliases carry the same integer values. Event batches are capped at 200 events per request by default.
+### Search events
+
+A search is an event with a `query` and no `item_id`. It weighs into that user's recommendations by the weight of its event type, like any other event. `event_id` is optional: it defaults to the event your `search` signal is bound to, and one named **Search** (weight 25) is created on first use when nothing is bound yet. The items in `result_item_ids` are stored as impressions, never as items the user chose.
+
+```json
+{
+  "user_id": "user-abc123",
+  "query": "waterproof trail shoes",
+  "result_item_ids": [3187, 3190, 3201],
+  "session_id": "session-42"
+}
+```
+
+To record a search and get recommendations back in one call, send it to [`POST /v1/search`](/api-reference/endpoint/search) with `result_item_ids` instead.
+
+Camel-case aliases `userId`, `itemId`, `eventId`, `contextId`, `sessionId`, `requestId`, and `resultItemIds` remain available, but all identifier aliases carry the same integer values. Event batches are capped at 200 events per request by default.
 
 ## Response
 
@@ -90,6 +107,6 @@ The response also returns ingestion stats (`inserted`, `processed`, `session`) a
 
 | Status | Scenario |
 | --- | --- |
-| `400` | Missing required fields, invalid JSON, unknown item, or unknown event type |
+| `400` | Missing required fields, invalid JSON, unknown item, unknown event type, an empty `query` on an event with no item, or `result_item_ids` on an item event |
 | `401` | Missing or invalid Bearer token |
 | `403` | Token does not include `neuronsearchlab-api/write` |

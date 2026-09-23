@@ -56,7 +56,7 @@ const results = await sdk.search({
 console.log(results.data);
 ```
 
-The JavaScript SDK posts to `/v1/search` and captures the returned `request_id` for subsequent `trackEvent()` calls.
+The JavaScript SDK posts to `/v1/search` and captures the returned `request_id` for subsequent `trackEvent()` calls. Pass `resultItemIds` to send your own engine's results.
 
 ## Use the PHP SDK
 
@@ -73,6 +73,26 @@ var_dump($results['data']);
 ```
 
 The PHP SDK uses the same Core API endpoint and mirrors the request ID propagation behavior.
+
+## Bring your own search engine
+
+If your product already has search (Algolia, Elasticsearch, Typesense, your database), keep it. Send NSL the query and the item IDs your engine showed, and NSL records the search and returns recommendations that complement those results:
+
+```bash
+curl -X POST "https://api.neuronsearchlab.com/v1/search" \
+  -H "Authorization: Bearer <access_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "waterproof trail shoes",
+    "user_id": "user-123",
+    "result_item_ids": [3187, 3190, 3201],
+    "limit": "6"
+  }'
+```
+
+The IDs you send are excluded from the response, so what comes back can sit beside your results. If you only want to record the search, send it to `/v1/events` with `query` and no `item_id`, or call `trackSearch()` in the SDKs.
+
+Either way, the search becomes an event that steers the user's later recommendations by the weight of your Search event. See [searches are events](/guides/events#searches-are-events).
 
 ## Response shape
 
@@ -122,6 +142,6 @@ Each item includes explanation metadata when available. The request-level explan
 
 ## Measure search engagement
 
-Use the returned `request_id` when sending click, view, add-to-cart, or conversion events. The official SDKs handle this automatically after `search()`. If you call REST directly, include `request_id` in your event payload so analytics can attribute engagement to the search result set.
+Every search with a user is also recorded as a search event that steers that user's later recommendations. Use the returned `request_id` when sending click, view, add-to-cart, or conversion events. The official SDKs handle this automatically after `search()`. If you call REST directly, include `request_id` in your event payload so analytics can attribute engagement to the search result set.
 
 See the [search endpoint reference](/api-reference/endpoint/search) for the full contract.

@@ -647,6 +647,9 @@
                 },
                 "bulk": {
                   "$ref": "#/components/examples/EventCreateBulk"
+                },
+                "search": {
+                  "$ref": "#/components/examples/SearchEventCreate"
                 }
               }
             }
@@ -1737,7 +1740,7 @@
       },
       "EventCreate": {
         "type": "object",
-        "description": "A user ID, a non-zero dashboard event_id, and a positive NSL-generated item_id are required. context_id is also a positive NSL-generated integer when supplied.",
+        "description": "A user ID is always required. An item event needs a non-zero dashboard event_id and a positive NSL-generated item_id. A search event sends a query and no item_id; its event_id is optional and defaults to the event your search signal is bound to. context_id is a positive NSL-generated integer when supplied.",
         "properties": {
           "user_id": {
             "type": "string",
@@ -1751,7 +1754,7 @@
           "item_id": {
             "type": "integer",
             "minimum": 1,
-            "description": "Item ID returned by NSL ingestion.",
+            "description": "Item ID returned by NSL ingestion. Required unless the event is a search (a `query` with no item).",
             "example": 3187
           },
           "itemId": {
@@ -1759,14 +1762,50 @@
             "minimum": 1,
             "description": "CamelCase alias for `item_id`."
           },
+          "query": {
+            "type": "string",
+            "maxLength": 256,
+            "description": "What the user searched for. An event with a `query` and no `item_id` is a search event: it steers the user's recommendations by the weight of its event type, and `event_id` defaults to the event your `search` signal is bound to. With an `item_id`, the query is kept on the item event as the search the user reached it from. Longer queries are cut to 256 characters.",
+            "example": "waterproof trail shoes"
+          },
+          "result_item_ids": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Item IDs your own search engine showed for `query`, in rank order. Recorded as impressions, not as items the user chose. Only accepted on a search event; the first 50 are kept.",
+            "example": [
+              3187,
+              3190,
+              3201
+            ]
+          },
+          "resultItemIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "CamelCase alias for `result_item_ids`."
+          },
           "event_id": {
             "type": "integer",
-            "not": { "enum": [0] },
-            "description": "Non-zero event ID shown in dashboard Event configuration."
+            "not": {
+              "enum": [
+                0
+              ]
+            },
+            "description": "Non-zero event ID shown in dashboard Event configuration. Optional on a search event, where it defaults to your Search event."
           },
           "eventId": {
             "type": "integer",
-            "not": { "enum": [0] },
+            "not": {
+              "enum": [
+                0
+              ]
+            },
             "description": "CamelCase alias for event_id."
           },
           "session_id": {
@@ -1925,7 +1964,11 @@
           },
           "event_id": {
             "type": "integer",
-            "not": { "enum": [0] },
+            "not": {
+              "enum": [
+                0
+              ]
+            },
             "example": 42
           },
           "session_id": {
@@ -2338,6 +2381,9 @@
           "pipeline_id": {
             "type": "integer",
             "nullable": true
+          },
+          "search_intent": {
+            "$ref": "#/components/schemas/SearchIntent"
           }
         },
         "additionalProperties": true
@@ -2895,6 +2941,19 @@
             "type": "string",
             "format": "uuid",
             "description": "Optional stable request ID for retries and attribution. Prefer the X-Request-Id header."
+          },
+          "result_item_ids": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Your own search engine ran `query` and showed these item IDs, in rank order. NSL records the search with them and returns recommendations that complement them: these IDs are excluded from `data`. The retrieval vector blends the query embedding with the centroid of your top results.",
+            "example": [
+              3187,
+              3190
+            ]
           }
         },
         "additionalProperties": true
@@ -2921,10 +2980,95 @@
               "query": {
                 "type": "string",
                 "example": "waterproof trail shoes"
+              },
+              "search": {
+                "type": "object",
+                "description": "How this search was served and recorded.",
+                "properties": {
+                  "source": {
+                    "type": "string",
+                    "enum": [
+                      "nsl",
+                      "client"
+                    ],
+                    "description": "`nsl` when NSL ran the search; `client` when you sent `result_item_ids` and `data` holds recommendations that complement them."
+                  },
+                  "vector": {
+                    "type": "string",
+                    "enum": [
+                      "query",
+                      "query+results",
+                      "results"
+                    ],
+                    "description": "What the retrieval vector was built from."
+                  },
+                  "result_item_ids_received": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "event_recorded": {
+                    "type": "boolean",
+                    "description": "Whether the search was written as an event. False when the request names no `user_id` or `anonymous_id`."
+                  }
+                }
               }
             }
           }
         ]
+      },
+      "SearchIntent": {
+        "type": "object",
+        "description": "Present when the user's recent searches steered this response. Searches from the last 14 days are weighed against item events by event weight, each halving every 72 hours.",
+        "properties": {
+          "share": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "The searches' share of the user's recent event weight: how far the ranking leaned towards them.",
+            "example": 0.29
+          },
+          "queries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "example": "waterproof trail shoes"
+                },
+                "count": {
+                  "type": "integer",
+                  "description": "Searches for this query in the window.",
+                  "example": 2
+                },
+                "event_weight": {
+                  "type": "number",
+                  "description": "Configured weight of the Search event type.",
+                  "example": 25
+                },
+                "share": {
+                  "type": "number",
+                  "description": "This query's share of the user's recent event weight.",
+                  "example": 0.21
+                },
+                "last_searched_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "candidates_added": {
+            "type": "integer",
+            "description": "Items added because they match a search.",
+            "example": 3
+          },
+          "candidates_rescored": {
+            "type": "integer",
+            "description": "Candidates whose score was blended towards the searches.",
+            "example": 24
+          }
+        }
       }
     },
     "examples": {
@@ -3310,6 +3454,20 @@
               ]
             }
           }
+        }
+      },
+      "SearchEventCreate": {
+        "summary": "Search event",
+        "description": "A search your own engine ran: a query and no item. event_id defaults to your Search event.",
+        "value": {
+          "user_id": "user-abc123",
+          "query": "waterproof trail shoes",
+          "result_item_ids": [
+            3187,
+            3190,
+            3201
+          ],
+          "session_id": "session-42"
         }
       }
     }

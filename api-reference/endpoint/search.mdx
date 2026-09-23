@@ -10,6 +10,21 @@ Returns ranked catalog items for a free-text query. Search uses the Core API dat
 
 The search request embeds `query`, retrieves candidates, applies context filters and pipeline configuration, and returns the same recommendation item shape as `GET /v1/recommendations`.
 
+Every search with a `user_id` (or `anonymous_id`) is also recorded as an event: one event with the query and no item, on the event type your `search` signal is bound to. It steers that user's later recommendations by that event type's weight, exactly as a click or a purchase does. The results it returned are kept on the event as impressions, not as items the user chose. See [searches as events](/guides/events#searches-are-events).
+
+### When your own engine runs the search
+
+Send `result_item_ids` with the IDs your engine showed for `query`. NSL records the search with those results and returns recommendations that complement them: the IDs you sent are excluded from `data`, and retrieval blends the query with the centroid of your top results, so it still works if the query cannot be embedded.
+
+```json
+{
+  "query": "waterproof trail shoes",
+  "user_id": "user-abc123",
+  "result_item_ids": [3187, 3190, 3201],
+  "limit": "6"
+}
+```
+
 ## Request
 
 ```http
@@ -41,6 +56,8 @@ Authorization: Bearer <access_token>
 | `semantic_weight` | string | no | Semantic retrieval weight when `fusion_method` is `weighted`. |
 | `keyword_weight` | string | no | Keyword retrieval weight when query retrieval is enabled. |
 | `keyword_fields` | string | no | Comma-separated metadata fields for keyword matching. |
+| `result_item_ids` | integer[] | no | Item IDs your own search engine showed for `query`, in rank order (up to 50 are kept). Switches the response to complementary recommendations. A comma-separated string is accepted on `GET`. |
+| `anonymous_id` | string | no | Records the search against this ID when there is no `user_id`. |
 
 ## Response
 
@@ -81,9 +98,17 @@ Authorization: Bearer <access_token>
       "score": 0.94
     }
   ],
-  "processing_time_ms": 182
+  "processing_time_ms": 182,
+  "search": {
+    "source": "nsl",
+    "vector": "query",
+    "result_item_ids_received": 0,
+    "event_recorded": true
+  }
 }
 ```
+
+`search.source` is `nsl` when NSL ran the search and `client` when you sent `result_item_ids`. `search.event_recorded` is `false` when the request names no user, because a search with nobody to attach it to cannot steer anyone's recommendations.
 
 For backwards-compatible rendering code, the response also includes `recommendations` with the same result array as `data`. Responses may include `embedding_info`, request-level `explanation`, and per-item `explanation` fields.
 
@@ -93,8 +118,8 @@ Use the returned `request_id` in downstream events to attribute engagement to th
 
 | Status | Scenario |
 | --- | --- |
-| `400` | Validation failed or malformed filters |
+| `400` | Validation failed, malformed filters, or `result_item_ids` that are not positive integers (`invalid_result_item_ids`) |
 | `401` | Missing/invalid access token or tenant resolution failed |
 | `403` | Token does not include `neuronsearchlab-api/read` |
-| `422` | Search query embedding is unavailable for the team |
+| `422` | The query cannot be embedded for the team, and no `result_item_ids` with embeddings were sent |
 | `500` | Unexpected search, database, or model-serving failure |

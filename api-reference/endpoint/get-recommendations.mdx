@@ -71,6 +71,24 @@ GET /v1/recommendations?user_id=user-abc123&context_id=101&limit=10
 
 For backwards compatibility, the response also includes a `recommendations` field with the same result array. When a context enables grouping, `data` and `recommendations` contain grouped recommendation aggregates. Responses also include `embedding_info`, request-level `explanation`, and per-item `explanation` fields when available.
 
+### When searches steered the response
+
+A user's recent searches weigh into their recommendations like any other event. When they did, the response carries `search_intent`:
+
+```json
+"search_intent": {
+  "share": 0.29,
+  "queries": [
+    { "query": "waterproof trail shoes", "count": 2, "event_weight": 25, "share": 0.21, "last_searched_at": "2026-09-23T17:22:43Z" },
+    { "query": "rain jacket", "count": 1, "event_weight": 25, "share": 0.08, "last_searched_at": "2026-09-22T09:10:02Z" }
+  ],
+  "candidates_added": 3,
+  "candidates_rescored": 24
+}
+```
+
+`share` is the searches' share of the user's recent event weight, and it is how far the ranking leaned towards them. Items added because they match a search have `source: "search_intent"`, and their `explanation` names the search. The request-level `explanation` has a `search_intent` pipeline stage that says why it did or did not apply. Searches are read for `user_id`, or `anonymous_id` when there is no `user_id`.
+
 ## Errors
 
 | Status | Scenario |
