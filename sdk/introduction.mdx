@@ -112,6 +112,29 @@ if (first) {
 }
 ```
 
+### Searches your own engine runs
+
+Every search is an event that steers the user's later recommendations by the weight of your Search event. If your own engine runs the search, send NSL the query and the IDs it showed, either to get complementary recommendations back or just to record it:
+
+```ts
+// Record it and get recommendations that complement your results
+// (the IDs you send are left out of the response).
+const extras = await sdk.search({
+  query: "wireless headphones",
+  userId: "user-123",
+  resultItemIds: [3187, 3190, 3201],
+});
+
+// Record only. eventId is optional and defaults to your Search event.
+await sdk.trackSearch({
+  userId: "user-123",
+  query: "wireless headphones",
+  resultItemIds: [3187, 3190, 3201],
+});
+```
+
+When searches steered a `getRecommendations()` response it carries `search_intent`. See [searches are events](/guides/events#searches-are-events). Requires `@neuronsearchlab/sdk` 2.2.0 or later.
+
 ### Auto-generated sections
 
 Use `getAutoRecommendations` for paginated, auto-titled recommendation sections - ideal for infinite-scroll feeds:
