@@ -22,7 +22,7 @@ u-1042,SKU-9,view,2026-03-04T10:30:00Z
 u-1042,SKU-9,purchase,2026-03-04T10:32:11Z
 ```
 
-Upload it under **Integrations → Import history**.
+Upload it under **Events → Import history**.
 
 **Columns are matched by name, not position**, so you do not need to reorder your export. These are all recognised:
 
@@ -35,7 +35,9 @@ Upload it under **Integrations → Import history**.
 
 Timestamps can be ISO 8601, epoch seconds, or epoch milliseconds.
 
-Event names are mapped for you - `view_item`, `page_view` and `impression` all become `view`; `add_to_cart` and `select_item` become `click`; `order` and `transaction` become `purchase`.
+**You choose what each event name means.** Every export names its events differently, so nothing is guessed. After you pick the file, the console lists each distinct event name in it with its row count, and you choose which of your event IDs it becomes - or leave it out. `Order Completed` is not assumed to be a purchase, and `add_to_cart` is never folded into a click.
+
+Your answers are saved, so the next export that uses the same names imports without asking again. Through the API, send the mapping as an `event_mapping` form field: a JSON object from each event name to an event ID, or `null` to leave it out. A request without a complete mapping starts nothing and answers with the names it found.
 
 ---
 
@@ -43,7 +45,7 @@ Event names are mapped for you - `view_item`, `page_view` and `impression` all b
 
 Under **Integrations → Shopify**, paste an Admin API access token with the `read_orders` scope. Create it from a custom app in your own Shopify admin - there is no app to install or review.
 
-Order line items become `purchase` events. Shopify does not expose product views, so this gives you conversions, which is the signal the embed cannot collect.
+Order line items become verified purchases, on the event bound to the `purchase` signal - your workspace's **Purchase** event unless you have rebound it. Shopify does not expose product views, so this gives you conversions, which is the signal the embed cannot collect.
 
 ---
 
@@ -53,7 +55,9 @@ GA4 comes in two shapes, and the difference decides what you actually get.
 
 ### BigQuery export - real training data
 
-If you have linked GA4 to BigQuery, we can read per-user rows: every `view_item`, `add_to_cart` and `purchase` with the pseudonymous user id attached. **This trains a model.**
+If you have linked GA4 to BigQuery, we can read per-user rows: every `view_item`, `select_item`, `add_to_cart` and `purchase` with the pseudonymous user id attached. **This trains a model.**
+
+GA4's event names are a fixed schema, so they are translated once rather than asked about: `view_item` is the `view` signal, `select_item` is `click`, and `add_to_cart` and `purchase` are themselves. Each lands on the event ID bound to that signal, and starting the import creates any that are missing.
 
 ### Data API - a popularity prior only
 
@@ -74,7 +78,7 @@ Rejections are reported by cause, because the two mean different things:
 | Reported as | What it means |
 | --- | --- |
 | Unknown item | Your catalogue and your export disagree on identifiers. Usually the export uses SKUs and the catalogue was crawled by URL, or the reverse. |
-| Unknown event | An event name we could not map. Rename it to one of the accepted names above. |
+| Unknown event | An event name you left out, or one that was not mapped when the import started. |
 | Malformed | A missing field or an unreadable timestamp. |
 
 <Warning>

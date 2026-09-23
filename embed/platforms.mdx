@@ -93,16 +93,23 @@ Two limits are worth knowing before you install it:
 | search term | query-driven retrieval on a results page |
 | basket | excluded from results, and seeds the strip where the page has no item |
 | customer id | personalisation across devices, hashed per workspace |
-| order | attribution, as `purchase_reported` |
+| order | attribution, as `order_reported` |
 
 These are your own identifiers throughout. A SKU is resolved against your
 catalogue server-side, so there is no id mapping to maintain.
 
 ## Conversions
 
-Orders from an adapter arrive as `purchase_reported`: weighted 0 and excluded
-from model training, because a browser cannot prove a sale took place. They
-are used for attribution.
+Orders from an adapter arrive as the `order_reported` signal, bound to a
+zero-weight event, because a browser cannot prove a sale took place. They are
+used for attribution.
+
+Every adapter reports the same signals — product views, basket additions,
+recommendation impressions and clicks, and orders — and they land on the event
+types created when you made your embed key. A Magento order and a Shopware order
+are therefore the same event, whatever either platform calls it. See
+[Events](/embed#events) for the full list and how to point a signal at an event
+you already track.
 
 Connect the same platform under **Integrations** and the verified order
 supersedes the browser's report on the same order id, rather than adding a

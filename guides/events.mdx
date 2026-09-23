@@ -80,6 +80,22 @@ curl -X POST https://api.neuronsearchlab.com/v1/events \
 
 ---
 
+## Integration signals
+
+The [embed](/embed), the Shopify app, the storefront adapters and the order and GA4 importers record behaviour for you. None of them send an event name. Each reports a **signal** - a fixed concept NSL defines, such as `rec_click`, `add_to_cart` or `purchase` - and your workspace binds every signal to one of your event IDs.
+
+That is what keeps events consistent across platforms. Shopify, Magento and your own server can all report purchases; they land on the one event ID bound to `purchase`, however each platform spells it, and nothing depends on case, spelling or a name someone chose.
+
+- **Enabling an integration creates its events.** Creating an embed key, or starting a Shopify or GA4 import, creates an event type for each signal it reports that is not bound yet, with a sensible default label and weight. Those event types count toward your plan's event-type limit.
+- **Every workspace starts with three bound events**: View, Click and Purchase.
+- **Nothing is matched by name.** An event you created called "clicked" is not assumed to be the click signal.
+- **Rebind to use an event you already have.** Open **Events → Integration signals** and choose the event ID a signal should land on. The list shows which integrations report each signal.
+- **A bound event cannot be deleted.** Rebind its signal first, so no integration is left with nowhere to write.
+
+Labels and weights stay yours to edit on every event, bound or not.
+
+---
+
 ## Signal templates
 
 A template captures a specific combination of event types, weights, and training thresholds. Saving a template lets you reproduce a training run exactly or switch between different configurations without losing your settings.
