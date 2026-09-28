@@ -20,13 +20,126 @@ rss: true
   </Card>
 </CardGroup>
 
-<Update label="September 20, 2026" rss="September 20, 2026: Admin console.">
+<Update label="September 28, 2026" rss="September 28, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Access and billing** — Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- **Access and billing** — Stop test runs from emailing real signup notifications
+- **Access and billing** — Let people book their onboarding session where they ask for it
+
+</Update>
+
+<Update label="September 23, 2026" rss="September 23, 2026: Admin console, TypeScript SDK, PHP SDK, MCP server, Next.js SDK.">
 
 ### Admin console
 
 #### Features
 
 - **Catalog, users, and events** — Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- **Catalog, users, and events** — Bind integration signals to event ids instead of resolving events by name
+- **Catalog, users, and events** — Let a user's searches steer their recommendations, weighted like any event
+- **Catalog, users, and events** — Keep a user's different searches distinct when they steer recommendations
+- **ChatGPT integration** — Added ChatGPT activation, OAuth onboarding, starter catalogues, recommendation prompts, and handoff from the in-console assistant.
+- **ChatGPT integration** — Move ChatGPT off the dashboard and into an Agents section on Integrations
+- **ChatGPT integration** — Assert the ChatGPT card's status through its switch, not a pill
+- Show every integration in its own colours, and let the switch say it is on
+
+#### Bug fixes
+
+- Fix the console build the Agents section broke
+
+### TypeScript SDK
+
+#### Features
+
+- **SDK API contract** — Expanded SDK calls around recommendation contexts, event payloads, item identifiers, item deletion, request/session metadata, and the v1 API contract.
+- **SDK API contract** — Send searches as events that steer recommendations (#16)
+- **SDK distribution** — Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
+- **SDK distribution** — Version packages (#17)
+
+### PHP SDK
+
+#### Features
+
+- **SDK API contract** — Send searches as events that steer recommendations (#2)
+
+### MCP server
+
+#### Features
+
+- Let track_event record searches that steer recommendations (#15)
+- **SDK distribution** — Version packages (#16)
+- **SDK distribution** — Register with the MCP Registry only once npm serves the release (#17)
+
+### Next.js SDK
+
+#### Features
+
+- **SDK API contract** — Send searches as events that steer recommendations (#3)
+
+</Update>
+
+<Update label="September 22, 2026" rss="September 22, 2026: Admin console, TypeScript SDK.">
+
+### Admin console
+
+#### Features
+
+- Ship the notification surface that was built but never merged
+- Serve every embed request from a context
+
+### TypeScript SDK
+
+#### Features
+
+- **SDK distribution** — Publish to npm through trusted publishing
+
+</Update>
+
+<Update label="September 21, 2026" rss="September 21, 2026: Admin console, TypeScript SDK, PHP SDK.">
+
+### Admin console
+
+#### Features
+
+- Add the website embed console, page context, conversions and placements
+- Rebuild the embed page around a live preview
+- Put the embed views in the tab bar and tighten Settings
+- Point the install snippet at embed 1.1.0
+- Honour the cart context the embed was already sending
+- Add category and search page context
+- Point the install snippet at embed 1.2.0
+- **Catalog, users, and events** — Let the catalogue decide which card fields exist, and tidy the controls
+- **Model lifecycle** — Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
+- **Model lifecycle** — Define the embed CDN deploy role instead of assuming someone made it
+- **Analytics and reporting** — Added period-aware dashboards, usage gauges, KPI cards, multi-series charts, saved analytic views, and production data refresh paths.
+- **Analytics and reporting** — Let a sandboxed checkout report conversions
+
+### TypeScript SDK
+
+#### Features
+
+- Add OAuth client credentials and async token providers
+- **SDK distribution** — Version packages (#15)
+- **SDK distribution** — Actually authenticate when publishing
+
+### PHP SDK
+
+#### Features
+
+- Add OAuth client credentials and callable token providers
+
+</Update>
+
+<Update label="September 20, 2026" rss="September 20, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
 - **Catalog, users, and events** — Summon the crawled catalogue into a rebuilt page of their own site
 - Find the pictures that were already there, and the right pages to crawl
 - Say what the sign-up is for in the button that asks for it
@@ -59,7 +172,6 @@ rss: true
 
 #### Features
 
-- **Model lifecycle** — Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
 - **Model lifecycle** — Show which models are new in the benchmark release, and carry the new family
 - **Model lifecycle** — Make two model descriptions read without the one above them
 - **Catalog, users, and events** — Update the model catalogue to benchmark v3.2
@@ -165,7 +277,6 @@ rss: true
 
 - **Catalog, users, and events** — Scheduled retraining with a promotion gate
 - **Catalog, users, and events** — Provision catalogues from the database, not the network
-- **ChatGPT integration** — Added ChatGPT activation, OAuth onboarding, starter catalogues, recommendation prompts, and handoff from the in-console assistant.
 - **ChatGPT integration** — Add interactive sample onboarding
 - **ChatGPT integration** — Add interactive recommendation widget
 
@@ -186,7 +297,6 @@ rss: true
 
 - **MCP tools** — Expanded MCP coverage from the first server release into contexts, pipelines, rules, event types, analytics, install paths, and clearer API error handling.
 - **MCP tools** — Declare tool output schemas and return structured content (#11)
-- **SDK distribution** — Improved package metadata, release workflows, version bumps, dual module exports, generated builds, dependency hygiene, and logging.
 - **SDK distribution** — Version packages (#12)
 - **Reliability and CI** — Hardened CI, test coverage, build compatibility, database type handling, migration paths, API errors, and production runtime behavior.
 - **Reliability and CI** — Add the five required submission test cases (#14)
@@ -460,7 +570,6 @@ rss: true
 
 #### Features
 
-- **Access and billing** — Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
 - **Access and billing** — Never let Stripe or a post-signup step block a free account
 - **Access and billing** — Add read-only listing of signups abandoned by the billing fault
 - Record why a registration failed where it can be read
@@ -528,7 +637,6 @@ rss: true
 
 #### Features
 
-- **Analytics and reporting** — Added period-aware dashboards, usage gauges, KPI cards, multi-series charts, saved analytic views, and production data refresh paths.
 - **Analytics and reporting** — Add acquisition attribution and server analytics
 - **Analytics and reporting** — Require strict overage for usage alerts
 - **Platform foundation** — Enable onboarding email sequence for new customers
@@ -837,7 +945,6 @@ rss: true
 #### Features
 
 - **SDK distribution** — Add JS SDK CI workflow
-- **SDK API contract** — Expanded SDK calls around recommendation contexts, event payloads, item identifiers, item deletion, request/session metadata, and the v1 API contract.
 - **SDK API contract** — Update JS SDK repository metadata
 
 </Update>
