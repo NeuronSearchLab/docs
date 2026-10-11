@@ -11,9 +11,10 @@ the completed order.
 
 The adapters load the widget and describe what the visitor is looking at. They
 also report completed orders when the platform exposes a stable order id; the
-BigCommerce script may not find one on every checkout theme. Source, installation
-steps and current verification limits are in
-[nsl-platforms](https://github.com/NeuronSearchLab/nsl-platforms).
+BigCommerce script may not find one on every checkout theme. The Magento ZIP
+and guide are public. For the other adapter packages and installation support,
+contact [NSL support](mailto:support@neuronsearchlab.com); their source and
+release archives are not yet publicly accessible.
 
 <Note>
   On Shopify? Use the [app](/embed/shopify) instead — it covers the same ground with theme and checkout extensions.
@@ -50,6 +51,7 @@ Place a strip by adding the block to any layout handle:
 
 ## Shopware 6
 
+Request the plugin package from [NSL support](mailto:support@neuronsearchlab.com).
 Copy the plugin into `custom/plugins/`, then:
 
 ```bash
@@ -65,6 +67,7 @@ Set the key in the plugin's configuration. Place a strip anywhere in Twig:
 
 ## PrestaShop 1.7 and 8
 
+Request the module package from [NSL support](mailto:support@neuronsearchlab.com).
 Upload the module under **Modules → Module Manager**, install it, and paste
 your embed key in its configuration.
 
@@ -73,7 +76,7 @@ SKUs come from the product `reference`, falling back to the product id where
 
 ## WooCommerce
 
-Download [`nsl-woocommerce.zip`](https://github.com/NeuronSearchLab/nsl-platforms/releases/download/v1.0.1/nsl-woocommerce.zip),
+Request `nsl-woocommerce.zip` from [NSL support](mailto:support@neuronsearchlab.com),
 upload it under **Plugins → Add New**, and activate it alongside WooCommerce.
 In **WooCommerce → Settings → Products → General**, enter a publishable embed
 key and allow the storefront origin in the NSL console. Classic product and
@@ -85,7 +88,8 @@ checkout and block-theme receipt flows still need staging verification.
 
 BigCommerce gives an app no template hook, so this adapter is a storefront
 script rather than a plugin. Paste it under **Settings → Advanced → Script
-Manager**, in the header, on all pages, with your key filled in.
+Manager**, in the header, on all pages, with your key filled in. Request the
+script from [NSL support](mailto:support@neuronsearchlab.com).
 
 It reads the basket and the order from BigCommerce's Storefront API, which is
 same-origin and unauthenticated, so there is no API account to create and no
@@ -135,5 +139,5 @@ provided by these adapters; do not use browser-reported orders as a verified
 sales ledger.
 
 <Warning>
-  These adapters have not completed the full merchant checkout and cache-isolation acceptance matrix on live staging stores. Some install and runtime paths pass against disposable platform builds in CI; see the [readiness matrix](https://github.com/NeuronSearchLab/nsl-platforms/blob/main/READINESS.md) for exact coverage. Adobe Marketplace manual QA and marketing review for Magento are pending.
+  These adapters have not completed the full merchant checkout and cache-isolation acceptance matrix on live staging stores. Some install and runtime paths pass against disposable platform builds in CI. Adobe Marketplace manual QA and marketing review for Magento are pending.
 </Warning>
