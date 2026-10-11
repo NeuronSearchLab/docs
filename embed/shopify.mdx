@@ -17,32 +17,54 @@ checkout.
   The app covers the manual steps described on the main embed page. With it installed you do not need [page context](/embed#page-context), [category and search](/embed#category-and-search-pages) or [conversions](/embed#conversions).
 </Note>
 
-## Current installation status
+## Availability
 
-The theme and pixel extensions are implemented and tested as source, but there
-is not yet a merchant-installable Shopify app or public App Store listing.
-Partner app registration, install/account linking, automatic pixel setup and a
-live checkout test are still required. The extension source is currently
-private; contact [NSL support](mailto:support@neuronsearchlab.com) for an
-evaluation or installation update.
+The Shopify Partner app is registered and its theme and web-pixel extensions
+are deployed. The public App Store listing is still in review preparation, so
+there is no public install link yet. To evaluate the integration on a Shopify
+development store, contact [NSL support](mailto:support@neuronsearchlab.com).
+The development app has been installed on an isolated test store; a complete
+checkout and self-service account-linking flow have not yet been verified.
 
-Once a Shopify app is distributed, the merchant setup will be:
+## Set up the storefront
+
+After NSL gives your store access to the app, complete these steps in order:
 
 <Steps>
   <Step title="Add the app">
-    Install the approved **NeuronSearchLab** app from its distribution link.
+    Install **NeuronSearchLab** in your Shopify admin. During the current
+    evaluation period NSL must grant access to your store. Public App Store
+    installation will be available after Shopify review.
+  </Step>
+  <Step title="Connect your catalogue">
+    Sign in to the [NSL console](https://console.neuronsearchlab.com/login).
+    Under **Integrations**, connect Shopify with your `*.myshopify.com` domain
+    and an Admin API access token with `read_products` and `read_inventory`.
+    Confirm products appear in **Users & Items** before enabling a strip.
+    This is a separate, temporary connection step while automatic account
+    linking is being built.
   </Step>
   <Step title="Create an embed key">
     In the console, **Developers → Website embed**. Add every storefront
-    domain to the key's origins, including any you preview from.
+    domain to the key's origins, including the `*.myshopify.com` domain and
+    custom domains you preview from. Copy the publishable key (`nsl_pk_...`).
   </Step>
   <Step title="Turn on the app embed">
-    **Theme editor → App embeds → NeuronSearchLab.** Paste the key and save.
-    The widget now loads on every page and reports context.
+    In Shopify, open **Online Store → Themes → Customize → App embeds →
+    NeuronSearchLab**. Paste the publishable key, enable the embed, and save.
+    The widget then loads on storefront pages and reports page context.
   </Step>
   <Step title="Place a strip">
-    Drag **Recommendations** into any template. Give it a placement name if
-    you want to configure it from the console later.
+    In the theme editor, add the **Recommendations** app block to a supported
+    template and save. Give it a placement name if you want to configure it
+    from the console later. Visit that page and confirm products appear.
+  </Step>
+  <Step title="Configure checkout reporting">
+    Shopify web pixels are managed separately from theme embeds. In **Settings
+    → Customer events**, confirm the NeuronSearchLab app pixel is connected
+    and uses the same publishable key. Test a completed checkout before
+    relying on conversion reports; the current development installation has
+    not passed that check yet.
   </Step>
 </Steps>
 
@@ -70,10 +92,10 @@ event, because a browser cannot prove a sale took place. They are used for
 attribution and revenue reporting. Product views and basket additions come from
 the app embed as `view` and `add_to_cart`; see [Events](/embed#events).
 
-For verified orders as well, connect Shopify in **Integrations** with
-`read_orders`. Both paths key on the same order id, so the verified order
-supersedes the browser's report rather than adding to it, and a sale is never
-counted twice.
+For verified orders as well, grant `read_orders` when connecting Shopify in
+**Integrations**. This access is subject to Shopify's protected customer-data
+review for a public app. Browser-reported and verified orders use the same
+order ID, allowing the verified event to supersede the reported one.
 
 ## Placements
 
