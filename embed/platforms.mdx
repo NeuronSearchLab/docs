@@ -4,14 +4,15 @@ icon: 'store'
 description: "Platform adapters that load the recommendation widget and supply it with storefront context."
 ---
 
-Each of these platforms has an adapter that installs the recommendation widget
+Each of these platforms has an adapter that loads the recommendation widget
 and feeds it context from the storefront: the product a page shows, the
 category being listed, the search term, the basket, the signed-in customer and
 the completed order.
 
-All four adapters do the same three things — load the widget, describe what
-the visitor is looking at, and report the sale. What differs between them is
-only how each platform exposes that data. Source and install steps are in
+The adapters load the widget and describe what the visitor is looking at. They
+also report completed orders when the platform exposes a stable order id; the
+BigCommerce script may not find one on every checkout theme. Source, installation
+steps and current verification limits are in
 [nsl-platforms](https://github.com/NeuronSearchLab/nsl-platforms).
 
 <Note>
@@ -21,13 +22,19 @@ only how each platform exposes that data. Source and install steps are in
 ## Magento 2
 
 ```bash
+composer config repositories.nsl-artifact artifact /path/to/directory-containing-nsl-magento-marketplace.zip
 composer require neuronsearchlab/module-recommendations
 bin/magento module:enable NeuronSearchLab_Recommendations
 bin/magento setup:upgrade && bin/magento cache:flush
 ```
 
-Then **Stores → Configuration → NeuronSearchLab**: enable it and paste your
-embed key.
+First download the [public Composer ZIP](https://github.com/NeuronSearchLab/nsl-magento/releases/download/v1.0.1/nsl-magento-marketplace.zip)
+into that directory. After Adobe Marketplace approval, a Marketplace-backed
+Composer repository can replace the local artifact repository. Then open
+**Stores → Configuration → NeuronSearchLab → Recommendations**, enable it and
+paste your publishable embed key. Import your product catalogue into NSL before
+expecting recommendation cards. The [Magento guide](https://github.com/NeuronSearchLab/nsl-magento/blob/main/USER_GUIDE.md)
+covers cache, theme and checkout checks.
 
 Place a strip by adding the block to any layout handle:
 
@@ -111,10 +118,12 @@ are therefore the same event, whatever either platform calls it. See
 [Events](/embed#events) for the full list and how to point a signal at an event
 you already track.
 
-Connect the same platform under **Integrations** and the verified order
-supersedes the browser's report on the same order id, rather than adding a
-second record.
+The Shopify order connector can reconcile a verified order against the pixel's
+report when their canonical order ids match. Verified server-side order
+connectors for Magento, Shopware, PrestaShop and BigCommerce are not yet
+provided by these adapters; do not use browser-reported orders as a verified
+sales ledger.
 
 <Warning>
-  None of these adapters has yet been exercised against a live store of its platform. They install and run against real platform builds in continuous integration, but install each on a staging store before it reaches a merchant.
+  These adapters have not completed the full merchant checkout and cache-isolation acceptance matrix on live staging stores. Some install and runtime paths pass against disposable platform builds in CI; see the [readiness matrix](https://github.com/NeuronSearchLab/nsl-platforms/blob/main/READINESS.md) for exact coverage. Adobe Marketplace manual QA and marketing review for Magento are pending.
 </Warning>
