@@ -44,7 +44,7 @@ Shopify, WooCommerce, BigCommerce, CSV, and S3 connectors help you get catalog d
 
 | Provider | Required details |
 | --- | --- |
-| Shopify | `shop_domain` and an Admin API access token. Required scopes: `read_products`, `read_inventory`. |
+| Shopify | During the current evaluation period, NSL support links the development store to your workspace. The console's manual `shop_domain` and Admin API token form is for stores that already have a previously issued token; Shopify no longer offers that token-creation path to new merchants. Required product scopes are `read_products` and `read_inventory`. See [Shopify setup](/embed/shopify). |
 | WooCommerce | Store URL, consumer key, and consumer secret from the WooCommerce REST API settings. |
 | BigCommerce | Store hash and access token from a store-level API account with product read access. |
 | S3 | AWS region, bucket, optional prefix, access key ID, and secret access key. Prefer a scoped IAM user. |
