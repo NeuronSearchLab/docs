@@ -95,9 +95,12 @@ regularly needs more should move to a larger plan.
 
 ## Catalogue sync
 
-The app syncs **active** products, including products on password-protected
+The app syncs products that are **active, published to the Online Store and
+in stock** (at least one variant for sale), including on password-protected
 and development stores. It reads each product's title, description, vendor,
-type, tags, price, SKU, availability, image and storefront URL.
+type, tags, price, SKU, image and storefront URL. A product that is
+unpublished, sells out or is deleted stops being recommended at the next
+sync, and returns when it is available again.
 
 Products sync again whenever one is created, updated or deleted, and at
 least every six hours. Select **Sync now** in the app to start one
@@ -135,7 +138,8 @@ rather than counting twice.
 ## Placements and the console
 
 The app covers setup. To configure what a strip serves, view analytics or add
-ranking rules, select **Open NeuronSearchLab console** at the top of the app.
+ranking rules, select **Open NeuronSearchLab console** in the app's
+**Placements and analytics** section.
 It signs you in to your store's workspace with your Shopify account, without
 a separate password.
 
