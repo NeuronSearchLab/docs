@@ -38,11 +38,13 @@ After NSL gives your store access to the app, complete these steps in order:
   </Step>
   <Step title="Connect your catalogue">
     Sign in to the [NSL console](https://console.neuronsearchlab.com/login).
-    Ask NSL support to link the Shopify development store to your workspace
-    during the evaluation period. Confirm products appear in **Users & Items**
-    before enabling a strip. Existing stores with a previously issued Admin
-    API token may instead use **Integrations → Shopify**; Shopify no longer
-    lets new merchants create that older kind of custom-app token.
+    Open **Integrations → Shopify**, enter your `*.myshopify.com` domain and
+    choose **Authorize with Shopify**. Approve the requested access in Shopify,
+    then return to the NSL console. During the current evaluation period, ask
+    NSL support to confirm the development store is linked to your workspace.
+    Check that products appear in **Users & Items** before enabling a strip.
+    Existing stores with a previously issued Admin API token may use the
+    legacy-token option in the same integration panel.
   </Step>
   <Step title="Create an embed key">
     In the console, **Developers → Website embed**. Add every storefront
@@ -112,8 +114,10 @@ Where your shop uses Shopify's customer privacy API and a visitor has not
 allowed analytics, the widget continues to render recommendations but stops
 describing the visitor: cart and customer are withheld.
 
-Only the customer **id** is ever sent, and it is hashed with a per-workspace
-key before storage. No name, email or address leaves the page.
+The storefront embed sends the customer **id**, rather than a name, email or
+address. It is hashed with a per-workspace key before storage. If order
+history is enabled, NSL reads the order customer ID or guest email from
+Shopify's Admin API and hashes that identifier before storing training rows.
 
 ## Troubleshooting
 
