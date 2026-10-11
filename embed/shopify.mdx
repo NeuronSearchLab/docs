@@ -1,76 +1,109 @@
 ---
 title: "Shopify"
 icon: 'bag-shopping'
-description: "Shopify theme and pixel extensions for recommendation context and conversions."
+description: "Install the NeuronSearchLab Shopify app: catalogue sync, storefront recommendations and checkout conversions, set up from Shopify admin."
 ---
 
-The NeuronSearchLab Shopify extensions add the recommendation widget to your
-theme and supply it with context from the storefront. Shopify already knows
-which product a page shows, what is in the basket, who is signed in and what
-was bought; the app reads each of those and passes them to the widget.
+The NeuronSearchLab app for Shopify adds personalised product recommendations
+to your storefront without code. Shopify already knows which product a page
+shows, what is in the basket, who is signed in and what was bought. The app
+reads that data and passes it to NeuronSearchLab, which keeps your catalogue
+in sync and serves each shopper products they are likely to want.
 
-It has two parts: a theme app embed that loads the widget and reports page,
-cart and customer context, and a web pixel that reports completed orders from
-checkout.
+Everything is set up from inside Shopify admin. You do not need an existing
+NeuronSearchLab account, and there are no keys to copy.
 
 <Note>
   The app covers the manual steps described on the main embed page. With it installed you do not need [page context](/embed#page-context), [category and search](/embed#category-and-search-pages) or [conversions](/embed#conversions).
 </Note>
 
-## Availability
+<Info>
+  The app has been submitted to the Shopify App Store and is in Shopify's review. Until the listing is published, email [support@neuronsearchlab.com](mailto:support@neuronsearchlab.com) for an install link.
+</Info>
 
-The Shopify Partner app is registered and its theme and web-pixel extensions
-are deployed. The public App Store listing is still in review preparation, so
-there is no public install link yet. To evaluate the integration on a Shopify
-development store, contact [NSL support](mailto:support@neuronsearchlab.com).
-The development app has been installed on an isolated test store; a complete
-checkout and self-service account-linking flow have not yet been verified.
+## What you need
 
-## Set up the storefront
+- A Shopify store with the Online Store sales channel and an Online Store 2.0
+  theme (any theme from the Shopify Theme Store qualifies).
+- Permission to install apps on the store.
 
-After NSL gives your store access to the app, complete these steps in order:
+## Install and set up
 
 <Steps>
-  <Step title="Add the app">
-    Install **NeuronSearchLab** in your Shopify admin. During the current
-    evaluation period NSL must grant access to your store. Public App Store
-    installation will be available after Shopify review.
+  <Step title="Install the app">
+    Install **NeuronSearchLab** from the Shopify App Store. Shopify asks you
+    to approve the access the app needs; see [Permissions](#permissions).
+    The app then opens in Shopify admin, under **Apps → NeuronSearchLab**.
   </Step>
-  <Step title="Connect your catalogue">
-    Sign in to the [NSL console](https://console.neuronsearchlab.com/login).
-    Open **Integrations → Shopify**, enter your `*.myshopify.com` domain and
-    choose **Authorize with Shopify**. Approve the requested access in Shopify,
-    then return to the NSL console. During the current evaluation period, ask
-    NSL support to confirm the development store is linked to your workspace.
-    Check that products appear in **Users & Items** before enabling a strip.
-    Existing stores with a previously issued Admin API token may use the
-    legacy-token option in the same integration panel.
-  </Step>
-  <Step title="Create an embed key">
-    In the console, **Developers → Website embed**. Add every storefront
-    domain to the key's origins, including the `*.myshopify.com` domain and
-    custom domains you preview from. Copy the publishable key (`nsl_pk_...`).
+  <Step title="Choose a plan">
+    Select **View plans** and choose a plan. Billing is through Shopify, on
+    your Shopify invoice. Once the plan is active, the app finishes setup
+    automatically:
+
+    - creates a NeuronSearchLab workspace for your store;
+    - starts syncing your active products;
+    - creates the storefront key and stores it where your theme can read it;
+    - connects a checkout pixel under **Settings → Customer events**.
+
+    The first catalogue sync usually takes a few minutes. The **Your
+    catalogue** card shows its progress and the number of products synced.
   </Step>
   <Step title="Turn on the app embed">
-    In Shopify, open **Online Store → Themes → Customize → App embeds →
-    NeuronSearchLab**. Paste the publishable key, enable the embed, and save.
-    The widget then loads on storefront pages and reports page context.
+    Select **Turn on app embed**. Your theme editor opens with the
+    **NeuronSearchLab** app embed switched on; select **Save**. The embed
+    loads the recommendation widget and reports page, product, basket and
+    signed-in customer context on every page.
   </Step>
-  <Step title="Place a strip">
-    In the theme editor, add the **Recommendations** app block to a supported
-    template and save. Give it a placement name if you want to configure it
-    from the console later. Visit that page and confirm products appear.
+  <Step title="Place recommendation strips">
+    Select **Add to product pages** or **Add to home page**. The theme editor
+    opens with a **Recommendations** block added; position it and select
+    **Save**. On a product page, **Related to this page** shows similar
+    products. **Personalised to the visitor** shows a feed for the person
+    browsing. You can add the block to any other template from the theme
+    editor.
   </Step>
-  <Step title="Configure checkout reporting">
-    Shopify web pixels are managed separately from theme embeds. In **Settings
-    → Customer events**, confirm the NeuronSearchLab app pixel is connected
-    and uses the same publishable key. Test a completed checkout before
-    relying on conversion reports; the current development installation has
-    not passed that check yet.
+  <Step title="Check it is live">
+    Visit a product page on your storefront. The strip shows products from
+    your catalogue. Back in the app, the app embed card changes to **Live**
+    once the storefront has requested recommendations. To see what the widget
+    is doing on any page, add `?nsl_debug=1` to the page URL.
   </Step>
 </Steps>
 
-## What the app sends
+## Plans
+
+Plans are billed by Shopify, in US dollars, every 30 days. You can change or
+cancel your plan at any time from **Change plan** in the app.
+
+| Plan | Price | Storefront recommendation requests per month |
+| --- | --- | --- |
+| Starter | $199 / month | 100,000 |
+| Growth | $449 / month | 250,000 |
+
+Shopify shows any free trial when you choose a plan. There are no usage
+charges on top of the plan price: a store that goes over its monthly
+requests keeps showing recommendations and is not charged extra. A store that
+regularly needs more should move to a larger plan.
+
+## Permissions
+
+| Access | Why |
+| --- | --- |
+| Read products and inventory | Sync your catalogue, and leave out products that cannot be bought |
+| Read orders | Learn from purchases, so recommendations improve faster |
+| Write pixels and read customer events | Connect the checkout pixel that reports completed orders |
+
+## Catalogue sync
+
+The app syncs **active** products, including products on password-protected
+and development stores. It reads each product's title, description, vendor,
+type, tags, price, SKU, availability, image and storefront URL.
+
+Products sync again whenever one is created, updated or deleted, and at
+least every six hours. Select **Sync now** in the app to start one
+straight away.
+
+## What the storefront sends
 
 Each value comes from Shopify's own objects, so there is no tagging to write
 and nothing to keep correct as your theme changes.
@@ -88,42 +121,71 @@ and nothing to keep correct as your theme changes.
 
 Orders are reported by a web pixel rather than by theme code, because
 Shopify's checkout is not part of your theme and no theme code runs there.
+The app creates the pixel for you; you can see it under **Settings →
+Customer events**.
 
-They arrive as the `order_reported` signal, bound by default to a zero-weight
-event, because a browser cannot prove a sale took place. They are used for
-attribution and revenue reporting. Product views and basket additions come from
-the app embed as `view` and `add_to_cart`; see [Events](/embed#events).
+Orders arrive as the `order_reported` signal, bound by default to a
+zero-weight event, because a browser cannot prove a sale took place. They are
+used for attribution and revenue reporting. Product views and basket
+additions come from the app embed as `view` and `add_to_cart`; see
+[Events](/embed#events). Verified orders read with the app's order access use
+the same order ID, so a verified order replaces the browser's report of it
+rather than counting twice.
 
-For verified orders as well, grant `read_orders` when connecting Shopify in
-**Integrations**. This access is subject to Shopify's protected customer-data
-review for a public app. Browser-reported and verified orders use the same
-order ID, allowing the verified event to supersede the reported one.
+## Placements and the console
 
-## Placements
+The app covers setup. To configure what a strip serves, view analytics or add
+ranking rules, select **Open NeuronSearchLab console** at the top of the app.
+It signs you in to your store's workspace with your Shopify account, without
+a separate password.
 
-A strip placed in the theme decides where recommendations appear. What it
-serves, how many items it shows and how each card reads are set by the
-placement in the console, so those change without a theme edit or a deploy.
-
-A placement the console does not recognise still renders, using your workspace
+A strip decides where recommendations appear. What it serves, how many items
+it shows and how each card reads are set by the placement in the console, so
+those change without a theme edit. Give the block a **Placement name** in the
+theme editor, then create a placement with the same name in the console. A
+placement the console does not recognise still renders with your workspace
 defaults, so renaming one does not blank a live page.
 
-## Privacy
+## Privacy and data
 
 Where your shop uses Shopify's customer privacy API and a visitor has not
 allowed analytics, the widget continues to render recommendations but stops
 describing the visitor: cart and customer are withheld.
 
-The storefront embed sends the customer **id**, rather than a name, email or
-address. It is hashed with a per-workspace key before storage. If order
-history is enabled, NSL reads the order customer ID or guest email from
-Shopify's Admin API and hashes that identifier before storing training rows.
+The storefront sends the customer **id**, never a name, email or address. It
+is hashed with a per-workspace key before storage. Order history is read
+through Shopify's Admin API and the customer ID, or a guest's email, is
+hashed the same way before anything is stored.
+
+NeuronSearchLab handles Shopify's privacy requests automatically. A customer
+redaction request deletes that customer's events and profile. When you
+uninstall, the storefront key stops working at once and the pixel is
+disconnected; 48 hours later, when Shopify sends its shop redaction request,
+the store's catalogue, events and keys are deleted.
+
+## Uninstalling
+
+Uninstall from **Settings → Apps** in Shopify admin. This cancels your plan
+and stops recommendations immediately; the app embed then renders nothing.
+If you reinstall within 48 hours, your previous workspace and catalogue
+are kept.
+
+## Stores set up before the app
+
+A store that previously connected to NeuronSearchLab with an Admin API token
+in **Integrations → Shopify** keeps working. Its app embed can still use a
+key typed into the embed's **Embed key** setting, which takes precedence over
+the key the app provides.
 
 ## Troubleshooting
 
 | Symptom | Cause |
 | --- | --- |
-| No strip renders | The app embed is off, or the key is missing from it |
-| Strip renders on some domains only | A storefront domain is not on the key's origins — the console's **Website embed** page lists any it turned away |
-| Strip looks unrelated to the product | The product's SKU is not in your catalogue. Add `?nsl_debug=1` to the page and the overlay says so |
-| Conversions not appearing | The web pixel needs the same embed key; check **Settings → Customer events** |
+| The app asks you to choose a plan | No active plan; choose one to finish setup |
+| No strip renders | The app embed is off, or the theme was not saved after turning it on |
+| The strip is empty on a new store | The first catalogue sync has not finished; check **Your catalogue** in the app |
+| Strip renders on some domains only | Open the app once after adding a domain; it adds your primary domain to the storefront key |
+| Strip looks unrelated to the product | Add `?nsl_debug=1` to the page; the overlay shows whether the product was found in your catalogue |
+| Conversions not appearing | Check the NeuronSearchLab pixel is connected under **Settings → Customer events**, and that the shopper allowed analytics |
+
+For help, email [support@neuronsearchlab.com](mailto:support@neuronsearchlab.com).
