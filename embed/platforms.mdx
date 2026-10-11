@@ -1,5 +1,5 @@
 ---
-title: "Magento, Shopware, PrestaShop, BigCommerce"
+title: "Magento, Shopware, PrestaShop, BigCommerce, WooCommerce"
 icon: 'store'
 description: "Platform adapters that load the recommendation widget and supply it with storefront context."
 ---
@@ -70,6 +70,16 @@ your embed key in its configuration.
 
 SKUs come from the product `reference`, falling back to the product id where
 `reference` is empty, as it is in many catalogues.
+
+## WooCommerce
+
+Download [`nsl-woocommerce.zip`](https://github.com/NeuronSearchLab/nsl-platforms/releases/download/v1.0.1/nsl-woocommerce.zip),
+upload it under **Plugins → Add New**, and activate it alongside WooCommerce.
+In **WooCommerce → Settings → Products → General**, enter a publishable embed
+key and allow the storefront origin in the NSL console. Classic product and
+cart templates receive automatic placements; custom pages can use the
+`[nsl_recommendations]` shortcode. Import the catalogue separately. Browser
+checkout and block-theme receipt flows still need staging verification.
 
 ## BigCommerce
 

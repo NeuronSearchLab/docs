@@ -1,11 +1,11 @@
 ---
 title: "Shopify"
 icon: 'bag-shopping'
-description: "The Shopify app: recommendations in your theme, with context and conversions supplied by the platform."
+description: "Shopify theme and pixel extensions for recommendation context and conversions."
 ---
 
-The NeuronSearchLab Shopify app installs the recommendation widget into your
-theme and supplies it with context from the storefront. Shopify already knows
+The NeuronSearchLab Shopify extensions add the recommendation widget to your
+theme and supply it with context from the storefront. Shopify already knows
 which product a page shows, what is in the basket, who is signed in and what
 was bought; the app reads each of those and passes them to the widget.
 
@@ -17,11 +17,20 @@ checkout.
   The app covers the manual steps described on the main embed page. With it installed you do not need [page context](/embed#page-context), [category and search](/embed#category-and-search-pages) or [conversions](/embed#conversions).
 </Note>
 
-## Install
+## Current installation status
+
+The theme and pixel extensions are implemented and tested as source, but there
+is not yet a merchant-installable Shopify app or public App Store listing.
+Partner app registration, install/account linking, automatic pixel setup and a
+live checkout test are still required. The
+[source repository](https://github.com/NeuronSearchLab/nsl-shopify) includes the
+extension code and developer setup instructions.
+
+Once a Shopify app is distributed, the merchant setup will be:
 
 <Steps>
   <Step title="Add the app">
-    Install **NeuronSearchLab** from the Shopify app store.
+    Install the approved **NeuronSearchLab** app from its distribution link.
   </Step>
   <Step title="Create an embed key">
     In the console, **Developers → Website embed**. Add every storefront
