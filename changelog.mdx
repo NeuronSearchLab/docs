@@ -20,13 +20,74 @@ rss: true
   </Card>
 </CardGroup>
 
+<Update label="October 12, 2026" rss="October 12, 2026: Admin console, Vercel integration.">
+
+### Admin console
+
+#### Features
+
+- **Model lifecycle** — Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
+- **Model lifecycle** — Encrypt the database at rest and state Shopify data handling
+- Stop reading order email in the Shopify order import
+- **Access and billing** — Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- **Access and billing** — Bill Shopify storefront requests over the plan allowance
+- **Access and billing** — Connect Magento stores without an NSL login, and sync their catalogue
+- **Access and billing** — One request pool, £5.60 / &#36;7.50 per 1,000 overage, capped at 3x the plan
+- **Vercel integration** — Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
+- **Vercel integration** — Name the mid tier Growth, map Vercel Growth, drop vectors from storefront responses
+
+### Vercel integration
+
+#### Features
+
+- **Vercel integration** — Price Vercel plans at the direct list and add Growth
+- **Vercel integration** — Test the aligned Vercel plan ladder
+
+</Update>
+
+<Update label="October 11, 2026" rss="October 11, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- Decrypt Shopify order token in backfill worker
+- Validate Shopify connector with supported GraphQL API
+- Give Shopify order backfill worker identity hash secret
+- Make the Shopify app embedded, with managed install and auto-setup
+- Navigate from the embedded app with Polaris button hrefs
+- Log pointer targets from the embedded app while diagnosing its buttons
+- Put the console sign-in in the embedded app's body
+- Recommend only Shopify products a shopper can open and buy
+- **Model lifecycle** — Add reviewed app stack deployment workflow
+- **Model lifecycle** — Guard app stack deploy against secret and serving drift
+- **Model lifecycle** — Hash Shopify order identities before training import
+- **Model lifecycle** — Review two Lambda changes in guarded app deploy
+- **Model lifecycle** — Judge Shopify publication by publishedAt, not onlineStoreUrl
+- **Access and billing** — Add authenticated Shopify OAuth install callback
+- **Access and billing** — Offer Shopify authorization from integrations
+- **Access and billing** — Record verified Shopify shop ID for billing
+- **Access and billing** — Resolve Shopify plan entitlements from active subscriptions
+- **Access and billing** — Keep Shopify subscribers entitled after a plan is edited
+- **Catalog, users, and events** — Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- **Catalog, users, and events** — Use GraphQL Admin API for Shopify order history
+- **Platform foundation** — Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
+- **Platform foundation** — Open theme editor through admin.shopify.com from the embedded app
+- **Platform foundation** — Link to the theme editor with shopify://admin from the embedded app
+- …and 1 more change.
+
+#### Bug fixes
+
+- Keep guarded CDK diff workflow valid YAML
+
+</Update>
+
 <Update label="September 28, 2026" rss="September 28, 2026: Admin console.">
 
 ### Admin console
 
 #### Features
 
-- **Access and billing** — Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
 - **Access and billing** — Stop test runs from emailing real signup notifications
 - **Access and billing** — Let people book their onboarding session where they ask for it
 
@@ -38,7 +99,6 @@ rss: true
 
 #### Features
 
-- **Catalog, users, and events** — Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
 - **Catalog, users, and events** — Bind integration signals to event ids instead of resolving events by name
 - **Catalog, users, and events** — Let a user's searches steer their recommendations, weighted like any event
 - **Catalog, users, and events** — Keep a user's different searches distinct when they steer recommendations
@@ -113,7 +173,6 @@ rss: true
 - Add category and search page context
 - Point the install snippet at embed 1.2.0
 - **Catalog, users, and events** — Let the catalogue decide which card fields exist, and tidy the controls
-- **Model lifecycle** — Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
 - **Model lifecycle** — Define the embed CDN deploy role instead of assuming someone made it
 - **Analytics and reporting** — Added period-aware dashboards, usage gauges, KPI cards, multi-series charts, saved analytic views, and production data refresh paths.
 - **Analytics and reporting** — Let a sandboxed checkout report conversions
@@ -199,7 +258,6 @@ rss: true
 - **Catalog, users, and events** — Import historical events so day one starts warm
 - **Catalog, users, and events** — Spend the budget on items first, and stop scoring every sitemap as one
 - **Catalog, users, and events** — Stop reading "index" in a sitemap name as "a list of index pages"
-- **Platform foundation** — Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
 - **Platform foundation** — Merge: zero-integration onboarding
 - **Platform foundation** — Take the brand colour from the favicon, and actually use it
 - **Ranking controls** — Built rule engines, rerank controls, segmentation, experiment wiring, explainability, discovery feature toggles, and recommendation proxy support.
@@ -467,7 +525,6 @@ rss: true
 
 #### Features
 
-- **Vercel integration** — Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
 - **Vercel integration** — Add native Vercel resource provisioning and SSO
 - **Vercel integration** — Add Vercel onboarding attribution and intent
 
