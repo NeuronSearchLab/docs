@@ -14,7 +14,7 @@ also report completed orders when the platform exposes a stable order id; the
 BigCommerce script may not find one on every checkout theme. The [adapter
 preview packages](https://github.com/NeuronSearchLab/nsl-commerce-adapters/releases/tag/v1.0.1-preview)
 are publicly downloadable for staging evaluation. The Magento ZIP also has a
-[dedicated release](https://github.com/NeuronSearchLab/nsl-magento/releases/tag/v1.0.1).
+[dedicated release](https://github.com/NeuronSearchLab/nsl-magento/releases/tag/v1.1.0).
 
 <Note>
   On Shopify? Use the [app](/embed/shopify) instead — it covers the same ground with theme and checkout extensions.
@@ -22,20 +22,47 @@ are publicly downloadable for staging evaluation. The Magento ZIP also has a
 
 ## Magento 2
 
+Download the [Magento Composer ZIP](https://github.com/NeuronSearchLab/nsl-magento/releases/download/v1.1.0/nsl-magento-marketplace.zip)
+into a directory outside your Magento project, then:
+
 ```bash
 composer config repositories.nsl-artifact artifact /path/to/directory-containing-nsl-magento-marketplace.zip
-composer require neuronsearchlab/module-recommendations
+composer require neuronsearchlab/module-recommendations:1.1.0
 bin/magento module:enable NeuronSearchLab_Recommendations
-bin/magento setup:upgrade && bin/magento cache:flush
+bin/magento setup:upgrade && bin/magento setup:di:compile && bin/magento cache:flush
 ```
 
-First download the [public Composer ZIP](https://github.com/NeuronSearchLab/nsl-magento/releases/download/v1.0.1/nsl-magento-marketplace.zip)
-into that directory. After Adobe Marketplace approval, a Marketplace-backed
-Composer repository can replace the local artifact repository. Then open
-**Stores → Configuration → NeuronSearchLab → Recommendations**, enable it and
-paste your publishable embed key. Import your product catalogue into NSL before
-expecting recommendation cards. The [Magento guide](https://github.com/NeuronSearchLab/nsl-magento/blob/main/USER_GUIDE.md)
-covers cache, theme and checkout checks.
+Then connect the store:
+
+<Steps>
+  <Step title="Connect">
+    In Magento Admin, open **Stores → Configuration → NeuronSearchLab →
+    Recommendations** and select **Connect to NeuronSearchLab** (or run
+    `bin/magento neuronsearchlab:connect`). This creates the store's
+    NeuronSearchLab workspace and embed key, switches the storefront
+    integration on, and sends the catalogue. You need no NSL account to
+    connect.
+  </Step>
+  <Step title="Wait for the import">
+    Recommendations appear on home, product, category, search and cart pages
+    once the catalogue is imported, usually within a few minutes. The
+    connection panel shows how many products are being recommended.
+  </Step>
+  <Step title="Open the console">
+    Select **Open NeuronSearchLab console** in the connection panel, then
+    sign in or create a free account. The store's workspace is added to your
+    account, where you configure placements, rules and analytics.
+  </Step>
+</Steps>
+
+The catalogue syncs every hour through Magento cron, and on demand with
+**Sync catalogue now** or `bin/magento neuronsearchlab:catalogue:sync`. Each sync
+sends enabled, visible products with their URL, image, price, categories and
+stock; products that are disabled, hidden, deleted or out of stock stop being
+recommended. The module sends the catalogue rather than NSL fetching it, so
+staging and development stores work the same way. A connected store starts
+on the free plan. The [Magento guide](https://github.com/NeuronSearchLab/nsl-magento/blob/main/USER_GUIDE.md)
+covers cache, theme and checkout checks, and disconnecting.
 
 Place a strip by adding the block to any layout handle:
 
@@ -140,5 +167,5 @@ provided by these adapters; do not use browser-reported orders as a verified
 sales ledger.
 
 <Warning>
-  These adapters have not completed the full merchant checkout and cache-isolation acceptance matrix on live staging stores. Some install and runtime paths pass against disposable platform builds in CI. Adobe Marketplace manual QA and marketing review for Magento are pending.
+  These adapters have not completed the full merchant checkout and cache-isolation acceptance matrix on live staging stores. Some install and runtime paths pass against disposable platform builds in CI. Adobe Marketplace manual QA and marketing review for Magento are pending; until then, install Magento from the GitHub release above.
 </Warning>
