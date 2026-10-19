@@ -20,6 +20,26 @@ rss: true
   </Card>
 </CardGroup>
 
+<Update label="October 14, 2026" rss="October 14, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Access and billing** — Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- **Access and billing** — Bill Stripe teams on Stripe, switch workspaces, widen Profile
+- Show customer adoption on the platform admin Customers page
+- **ChatGPT integration** — Added ChatGPT activation, OAuth onboarding, starter catalogues, recommendation prompts, and handoff from the in-console assistant.
+- **ChatGPT integration** — Render the ChatGPT demo from its primary tool
+- **ChatGPT integration** — Repair blank workspaces before ChatGPT demos
+- **ChatGPT integration** — Add an internal identity for ChatGPT demos
+
+#### Bug fixes
+
+- Fix item analytics IDs, box the one-time codes, unstretch the email logo
+
+</Update>
+
 <Update label="October 12, 2026" rss="October 12, 2026: Admin console, Vercel integration.">
 
 ### Admin console
@@ -29,12 +49,15 @@ rss: true
 - **Model lifecycle** — Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
 - **Model lifecycle** — Encrypt the database at rest and state Shopify data handling
 - Stop reading order email in the Shopify order import
-- **Access and billing** — Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- Drop the overage cap: every request past the allowance is billed
+- Add MFA, password reset, email change and account deletion
 - **Access and billing** — Bill Shopify storefront requests over the plan allowance
 - **Access and billing** — Connect Magento stores without an NSL login, and sync their catalogue
 - **Access and billing** — One request pool, £5.60 / &#36;7.50 per 1,000 overage, capped at 3x the plan
 - **Vercel integration** — Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
 - **Vercel integration** — Name the mid tier Growth, map Vercel Growth, drop vectors from storefront responses
+- **Catalog, users, and events** — Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
+- **Catalog, users, and events** — Align the item and user slide-overs and tables, and give primary buttons a Polaris bevel
 
 ### Vercel integration
 
@@ -42,6 +65,7 @@ rss: true
 
 - **Vercel integration** — Price Vercel plans at the direct list and add Growth
 - **Vercel integration** — Test the aligned Vercel plan ladder
+- One request pool and &#36;7.50 per 1,000 overage on Marketplace plans
 
 </Update>
 
@@ -69,7 +93,6 @@ rss: true
 - **Access and billing** — Record verified Shopify shop ID for billing
 - **Access and billing** — Resolve Shopify plan entitlements from active subscriptions
 - **Access and billing** — Keep Shopify subscribers entitled after a plan is edited
-- **Catalog, users, and events** — Wired live catalog, user, and event data into searchable tables, detail panels, ingest flows, schedulers, and timeline views.
 - **Catalog, users, and events** — Use GraphQL Admin API for Shopify order history
 - **Platform foundation** — Established the Next.js console shell, product navigation, dashboard surfaces, profile/team areas, and developer-facing project documentation.
 - **Platform foundation** — Open theme editor through admin.shopify.com from the embedded app
@@ -102,7 +125,6 @@ rss: true
 - **Catalog, users, and events** — Bind integration signals to event ids instead of resolving events by name
 - **Catalog, users, and events** — Let a user's searches steer their recommendations, weighted like any event
 - **Catalog, users, and events** — Keep a user's different searches distinct when they steer recommendations
-- **ChatGPT integration** — Added ChatGPT activation, OAuth onboarding, starter catalogues, recommendation prompts, and handoff from the in-console assistant.
 - **ChatGPT integration** — Move ChatGPT off the dashboard and into an Agents section on Integrations
 - **ChatGPT integration** — Assert the ChatGPT card's status through its switch, not a pill
 - Show every integration in its own colours, and let the switch say it is on
