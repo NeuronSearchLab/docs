@@ -20,13 +20,50 @@ rss: true
   </Card>
 </CardGroup>
 
+<Update label="October 26, 2026" rss="October 26, 2026: Admin console.">
+
+### Admin console
+
+#### Bug fixes
+
+- Fix blank public preview loading and error states (#25)
+
+</Update>
+
+<Update label="October 25, 2026" rss="October 25, 2026: Admin console.">
+
+### Admin console
+
+#### Bug fixes
+
+- Run the DB crons every three hours and cap Aurora at 1 ACU
+
+</Update>
+
+<Update label="October 24, 2026" rss="October 24, 2026: Admin console.">
+
+### Admin console
+
+#### Features
+
+- **Model lifecycle** — Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
+- **Model lifecycle** — Reach AWS services over IPv6 instead of interface endpoints
+- **Access and billing** — Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
+- **Access and billing** — Read the Stripe key from Secrets Manager in the metering worker
+
+#### Bug fixes
+
+- Start every DB cron on minute :05 so Aurora can auto-pause
+- Make the Aurora writer private
+
+</Update>
+
 <Update label="October 14, 2026" rss="October 14, 2026: Admin console.">
 
 ### Admin console
 
 #### Features
 
-- **Access and billing** — Added account registration, session handling, team invites, API key and SDK credential management, and Stripe-backed billing workflows.
 - **Access and billing** — Bill Stripe teams on Stripe, switch workspaces, widen Profile
 - Show customer adoption on the platform admin Customers page
 - **ChatGPT integration** — Added ChatGPT activation, OAuth onboarding, starter catalogues, recommendation prompts, and handoff from the in-console assistant.
@@ -46,7 +83,6 @@ rss: true
 
 #### Features
 
-- **Model lifecycle** — Added tenant model families, training kickoff and monitoring, SageMaker deployment automation, learned rankers, embedding refreshes, and endpoint promotion tooling.
 - **Model lifecycle** — Encrypt the database at rest and state Shopify data handling
 - Stop reading order email in the Shopify order import
 - Drop the overage cap: every request past the allowance is billed
