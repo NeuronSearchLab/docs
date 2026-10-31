@@ -38,6 +38,25 @@ Each call resolves the tenant from the access token claims, fetches recent user 
 
 See the [endpoint reference](/api-reference/endpoint/get-recommendations) for the detailed contract.
 
+### Several rails on one page
+
+When a page shows several rails, ask for all of them in one request with `POST /v1/recommendations/batch`. The visitor's history is read once for the page instead of once per rail. Each rail is still billed as its own recommendation set.
+
+```bash
+curl -X POST "https://api.neuronsearchlab.com/v1/recommendations/batch" \
+  -H "Authorization: Bearer <access_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "user-123",
+    "requests": [
+      { "key": "for_you", "context_id": 101, "limit": 12 },
+      { "key": "similar", "context_id": 102, "item_id": 3187, "limit": 6 }
+    ]
+  }'
+```
+
+A batch holds up to eight sets. See [Get recommendation sets](/api-reference/endpoint/get-recommendation-sets).
+
 ## Use the JavaScript SDK
 
 Install the SDK and initialise it with an access token obtained from the auth token endpoint:
@@ -62,6 +81,8 @@ const result = await sdk.getRecommendations({
 
 console.log(result.recommendations);
 ```
+
+For a page with several rails, `sdk.getRecommendationSets({ userId, sets: [{ key, contextId, limit }] })` sends them in one request and returns each under its key.
 
 The SDK retries transient failures automatically with exponential backoff. Explore more SDK capabilities in the [SDK introduction](/sdk/introduction).
 
