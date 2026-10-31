@@ -2873,7 +2873,8 @@
             "maxItems": 8,
             "items": {
               "$ref": "#/components/schemas/RecommendationSetRequest"
-            }
+            },
+            "description": "Identical sets in one batch are computed and billed once."
           }
         }
       },
@@ -2978,16 +2979,19 @@
             "properties": {
               "sets": {
                 "type": "integer",
-                "description": "Recommendation sets billed."
+                "description": "Sets in the batch."
               },
               "computed": {
-                "type": "integer"
+                "type": "integer",
+                "description": "Sets ranked for this request. Billed."
               },
               "reused": {
-                "type": "integer"
+                "type": "integer",
+                "description": "Sets served again from an identical recent answer. Billed."
               },
               "coalesced": {
-                "type": "integer"
+                "type": "integer",
+                "description": "Sets identical to an earlier set in the same batch. Not billed again; they share its request_id."
               }
             }
           }

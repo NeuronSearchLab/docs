@@ -10,7 +10,7 @@ A page with several rails, such as "For you", "Similar items" and "Trending", ca
 
 The sets share the work they have in common. The visitor's history is read once for the whole page, and two identical sets in one batch are computed once.
 
-Each set is billed as its own recommendation set, the same as a separate `GET /v1/recommendations` call. A batch of five sets counts as five.
+Each set is billed as its own recommendation set, the same as a separate `GET /v1/recommendations` call: a batch of five different sets counts as five. Two identical sets in one batch are computed once and billed once.
 
 ## Request
 
@@ -89,7 +89,7 @@ Pagination (`mode`, `cursor`, `starting_after`) is not part of a batch. Page thr
 
 A set that fails comes back with its own `status` and `error`, and the other sets are still served. The batch itself fails only when the request is malformed or unauthorised.
 
-`usage.sets` is the number of sets billed. `computed`, `reused` and `coalesced` say how many were ranked, served again from an identical answer a moment earlier, or shared with an identical set in the same batch. When a set is served again, it carries `reuse: { "reused": true, "age_ms": … }`, and it still gets its own `request_id`.
+`usage.sets` is the number of sets in the batch. `computed`, `reused` and `coalesced` say how many were ranked, served again from an identical answer a moment earlier, or shared with an identical set in the same batch. Computed and reused sets are billed; a coalesced set is not, and it carries the same `request_id` as the set it shares, since it is the same answer. A reused set carries `reuse: { "reused": true, "age_ms": … }` and its own `request_id`.
 
 ## SDKs
 
