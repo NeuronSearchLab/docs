@@ -184,7 +184,8 @@
           {
             "group": "Recommendations",
             "pages": [
-              "api-reference/endpoint/get-recommendations"
+              "api-reference/endpoint/get-recommendations",
+              "api-reference/endpoint/get-recommendation-sets"
             ],
             "icon": "sparkles"
           },
