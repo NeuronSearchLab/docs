@@ -91,6 +91,21 @@ A set that fails comes back with its own `status` and `error`, and the other set
 
 `usage.sets` is the number of sets in the batch. `computed`, `reused` and `coalesced` say how many were ranked, served again from an identical answer a moment earlier, or shared with an identical set in the same batch. Computed and reused sets are billed; a coalesced set is not, and it carries the same `request_id` as the set it shares, since it is the same answer. A reused set carries `reuse: { "reused": true, "age_ms": … }` and its own `request_id`.
 
+## Context groups
+
+Rails that appear together on a page can share rules. On the console's **Contexts** page, drag contexts into a group, then open the group's **Settings**. The order of the rails in a group is their priority: a higher rail claims an item first.
+
+| Rule | What it does |
+| --- | --- |
+| Don't repeat items across rails | An item appears in one rail at most. The highest rail that ranked it keeps it. |
+| Keep rails full | When the group's rules remove items, the rail takes the next ones from its own ranking, so it still fills its `limit`. Turned off, the rail may return fewer items. |
+| Limit per attribute across the group | At most N items share one metadata value (for example `author` or `category`) across all the group's rails. |
+| Exempt (per rail) | The rail ignores the group's rules, and the items it shows don't count against the other rails. |
+
+The rules apply only when two or more of a group's rails are in the same batch. A rail requested on its own, with `GET /v1/recommendations` or as the only rail of its group in a batch, is served exactly as before. Nothing changes in the request: the batch endpoint, the embed script and the SDKs pick up a group as soon as its contexts are grouped.
+
+Results still come back in request order, each with its own `request_id`, and the served events record what each rail actually showed. Billing doesn't change: each set is still billed as its own recommendation set. Two identical rails in one group are each computed and billed, because the second skips what the first one shows.
+
 ## SDKs
 
 ```ts
