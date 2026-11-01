@@ -2849,9 +2849,6 @@
       },
       "RecommendationSetsRequest": {
         "type": "object",
-        "required": [
-          "requests"
-        ],
         "properties": {
           "user_id": {
             "type": "string"
@@ -2875,6 +2872,18 @@
               "$ref": "#/components/schemas/RecommendationSetRequest"
             },
             "description": "Identical sets in one batch are computed and billed once."
+          },
+          "group_id": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "A context group to serve: one set per rail, in group order, keyed by context key. `requests` then becomes optional and adjusts or adds rails."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20,
+            "description": "Items per rail in a group request. Only valid with `group_id`."
           }
         }
       },
@@ -2994,6 +3003,10 @@
                 "description": "Sets identical to an earlier set in the same batch. Not billed again; they share its request_id."
               }
             }
+          },
+          "group_id": {
+            "type": "integer",
+            "description": "Present for a group request."
           }
         }
       }
