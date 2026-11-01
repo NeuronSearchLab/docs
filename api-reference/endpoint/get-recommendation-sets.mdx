@@ -106,6 +106,27 @@ The rules apply only when two or more of a group's rails are in the same batch. 
 
 Results still come back in request order, each with its own `request_id`, and the served events record what each rail actually showed. Billing doesn't change: each set is still billed as its own recommendation set. Two identical rails in one group are each computed and billed, because the second skips what the first one shows.
 
+### Load a group by its ID
+
+Each group shows its ID next to its name on the **Contexts** page (for example `#12`). Send `group_id` instead of listing the group's contexts, and every rail of the group is served, in the group's order, under its rules:
+
+```json
+{
+  "user_id": "user-abc123",
+  "group_id": 12,
+  "limit": 12,
+  "requests": [{ "context_id": 2324, "item_id": 3187 }]
+}
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `group_id` | integer | The group to serve. Each rail comes back under its context key, or `context_<id>` when the context has no key. |
+| `limit` | integer | Items per rail in a group request. Defaults to `20`, maximum `100`. Only valid with `group_id`. |
+| `requests` | array | Optional with a group. A set for one of the group's contexts adjusts that rail (for example `item_id` for a "similar items" rail) and may leave out `key`. A set for any other context is served alongside and needs its own `key`. |
+
+The response carries `group_id`, and the expanded batch must fit the usual limits: eight sets and 200 items. An unknown or empty group returns `400` with code `invalid_group`; if groups can't be read for a moment, a group request returns `503` with code `group_unavailable` and can be retried.
+
 ## SDKs
 
 ```ts
@@ -118,7 +139,13 @@ const { sets } = await sdk.getRecommendationSets({
 });
 ```
 
-The TypeScript, PHP and Swift SDKs offer `getRecommendationSets`, and `@neuronsearchlab/nextjs` offers `nsl.recommendSets`. Each one splits a page of more than eight sets into several batches for you. The embed script batches placeholders on the same page automatically.
+To load a context group, pass its ID:
+
+```ts
+const { sets } = await sdk.getRecommendationSets({ userId: 'user-abc123', groupId: 12, limit: 12 });
+```
+
+The TypeScript, PHP and Swift SDKs offer `getRecommendationSets` (with `groupId`), and `@neuronsearchlab/nextjs` offers `nsl.recommendSets`. Each one splits a page of more than eight sets into several batches for you; a group request is always one batch. The embed script batches placeholders on the same page automatically.
 
 ## Errors
 
