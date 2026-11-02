@@ -1,0 +1,31 @@
+---
+title: 'Choose an SDK'
+icon: 'cube'
+description: 'Choose the right client library or assistant integration for your application.'
+---
+
+The client SDKs call the [Core API](/api-reference/introduction). They handle request formatting and provide helpers for items, events, recommendations and search. The MCP server connects AI assistants to NSL.
+
+| Integration | Install | Best fit |
+| --- | --- | --- |
+| [JavaScript / TypeScript](/sdk/introduction) | `npm install @neuronsearchlab/sdk` | Node.js services and TypeScript applications |
+| [Next.js](/sdk/nextjs) | `npm install @neuronsearchlab/nextjs` | Server Components, Route Handlers and React event helpers |
+| [PHP](/sdk/php) | `composer require neuronsearchlab/sdk-php` | PHP 8.2+, including Laravel and background workers |
+| [Swift](/sdk/swift) | Swift Package Manager | Native Swift integrations using async/await |
+| [ChatGPT and MCP](/sdk/mcp) | Hosted connection or `@neuronsearchlab/mcp` | Inspecting and managing NSL from an AI assistant |
+
+For a website that needs no custom backend, start with the [Website embed](/embed). For other languages, use the REST API directly.
+
+## Shared conventions
+
+- **Item and context IDs** are positive integers assigned by NSL. **Event-type IDs** are non-zero integers from your workspace. Do not substitute display names or your store's SKU.
+- **User IDs** come from your application. Use the same identifier when requesting recommendations and sending events.
+- **Request IDs** identify a particular result set. Preserve each rail's ID with its rendered items and send it explicitly with engagement events.
+- **Session IDs** group activity within a visit. A single SDK instance's generated session is not a session for every user of your server.
+- **Credentials** belong on trusted servers. See [Authentication](/integrate/authentication) before integrating a browser or mobile client.
+
+The libraries do not expose identical methods. For example, Next.js uses `recommendSets`, while the other clients use `getRecommendationSets`. Each reference documents its own API and limits.
+
+## Migrating an older integration
+
+Read the [integer ID migration guide](/sdk/integer-id-migration) if your code uses string item IDs or event names. Update stored mappings and event payloads before changing production traffic.

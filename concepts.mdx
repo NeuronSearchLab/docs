@@ -1,0 +1,99 @@
+---
+title: 'Key concepts'
+icon: 'book'
+description: 'Every NeuronSearchLab term in one place, with a link to the page that explains it in full.'
+---
+
+Read this page once and the rest of the documentation will make sense. Each term links to the page that covers it in depth.
+
+## Your data
+
+<AccordionGroup>
+  <Accordion title="Workspace" icon="building">
+    Everything you configure and send lives in one workspace (also called a team or project). Members, credentials, plan and usage belong to the workspace. You can belong to several and switch between them from the profile menu. See [Members](/console/members) and [Account and settings](/console/account).
+  </Accordion>
+  <Accordion title="Item" icon="box">
+    Anything NSL can recommend: a product, listing, article, video or course. An item has a `name`, an optional `description`, free-form `metadata` (category, price, brand, availability and so on) and an `active` flag. NSL assigns each item an integer `id`. Items can come from the API, a feed, a shop platform or a crawl of your website. See [Catalogue](/integrate/catalogue) and [Items](/console/items).
+  </Accordion>
+  <Accordion title="User" icon="user">
+    The person a request is for, identified by your own `user_id` string. Anonymous visitors can use a session or device identifier. NSL keeps a profile per user that is built from their events. See [Users](/console/users) and [Identity](/integrate/identity).
+  </Accordion>
+  <Accordion title="Event and event type" icon="signal">
+    An event records that a user did something with an item: viewed it, clicked it, bought it, skipped it. Each event refers to an **event type** by its integer ID. Event types have a label, a **weight** from 0 to 100 that says how much the action counts, and a **polarity** (positive, neutral or negative). See [Events](/integrate/events).
+  </Accordion>
+  <Accordion title="Signal" icon="tower-broadcast">
+    A fixed concept that NSL defines, such as `view`, `rec_click`, `add_to_cart` or `purchase`. Integrations (the embed, the Shopify app, importers) report signals rather than event names, and your workspace binds each signal to one of your event types. This keeps purchases from Shopify, your server and a CSV import on the same event type. See [Integration signals](/integrate/events#integration-signals).
+  </Accordion>
+  <Accordion title="Search event" icon="magnifying-glass">
+    A search is recorded as an event with a `query` and no item. Recent searches steer a user's later recommendations by the weight of your Search event type. See [Searches are events](/integrate/events#searches-are-events).
+  </Accordion>
+</AccordionGroup>
+
+## Serving
+
+<AccordionGroup>
+  <Accordion title="Context" icon="sliders">
+    One place in your product where recommendations appear: a homepage feed, a "similar items" rail, a basket upsell, an email digest. Your code sends a `context_id`; the context decides the model, the recipe, the rules and the filters. Operators change a context without a code release. See [Contexts](/console/contexts).
+  </Accordion>
+  <Accordion title="Recommendation type" icon="arrows-split-up-and-left">
+    The kind of surface a context serves: **Personalised discovery** (a feed for one user), **Related items** ("more like this", seeded by an `item_id`), **Search results**, **Continue watching**, **Email digest** or **Merchandising**. The type sets sensible defaults; the recipe and rules do the rest.
+  </Accordion>
+  <Accordion title="Recipe" icon="list-check">
+    A context's ranking strategy: which candidate sources feed it, how each event signal is weighted, how much room is given to discovery, and which guardrails apply. You edit it in the context's **Inputs**, **Ranking** and **Safety** tabs. Templates give you a ready-made recipe for common use cases. See [Contexts](/console/contexts#recipe).
+  </Accordion>
+  <Accordion title="Pipeline" icon="diagram-project">
+    The ordered stages a request runs through: candidate generation, enrichment, scoring, learned ranking, rules and post-processing. Each context has its own pipeline, which you can inspect and tune. See [Pipeline](/console/pipeline).
+  </Accordion>
+  <Accordion title="Rule" icon="scale-balanced">
+    Business logic applied after scoring: boost, bury, pin, filter, cap, diversify, dedupe, reorder, group and more. Rules can be scheduled and targeted at segments. See [Rules Engine](/console/rules).
+  </Accordion>
+  <Accordion title="Segment" icon="users">
+    A reusable group of users defined by behaviour, profile metadata, computed statistics or interactions with a specific item. Segments target rules. See [Segments](/console/segments).
+  </Accordion>
+  <Accordion title="Recommendation set and context group" icon="layer-group">
+    A page with several rails can request them together as **recommendation sets** in one call. A **context group** adds rules across those rails, such as "never show the same item twice on this page". See [Several rails on one page](/integrate/recommendations#several-rails-on-one-page) and [Context groups](/console/context-groups).
+  </Accordion>
+  <Accordion title="Request ID" icon="fingerprint">
+    Every recommendation and search response carries a `request_id`. Sending it with the events that follow ties clicks and purchases to the exact list that produced them, which is what analytics, experiments and Explainability rely on.
+  </Accordion>
+</AccordionGroup>
+
+## Models and measurement
+
+<AccordionGroup>
+  <Accordion title="Recommender and model" icon="brain">
+    A recommender is an architecture you can train, chosen from the catalogue on the **Models** page: neighbourhood models such as item-KNN, matrix factorisation, sequential models such as SASRec and BERT4Rec, graph models such as LightGCN, two-tower retrieval with a ranking stage, and generative models. Training one on your events produces a **model version**. Contexts serve from a model you choose, or from **Automatic**, which uses the best deployed model for your workspace. See [Models](/console/models).
+  </Accordion>
+  <Accordion title="Model family" icon="sitemap">
+    A group of models built for one job, such as general recommendations, similar items or trending. NSL publishes a base model for each family; your trained versions override it for your workspace. If nothing in a family is ready, serving falls back to the family base and then the general base.
+  </Accordion>
+  <Accordion title="Signal template" icon="file-lines">
+    The training input: which event types a model learns from, their weights, and the minimum event counts required before training can start. See [Events page](/console/events#signal-templates).
+  </Accordion>
+  <Accordion title="Experiment" icon="flask">
+    A live A/B test that splits users between variants with different models, recipes or rules, and reports click-through, conversion and other metrics per variant. See [Experiments](/console/experiments).
+  </Accordion>
+  <Accordion title="Explanation" icon="microscope">
+    A breakdown of why an item ranked where it did: its score at each stage, the rules that matched and the pipeline trace. See [Explainability](/console/explainability).
+  </Accordion>
+</AccordionGroup>
+
+## Access and billing
+
+<AccordionGroup>
+  <Accordion title="SDK credentials" icon="key">
+    An OAuth client ID and secret for your servers. Exchanged for a short-lived access token that calls the Core API. See [Authentication](/integrate/authentication).
+  </Accordion>
+  <Accordion title="API key" icon="key">
+    A long-lived `nsl_…` bearer token, scoped to specific areas, for automation and AI assistants that call the Platform API. See [API keys](/console/api-keys).
+  </Accordion>
+  <Accordion title="Publishable key" icon="globe">
+    An `nsl_pk_…` key that is safe to put in a web page. It can only fetch recommendations and report engagement for the website embed, from origins you allow. See [Website embed](/console/website-embed).
+  </Accordion>
+  <Accordion title="Core API and Platform API" icon="code">
+    The **Core API** (`api.neuronsearchlab.com`) is what your application calls: items, events, recommendations and search. The **Platform API** (`console.neuronsearchlab.com/api`) is what the console itself uses, and what you call to automate configuration. See the [API reference](/api-reference/introduction).
+  </Accordion>
+  <Accordion title="Plan and usage" icon="credit-card">
+    Each plan includes a monthly allowance of recommendation requests and limits on contexts, rules, event types and seats. A request is one recommendation list or search. See [Billing and plans](/console/billing).
+  </Accordion>
+</AccordionGroup>

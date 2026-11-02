@@ -1,167 +1,82 @@
 ---
-title: Introduction
+title: Overview
 icon: "house"
-description: "NeuronSearchLab is your engine for fast, flexible, and intelligent recommendations."
+description: "NeuronSearchLab is a hosted recommendation and search service. Send it your catalogue and your users' behaviour, and it returns ranked, personalised results for every surface of your product."
 ---
 
-<img
-  className="rounded-md"
-  src="/images/console-dashboard-2026-04-21.png"
-  alt="NeuronSearchLab admin console dashboard"
-/>
+NeuronSearchLab (NSL) gives you personalised recommendations and search without building the retrieval, ranking and training stack yourself. Your application sends three things, and gets one thing back:
 
-## Welcome to NeuronSearchLab
+| You send | What it is | How |
+| --- | --- | --- |
+| **Items** | The things you could recommend: products, listings, articles, videos | [Catalogue](/integrate/catalogue) |
+| **Events** | What people do with those items: views, clicks, purchases, searches | [Events](/integrate/events) |
+| **Requests** | "What should this person see here?" | [Recommendations](/integrate/recommendations) and [Search](/integrate/search) |
 
-NeuronSearchLab is a hosted recommendation platform for teams that need personalization, ranking control, and analytics without building the full retrieval stack themselves.
+NSL returns a ranked list of items for each request, and records which list a person saw so that later events can be credited to it.
 
-Use the Core API or official SDKs from your backend to send catalog data, track events, and fetch recommendations. Use the console to configure contexts, rules, pipelines, model families, experiments, and analytics for the operators who own recommendation quality.
+## How a recommendation is made
 
-### Why teams choose NeuronSearchLab
+```mermaid
+flowchart TD
+  A["Your app asks for<br/>context 101, user u-42"] --> B["Context<br/>(the placement's settings)"]
+  B --> C["Candidates<br/>retrieved by a model"]
+  C --> D["Ranking<br/>signals, discovery, guardrails"]
+  D --> E["Rules<br/>boost, pin, filter, cap"]
+  E --> F["Ranked items<br/>+ request_id"]
+  F -.->|"events carry the request_id"| G["Analytics, experiments<br/>and the next training run"]
+```
 
-- **Recommendations without the infrastructure rebuild** - Hosted indexing, retrieval, ranking, and analytics in one platform.
-- **Control for every surface** - Configure contexts, filters, rules, model families, and experiments for different pages, campaigns, and user journeys.
-- **Developer-friendly integration** - Send catalog and event data from your backend, then serve recommendations through the Core API or official SDKs.
-- **Operational visibility** - Use the console to inspect items, users, events, ranking behavior, and performance trends.
-- **Secure by design** - Keep tenant data isolated and manage access with product authentication and server-side credentials.
+For predictable placement behaviour, send a **context** with each request: one placement in your product, such as a homepage feed or a "similar items" rail. The context decides which model retrieves candidates, how they are ranked, and which business rules apply. Operators change a context in the console; your code keeps sending the same `context_id`. See [Key concepts](/concepts) for every term on this page.
 
-### How the platform fits together
-
-<Steps>
-  <Step title="Connect your catalog">
-    Send the item fields your app already knows, such as names, descriptions, and metadata.
-  </Step>
-  <Step title="Capture real-world signals">
-    Track views, clicks, purchases, and custom events so recommendations can reflect real user behavior.
-  </Step>
-  <Step title="Serve recommendations">
-    Ask for recommendations from your backend using the SDKs or Core API for the surface you are rendering.
-  </Step>
-  <Step title="Tune quality over time">
-    Use contexts, rules, pipelines, model families, experiments, and analytics to improve the experience without changing your app every time.
-  </Step>
-</Steps>
-
----
-
-## Get started
-
-Start by creating an account and generating your API credentials. Then send in your first items and events.
+## Choose how to start
 
 <CardGroup cols={2}>
-  <Card
-    title="Connect Your Data"
-    icon="database"
-    href="/connect-your-data"
-  >
-    Learn how to send item and event data to NeuronSearchLab.
+  <Card title="Quickstart (API)" icon="bolt" href="/quickstart">
+    Create credentials, send an item and an event, and fetch recommendations in about ten minutes.
   </Card>
-  <Card
-    title="Generate Recommendations"
-    icon="sparkles"
-    href="/generate-recommendations"
-  >
-    Retrieve personalized results in real time with our simple API.
+  <Card title="No-code start" icon="wand-magic-sparkles" href="/instant-start">
+    Paste your website's address. NSL builds the catalogue from your pages.
   </Card>
-  <Card
-    title="Platform features"
-    icon="sliders"
-    href="https://www.neuronsearchlab.com/features"
-  >
-    See the product surfaces behind contexts, rules, analytics, and operator control.
+  <Card title="Website embed" icon="code" href="/embed">
+    One script tag renders recommendations and records views and clicks for you.
   </Card>
-  <Card
-    title="Use cases"
-    icon="grid-2"
-    href="https://www.neuronsearchlab.com/use-cases"
-  >
-    Map recommendation patterns to ecommerce, streaming, publishing, marketplaces, and lifecycle messaging.
+  <Card title="Shopify, Magento and other platforms" icon="store" href="/embed/shopify">
+    Install the app or module for your shop platform.
+  </Card>
+</CardGroup>
+
+| If you are... | Start with |
+| --- | --- |
+| A developer adding recommendations to your own app or API | [Quickstart](/quickstart), then the [SDK for your language](/sdk/overview) |
+| Running a website and want results without backend work | [No-code start](/instant-start) and the [Website embed](/embed) |
+| Running a Shopify, Magento, WooCommerce, BigCommerce, Shopware or PrestaShop store | [Shopify](/embed/shopify) or [other platforms](/embed/platforms) |
+| Deploying a Next.js app on Vercel | [Vercel integration](/platforms/vercel) |
+| An operator tuning what people see | [Console tour](/console/overview) and [Contexts](/console/contexts) |
+| Working from an AI assistant | [ChatGPT and MCP](/sdk/mcp) |
+
+## What is in these docs
+
+<CardGroup cols={3}>
+  <Card title="Integrate" icon="plug" href="/integrate/authentication">
+    Credentials, catalogue, events, recommendations, search, history imports and identity.
+  </Card>
+  <Card title="Console" icon="browser" href="/console/overview">
+    Every page of the console, in the order the sidebar shows them.
+  </Card>
+  <Card title="Playbooks" icon="route" href="/playbooks/launch-a-placement">
+    Step-by-step tasks that combine several features.
+  </Card>
+  <Card title="SDKs" icon="cube" href="/sdk/overview">
+    JavaScript, PHP, Next.js and Swift clients, and the MCP server.
+  </Card>
+  <Card title="API reference" icon="code" href="/api-reference/introduction">
+    The Core API for your application and the Platform API for automation.
+  </Card>
+  <Card title="Changelog" icon="clock-rotate-left" href="/changelog">
+    What changed, by product area.
   </Card>
 </CardGroup>
 
 <Note>
-  For the broader technical framing behind these APIs, read the [recommendation systems path](https://www.neuronsearchlab.com/blog/recommendation-systems).
+  For background on how recommendation systems work in general, read the [recommendation systems reading path](https://www.neuronsearchlab.com/blog/recommendation-systems).
 </Note>
-
-## Orchestrate your rankings
-
-The ranking platform gives non-technical operators full control over what gets recommended, to whom, and when - without writing code.
-
-<CardGroup cols={2}>
-  <Card
-    title="User Segments"
-    icon="users"
-    href="/guides/user-segments"
-  >
-    Define user cohorts by behaviour, demographics, or item interactions.
-  </Card>
-  <Card
-    title="Rules Engine"
-    icon="scale-balanced"
-    href="/guides/rules-engine"
-  >
-    Boost, bury, pin, filter, cap, dedupe, reorder, or group results with scheduled business rules.
-  </Card>
-  <Card
-    title="A/B Testing"
-    icon="flask"
-    href="/guides/ab-testing"
-  >
-    Split traffic between strategies and measure impact with real metrics.
-  </Card>
-  <Card
-    title="Scenarios"
-    icon="route"
-    href="/guides/scenarios"
-  >
-    Step-by-step walkthroughs for campaigns, flash sales, and rollouts.
-  </Card>
-</CardGroup>
-
-## Make it yours
-
-NeuronSearchLab is built to be flexible. You can adapt it to your domain, business rules, and frontend experience.
-
-<CardGroup cols={2}>
-  <Card
-    title="Customize Contexts"
-    icon="sliders"
-    href="/contexts"
-  >
-    Configure retrieval defaults and pre-query filtering for each recommendation surface.
-  </Card>
-  <Card
-    title="Secure Your Endpoints"
-    icon="shield"
-    href="/authentication"
-  >
-    Manage access with built-in authentication and OAuth client support.
-  </Card>
-  <Card
-    title="Core API"
-    icon="book"
-    href="/api-reference/introduction"
-  >
-    View serving, event, and catalog endpoints for application backends.
-  </Card>
-  <Card
-    title="ChatGPT Plugin and MCP"
-    icon="robot"
-    href="/sdk/mcp"
-  >
-    Install NeuronSearchLab in ChatGPT, or connect Claude, Codex, and other clients through hosted MCP.
-  </Card>
-  <Card
-    title="Vercel Integration"
-    icon="cloud"
-    href="/guides/vercel"
-  >
-    Provision a recommendation workspace and server-only configuration from Vercel Marketplace.
-  </Card>
-  <Card
-    title="PHP SDK"
-    icon="code"
-    href="/sdk/php"
-  >
-    Install the official Composer package for Laravel and other PHP services.
-  </Card>
-</CardGroup>

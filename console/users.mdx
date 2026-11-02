@@ -1,0 +1,29 @@
+---
+title: 'Users'
+icon: 'user'
+description: 'Look up any user to see their profile, resolved identity, event history and what NSL has learned about them.'
+---
+
+**Data → Users** lists the people NSL has a profile for, with their user ID, name, status and when they were last active. Use it to check that events from your integration are reaching the right person, and to understand why someone sees what they see.
+
+Search by user ID or name, and sort by any column. Select a user to open their panel.
+
+## User details
+
+| Tab | Shows |
+| --- | --- |
+| **Details** | User ID, name, status, metadata and last update, plus an **explainable profile**: plain-language statements about the user's interests, each with the events that support it |
+| **Identity** | The user's resolved identity from [NSL Resolve](/integrate/identity): linked identifiers, resolution status, consent purposes and external partner mappings |
+| **Events** | The user's event history, newest first: event type, item, time and placement. Also shows how much their recent searches are steering their recommendations |
+| **Embeddings** | Where the user sits relative to items in the model's embedding space |
+| **Analytics** | How many recommendations the user was served and how they engaged |
+
+### Deleting a profile
+
+The explainable profile can be deleted from the **Details** tab. This removes the statements only: the user's numerical representation is unchanged, and only events received after the deletion contribute to a rebuilt profile.
+
+## Common checks
+
+- **Events not arriving**: if a user you expect is missing, or their **Events** tab is empty, check that the `user_id` your integration sends matches the one you are searching for, including case.
+- **Duplicate people**: the same person under two IDs (for example an anonymous ID and an account ID) means identity is not being linked at sign-in. See [Identity](/integrate/identity).
+- **Unexpected recommendations**: compare the profile statements and recent events with what they were shown, then use [Explainability](/console/explainability) on a specific item.

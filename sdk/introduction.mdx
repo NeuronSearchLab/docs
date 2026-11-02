@@ -1,326 +1,212 @@
 ---
-title: "JavaScript SDK"
-icon: "js"
-description: "Install, configure, and use the official NeuronSearchLab JavaScript SDK in your applications."
+title: 'JavaScript and TypeScript'
+icon: 'js'
+description: 'Configure the client and use every public method for recommendations, search, events, items and logging.'
 ---
-
-<Note>
-The SDK is a lightweight TypeScript client with built-in event batching, automatic retries, and structured logging for the NeuronSearchLab API.
-
-Need PHP instead? View the [PHP SDK guide](/sdk/php) or install it from [Packagist](https://packagist.org/packages/neuronsearchlab/sdk-php).
-</Note>
-
-## Installation
 
 ```bash
 npm install @neuronsearchlab/sdk
 ```
 
-The SDK ships with TypeScript declarations - no additional type packages needed.
+The package includes TypeScript declarations, ES module and CommonJS exports. `NeuronSDK` is available as both a default and named export.
 
----
-
-## Initialize the client
-
-The SDK uses a Bearer token for authentication. Obtain an access token by exchanging your [SDK credentials](/authentication) and pass it when creating the client:
+## Create a client
 
 ```ts
 import NeuronSDK from "@neuronsearchlab/sdk";
 
 const sdk = new NeuronSDK({
   baseUrl: "https://api.neuronsearchlab.com/v1",
-  accessToken: "<your_access_token>",
+  oauthClientCredentials: {
+    clientId: process.env.NSL_CLIENT_ID!,
+    clientSecret: process.env.NSL_CLIENT_SECRET!,
+  },
+  autoSessionId: false,
+  propagateRecommendationRequestId: false,
 });
 ```
 
-### Configuration options
+This is a server-side example. Explicit session and request IDs prevent concurrent visitors from sharing attribution state on a long-lived client. Do not expose workspace credentials in a browser. Use the [embed](/embed) or your own backend for public clients.
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `baseUrl` | string | required | API base URL |
-| `accessToken` | string | required | Bearer token from the auth token endpoint |
-| `timeoutMs` | number | `10000` | HTTP request timeout in ms |
-| `maxRetries` | number | `2` | Retry count on 429/5xx/timeouts |
-| `collateWindowSeconds` | number | `3` | Buffer events for this many seconds before flushing |
-| `maxBatchSize` | number | `200` | Flush immediately when buffer reaches this size |
-| `maxBufferedEvents` | number | `5000` | Drop oldest events beyond this limit |
-| `propagateRecommendationRequestId` | boolean | `true` | Auto-attach `request_id` from recommendations to subsequent events |
-| `autoSessionId` | boolean | `true` | Auto-generate a session UUID |
+### Authentication options
 
----
+Configure exactly one:
 
-## Get recommendations
+| Option | Behaviour |
+| --- | --- |
+| `oauthClientCredentials` | Exchanges `clientId` and `clientSecret`, caches the token and refreshes it. Optional `tokenUrl`, `scope` (string or string array), `audience` and `additionalParameters` customise the exchange. |
+| `tokenProvider` | Function receiving `{ forceRefresh, reason }`, returning a token string or `{ accessToken, expiresAt, expiresInSeconds }`, synchronously or as a promise. `expiresAt` is a `Date` or epoch milliseconds. |
+| `accessToken` | Static bearer token. You must replace it when it expires. |
+
+A provider's `reason` is `initial`, `expired` or `unauthorized`. Honour `forceRefresh` after a `401`. Refreshable authentication retries an unauthorised request once; a static token cannot refresh itself.
+
+### Client configuration
+
+| Option | Default | Purpose |
+| --- | --- | --- |
+| `baseUrl` | Required | `https://api.neuronsearchlab.com/v1` |
+| `timeoutMs` | `10000` | Per-request timeout |
+| `maxRetries` | `2` | Retries for transient HTTP and timeout failures |
+| `fetchImpl` | Runtime fetch | Custom fetch implementation |
+| `tokenExpirySkewMs` | `60000` | Refresh before expiry; capped at half the token lifetime |
+| `collateWindowSeconds` | `3` | Event buffering window |
+| `maxBatchSize` | `200` | Flush when the event batch reaches this size |
+| `maxBufferedEvents` | `5000` | Buffer capacity; oldest pending events are dropped when exceeded |
+| `maxEventRetries` | `5` | Buffered-event retry limit |
+| `disableArrayBatching` | `false` | Send events individually |
+| `propagateRecommendationRequestId` | `true` | Remember the latest single-list/search request ID |
+| `sessionId` | Unset | Default session ID for this instance |
+| `autoSessionId` | `true` | Generate an instance session when none is supplied |
+
+## Recommendations
 
 ```ts
 const result = await sdk.getRecommendations({
-  userId: "user-123",
-  contextId: 101,
-  limit: 10,
+  userId: "user-123", contextId: 101, limit: 10,
 });
-
-console.log(result.recommendations);
-// [{ id, object, item_id, rank, score, item, metadata }, ...]
+const items = result.data ?? result.recommendations;
 ```
 
-Each recommendation includes `id`, `object`, `item_id`, `rank`, `score`, and an embedded `item` object with the metadata you stored. The response also includes a `request_id` for event attribution.
+`getRecommendations(options)` returns `Promise<RecommendationsResponse>`. `userId` is required; optional fields are `contextId`, `limit`, structured `scope`, and `startingAfter` (alias `starting_after`) for pagination. Use the response cursor rather than constructing one.
+
+`getAutoRecommendations(options)` requests a generated section. It accepts `userId`, optional `contextId`, `scope`, `limit`, `cursor`, `windowDays`, `candidateLimit` and `servedCap`. Read `section` for its title, pass `next_cursor` into the next call, and stop when `done` is true or no next cursor is returned. See [Recommendations](/integrate/recommendations).
+
+### Several rails
+
+```ts
+const page = await sdk.getRecommendationSets({
+  userId: "user-123",
+  sets: [
+    { key: "for_you", contextId: 101, limit: 8 },
+    { key: "similar", contextId: 102, itemId: 3187, limit: 4 },
+  ],
+});
+const rail = page.sets.for_you;
+if (rail.error) {
+  console.error(rail.error.message);
+} else {
+  console.log(rail.data, rail.request_id);
+}
+```
+
+`getRecommendationSets(options)` accepts `userId` or `anonymousId`, optional `sessionId`, `requestId` and a non-empty `sets` array. Each set accepts `key`, `contextId`, `limit`, `itemId`, `cartItemIds`, `pageType`, `filters`, `scope` and `query`. Set keys must be unique and match `[A-Za-z0-9_.:-]{1,64}`.
+
+The result contains ordered `results`, a keyed `sets` map, and usage counts. Check each set's `status` and `error`. Attribute events to that set's `request_id`; a batch does not set one automatic request ID for every rail.
+
+`MAX_RECOMMENDATION_SETS_PER_BATCH` is `8`. Larger explicit set lists are split. An explicit `requestId` is reused for the first chunk only. Do not assume calling a split batch again with the same ID makes every later chunk idempotent.
 
 ## Search
 
-Use `search` when the user supplies a free-text query and you want ranked catalog items back through the Core API data plane:
-
 ```ts
 const results = await sdk.search({
-  query: "waterproof trail shoes",
-  userId: "user-123",
-  contextId: 101,
-  limit: 10,
-  filter: ["category:footwear"],
-});
-
-console.log(results.data);
-```
-
-The SDK posts to `https://api.neuronsearchlab.com/v1/search`, not the console Platform API. Search responses use the same item shape as recommendations and include `query`, `request_id`, `data`, and `recommendations`.
-
-### Search-to-click loop
-
-For search-backed surfaces, treat search and events as one attribution loop:
-
-1. Run `search` with the user's query and optional context.
-2. Render results from `data` or `recommendations`.
-3. Capture `request_id` from the search response.
-4. Send that `requestId` back with the click, view, or purchase event.
-
-This keeps attribution tied to the exact result set the user saw.
-
-```ts
-const search = await sdk.search({
-  query: "wireless headphones",
-  userId: "user-123",
-  limit: 8,
-});
-
-const first = search.data[0];
-
-if (first) {
-  await sdk.trackEvent({
-    eventId: 42,
-    userId: "user-123",
-    itemId: first.item_id,
-    requestId: search.request_id,
-  });
-}
-```
-
-### Searches your own engine runs
-
-Every search is an event that steers the user's later recommendations by the weight of your Search event. If your own engine runs the search, send NSL the query and the IDs it showed, either to get complementary recommendations back or just to record it:
-
-```ts
-// Record it and get recommendations that complement your results
-// (the IDs you send are left out of the response).
-const extras = await sdk.search({
-  query: "wireless headphones",
-  userId: "user-123",
-  resultItemIds: [3187, 3190, 3201],
-});
-
-// Record only. eventId is optional and defaults to your Search event.
-await sdk.trackSearch({
-  userId: "user-123",
-  query: "wireless headphones",
-  resultItemIds: [3187, 3190, 3201],
+  query: "waterproof trail shoes", userId: "user-123",
+  contextId: 101, limit: 10, filter: ["category:footwear"],
 });
 ```
 
-When searches steered a `getRecommendations()` response it carries `search_intent`. See [searches are events](/guides/events#searches-are-events). Requires `@neuronsearchlab/sdk` 2.2.0 or later.
+`search(options)` returns `SearchResponse`, with `data`, `recommendations`, `request_id` and search information. `query` is required. The options are:
 
-### Auto-generated sections
+| Options | Purpose |
+| --- | --- |
+| `userId`, `contextId`, `limit` | Visitor, placement and result count |
+| `filter`, `filters` | Shorthand filters; `filters` also accepts structured `{ column, operator, value, logic? }` entries |
+| `scope` | Structured object or JSON string containing request constraints |
+| `resultItemIds` | Results your own search engine already displayed; NSL returns complementary items |
+| `queryRetrievalEnabled`, `fusionMethod` | Enable query retrieval and choose `rrf` or `weighted` fusion |
+| `semanticWeight`, `keywordWeight`, `keywordFields` | Tune hybrid retrieval |
+| `requestId`, `debug`, `explain`, `includeSuppressed` | Request tracing and explanation controls |
 
-Use `getAutoRecommendations` for paginated, auto-titled recommendation sections - ideal for infinite-scroll feeds:
+Snake-case aliases exist for the corresponding wire fields. Prefer one spelling consistently. See the [search reference](/api-reference/endpoint/search) for semantics and limits.
+
+## Events and delivery
+
+`trackEvent(payload)` buffers an interaction and returns a promise for its send result. Supply `userId`, integer `eventId` and integer `itemId`; add `contextId`, `requestId`, `sessionId`, `occurredAt` (Unix seconds) and `metadata` as needed.
 
 ```ts
-const section = await sdk.getAutoRecommendations({
-  userId: "user-123",
-  limit: 5,
-  windowDays: 7,
+const pending = sdk.trackEvent({
+  userId: "user-123", eventId: 42, itemId: 3187,
+  contextId: 101, requestId: result.request_id,
+  sessionId: "visit-456",
 });
-
-console.log(section.section?.title);
-// e.g. "Because you liked Running Shoes"
-
-// Load next section
-if (section.next_cursor) {
-  const next = await sdk.getAutoRecommendations({
-    userId: "user-123",
-    cursor: section.next_cursor,
-  });
-}
-```
-
----
-
-## Track events
-
-Events provide the feedback loop that powers personalization. The SDK buffers events in memory and flushes them in batches for efficiency.
-
-```ts
-await sdk.trackEvent({
-  eventId: 42,
-  userId: "user-123",
-  itemId: 3187,
-});
-```
-
-### How batching works
-
-<Steps>
-  <Step title="Buffer events">
-    Events are buffered with a timestamp that maps to `occurred_at` in the API.
-  </Step>
-  <Step title="Flush on window or batch size">
-    The buffer flushes when the collate window elapses (default 3s) or the buffer reaches `maxBatchSize`.
-  </Step>
-  <Step title="Flush during page unload">
-    On page unload (`beforeunload`, `pagehide`), remaining events are flushed automatically.
-  </Step>
-  <Step title="Retry failed sends">
-    Failed sends are retried with exponential backoff.
-  </Step>
-</Steps>
-
-You can flush manually at any time:
-
-```ts
 await sdk.flushEvents();
+await pending;
 ```
 
-### Request ID propagation
+Retain the pending promise before flushing in a short-lived process. Awaiting each event inside a loop serialises delivery; enqueue multiple events and then flush if you want a batch. Flush before a worker or request handler exits. Lifecycle flushing is best-effort, not a durable queue.
 
-When `propagateRecommendationRequestId` is enabled (the default), the SDK captures the `request_id` from `getRecommendations()` or `search()` and automatically attaches it to subsequent `trackEvent()` calls. This links events back to the result set that produced them.
+`trackSearch(payload)` records a search without fetching recommendations. Supply `userId`, `query`, optional `resultItemIds` and the same attribution fields. Omit `itemId`; `eventId` defaults to the workspace's Search signal binding when omitted.
+
+`createEvent(payload)` is a deprecated alias of `trackEvent`. It records an occurrence; it does not create an event type.
+
+`flushEvents({ useBeacon? })` attempts delivery of the current buffer and returns `Promise<void>`. `useBeacon` enables lifecycle-oriented delivery handling. Observe the event promises for delivery errors, and use your own durable event source when loss is unacceptable.
+
+`deduplicationId` is a stable caller-owned occurrence key for retry deduplication. `deduplication_id`, `idempotencyKey`, `idempotency_key`, `messageId` and `message_id` are supported aliases. Reuse a key only for the same event.
+
+## Items
+
+| Method | Input and result |
+| --- | --- |
+| `createItem<T>(item)` | Creates one item; default result type includes integer `id` and `object: "item"` |
+| `upsertItem<T>(itemOrArray)` | Creates or updates one or many items; returns the Core API response. `metadata.source_item_id` identifies repeat imports. |
+| `patchItem<T>({ itemId, ...fields })` | Updates fields on an existing item; returns `PatchItemResponse` by default |
+| `setItemActive<T>(itemId, active)` | Convenience wrapper around `patchItem` |
+| `deleteItems<T>(itemOrArray)` | Deletes one or multiple `{ itemId }` entries; returns `DeleteItemsResponse` by default |
+
+Create payloads contain `name`, optional `description` and `metadata`. Do not send an item ID when creating. Store the returned integer ID; update and delete inputs also accept integer `id` or `item_id` aliases.
 
 ```ts
-const recs = await sdk.getRecommendations({ userId: "user-123", limit: 5 });
-
-// request_id is auto-attached - no need to pass it
-await sdk.trackEvent({
-  eventId: 42,
-  userId: "user-123",
-  itemId: recs.recommendations[0].item_id,
+const item = await sdk.createItem({
+  name: "Trail shoes", description: "Lightweight waterproof running shoes",
+  metadata: { source_item_id: "SKU-42", category: "footwear" },
 });
+await sdk.patchItem({ itemId: item.id, metadata: { source_item_id: "SKU-42", category: "footwear", price: 120 } });
+await sdk.setItemActive(item.id, false);
 ```
 
----
+For array creation, provide a response type with `data` when using TypeScript; the older default generic on `upsertItem` does not describe the batch envelope. Generic types describe your expectation and do not validate a response at runtime.
 
-## Manage catalog items
+## Client state methods
 
-### Create an item
+| Method | Effect |
+| --- | --- |
+| `setAccessToken(token)` | Replaces authentication with a static token; automatic refresh is no longer used |
+| `setBaseUrl(url)` | Changes the API base URL |
+| `setTimeout(ms)` | Changes request timeout |
+| `setRequestId(idOrNull)` / `getRequestId()` | Set, clear or read the default attribution request ID |
+| `setSessionId(idOrNull)` / `getSessionId()` | Set or read the instance session; with auto-session enabled, a missing session may be regenerated |
 
-```ts
-const item = await sdk.upsertItem({
-  name: "Nike Running Shoes",
-  description: "High-performance running shoes for daily training.",
-  metadata: { category: "Footwear", brand: "Nike", price: 109.99 },
-});
-```
+Automatic request propagation remembers the latest single recommendation, auto-section or search call. It cannot choose the correct rail for a click on an older result. Send explicit IDs for multiple rails, tabs or concurrent users.
 
-The `description` field is used to generate embeddings for similarity matching. NSL generates `item.id`; persist that integer alongside your source record.
+## Errors and retries
 
-### Update an item
+| Export | Useful fields |
+| --- | --- |
+| `SDKAuthError` | `message`, optional `status` and `cause` for token acquisition failures |
+| `SDKHttpError` | `status`, `statusText`, `body` for an HTTP failure |
+| `SDKTimeoutError` | `timeoutMs` for a timed-out request |
 
-```ts
-await sdk.patchItem({
-  itemId: 3187,
-  active: false, // disable the item
-});
-```
-
-Or use the convenience helper:
-
-```ts
-await sdk.setItemActive(3187, false);
-```
-
-### Delete items
-
-```ts
-await sdk.deleteItems({ itemId: 3187 });
-
-// Batch delete
-await sdk.deleteItems([
-  { itemId: 3187 },
-  { itemId: 3188 },
-]);
-```
-
----
-
-## Error handling
-
-The SDK exports two error classes:
-
-```ts
-import NeuronSDK, { SDKHttpError, SDKTimeoutError } from "@neuronsearchlab/sdk";
-
-try {
-  await sdk.getRecommendations({ userId: "user-123" });
-} catch (err) {
-  if (err instanceof SDKHttpError) {
-    console.error(`HTTP ${err.status}: ${err.statusText}`, err.body);
-  } else if (err instanceof SDKTimeoutError) {
-    console.error(`Request timed out after ${err.timeoutMs}ms`);
-  }
-}
-```
-
-Transient errors (429, 5xx, timeouts) are retried automatically with exponential backoff up to `maxRetries` times.
-
----
+Invalid input can also throw a normal `Error`. Transient failures use bounded retry/backoff; validation and permission failures need a corrected request. Handle empty results and failed rails in your UI rather than treating every successful HTTP response as a full list.
 
 ## Logging
 
-Configure structured logging for debugging and observability:
-
 ```ts
-import { configureLogger } from "@neuronsearchlab/sdk";
-
-configureLogger({
-  level: "DEBUG",
-  enableNetworkBodyLogging: true,
-  enablePerformanceLogging: true,
-});
+import { configureLogger, logger } from "@neuronsearchlab/sdk";
+configureLogger({ level: "WARN", enableNetworkBodyLogging: false });
+logger.warn("Recommendation fallback used", { contextId: 101 });
 ```
 
-Available log levels: `TRACE`, `DEBUG`, `INFO` (default), `WARN`, `ERROR`, `FATAL`.
+`configureLogger(config)` and `logger.configure(config)` set `level`, `enableNetworkBodyLogging`, `enablePerformanceLogging`, `transport` and `redactKeys`. Levels are `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`, `FATAL`; the default is `INFO`. Network body and performance logging are off by default.
 
-You can also provide a custom transport to send logs to your own logging infrastructure:
+`logger.trace`, `debug`, `info`, `warn`, `error` and `fatal` accept a message and optional context. `shouldLog(level)`, `canLogNetworkPayloads(level)` and `isPerformanceLoggingEnabled()` inspect the active settings. A custom transport receives a `StructuredLogEntry` with level, numeric level value, message, timestamp and optional context.
 
-```ts
-configureLogger({
-  level: "WARN",
-  transport: (entry) => {
-    // entry: { level, message, timestamp, context }
-    myLogger.log(entry);
-  },
-});
-```
+Keep body logging off for normal operation: payloads can contain user data. Use `redactKeys` for application-specific fields.
 
----
+## Type reference
 
-## Session management
+The package exports `SDKConfig`; the authentication types `OAuthClientCredentialsConfig`, `TokenProvider`, `TokenProviderContext`, `TokenProviderReason`, `TokenProviderResult`; item/event types `TrackEventPayload`, `ItemUpsertPayload`, `PatchItemInput`, `PatchItemResponse`, `DeleteItemInput`, `DeleteItemsResponse`; recommendation types `RecommendationOptions`, `AutoRecommendationsOptions`, `RecommendationResource`, `RecommendationsResponse`, `Recommendation`, `RecommendationSetRequest`, `RecommendationSetsOptions`, `RecommendationSetError`, `RecommendationSetResult`, `RecommendationSetsResponse`; search types `SearchOptions`, `SearchStructuredFilter`, `SearchResponse`, `SearchIntentSummary`; and `APIErrorBody`, `LogLevel`, `LoggerConfig`, `StructuredLogEntry`, `LoggerTransport`.
 
-The SDK auto-generates a session UUID on initialization (when `autoSessionId` is true). All events include the session ID automatically. You can override or read it:
+Use these types with the methods above. The [Core API reference](/api-reference/introduction) defines the underlying resource fields.
 
-```ts
-sdk.setSessionId("custom-session-id");
-console.log(sdk.getSessionId());
-```
-
----
-
-## Next steps
-
-- View the [PHP SDK guide](/sdk/php) if you are integrating from Laravel or another PHP service.
-- View the [API documentation](/api-reference/introduction) for the underlying REST endpoints.
-- Set up the [MCP integration](/sdk/mcp) to use NeuronSearchLab from AI assistants like Claude.
-- Reach out to [contact@neuronsearchlab.com](mailto:contact@neuronsearchlab.com) if you need help.
+<Note>
+  This reference targets JavaScript 2.3.0. To use [context groups](/console/context-groups), pass their member context IDs as explicit sets in one batch. Group rules apply automatically. This published client version does not expose a `groupId` helper.
+</Note>

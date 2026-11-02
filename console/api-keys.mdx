@@ -1,0 +1,42 @@
+---
+title: 'API Keys'
+icon: 'key'
+description: 'Create scoped Platform API keys for configuration automation and MCP clients.'
+---
+
+Open **Developers → API Keys**. The page heading is **Platform API Keys**. These keys authenticate automation against `https://console.neuronsearchlab.com/api`; application traffic uses [SDK credentials](/console/sdk-credentials).
+
+## Create a key
+
+1. Select **New API key** and enter a name that identifies its application.
+2. Choose an environment: production, staging, dev or test. This is an organisational label, not a separate workspace.
+3. Choose the scopes needed by the routes you will call.
+4. Create the key and copy its full value from the reveal dialog. It is displayed once.
+5. Store it on your server or in your MCP client's secret configuration.
+
+## Scopes
+
+| Scope | Meaning |
+| --- | --- |
+| `admin` | Workspace administration; required by most configuration routes |
+| `events` | Routes that explicitly permit event access |
+| `items` | Routes that explicitly permit item access |
+| `recommendations` | Routes that explicitly permit recommendation access |
+| `search` | Routes that explicitly permit search access |
+
+A scope name does not grant access to every similarly named route. Check the operation's authentication requirements in the [Platform API reference](/api-reference/platform-api/introduction). A valid key with insufficient scope receives `403`.
+
+For example, list rules using a key with `admin` scope:
+
+```bash
+curl https://console.neuronsearchlab.com/api/rules \
+  -H "Authorization: Bearer $NSL_PLATFORM_KEY"
+```
+
+## Review and revoke
+
+The table shows the key name, visible prefix, environment, scopes, last-use time and status. Use the prefix to identify a key without exposing its full value.
+
+Select **Revoke** to disable a key. To rotate one, create and deploy its replacement first, verify access, then revoke the original. Check [Activity](/console/activity) when investigating configuration changes.
+
+Keep keys private. A publishable website key is a separate credential with a narrower purpose; see [Website embed](/console/website-embed).

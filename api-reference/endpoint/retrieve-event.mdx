@@ -1,43 +1,9 @@
 ---
 title: "Retrieve event"
 description: "Retrieve a single ingested event."
-openapi: "GET /v1/events/{event_id}"
+openapi: "/api-reference/openapi.json GET /v1/events/{event_id}"
 ---
 
-## Request
+Retrieve one recorded event occurrence by its event-record ID. This is different from `event_id` in an ingestion payload, which identifies the configured event type.
 
-```http
-GET /v1/events/12345
-```
-
-## Response
-
-```json
-{
-  "id": "12345",
-  "object": "event",
-  "user_id": "user-abc123",
-  "item_id": 3187,
-  "event_id": 42,
-  "click": {},
-  "session_id": "4a93",
-  "request_id": "c7f0d2bb-56b1-4ca7-8f09-84d8e4ed02b4",
-  "context_id": 101,
-  "placement": "home_feed",
-  "metadata": {
-    "context_id": 101,
-    "click": {}
-  },
-  "occurred_at": 1777478400,
-  "created": 1777478405
-}
-```
-
-`session_id`, `request_id`, and `placement` are `null` when not provided at ingest time.
-
-## Errors
-
-| Status | Scenario |
-| --- | --- |
-| `400` | Malformed event ID |
-| `404` | Event does not exist for the authenticated tenant |
+Inspect its user, item, context and request attribution when debugging tracking. See [Events](/integrate/events) and [Explainability](/console/explainability).

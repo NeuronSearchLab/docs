@@ -1,0 +1,89 @@
+---
+title: 'Catalogue'
+icon: 'database'
+description: 'Get the items you want to recommend into NeuronSearchLab and keep them current.'
+---
+
+Your catalogue is every item NSL may recommend. The richer each item's description and metadata, the better NSL can match it to people and the more you can do with filters and rules later.
+
+## Choose an ingestion path
+
+| Path | Best for | Page |
+| --- | --- | --- |
+| **Core API or SDK** | Any catalogue you control in code. Full control over fields and timing. | This page |
+| **Website crawl** | Getting started quickly from a public website, with no code | [No-code start](/instant-start) |
+| **Shop platform** | Shopify, Magento, WooCommerce, BigCommerce, Shopware or PrestaShop stores | [Shopify](/embed/shopify), [other platforms](/embed/platforms) |
+| **Connector** | Product feeds, CSV files or a storage bucket | [Integrations](/console/integrations) |
+
+You can combine paths, but verify source identifiers before switching ingestion methods. Matching identifiers let an importer reuse existing items; unrelated or missing identifiers can create duplicates.
+
+## What makes a good item
+
+| Field | Required | Why it matters |
+| --- | --- | --- |
+| `name` | Yes | Shown in the console and used for similarity. |
+| `description` | No, but strongly recommended | The main text NSL reads to understand an item. Items with thin or duplicated descriptions are hard to tell apart. |
+| `metadata` | No | Any JSON object: `category`, `brand`, `price`, `availability`, `author`, `published_at`, `image_url`, `url`, `sku`. Metadata powers filters, rules, segments and diversity controls, and is returned with each recommendation so you can render it. |
+| `active` | Update only | New items are active. Set `active: false` on an update to stop recommending an item while retaining it. |
+
+<Tip>
+  Use consistent metadata keys across all items, such as `category` everywhere rather than `category` on some and `type` on others. Rules and filters match on exact keys.
+</Tip>
+
+## Create items
+
+```bash
+curl -X POST https://api.neuronsearchlab.com/v1/items \
+  -H "Authorization: Bearer <access_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Trail running shoes",
+    "description": "Lightweight shoes with a waterproof upper and a rock plate.",
+    "metadata": { "category": "footwear", "brand": "Acme", "price": 120, "availability": "in_stock", "sku": "AC-TR-01" }
+  }'
+```
+
+```json
+{ "id": 3187, "object": "item", "name": "Trail running shoes", "active": true, "created": 1777478400 }
+```
+
+Send an array to create many items in one call. NSL generates each item's integer `id`: do not send your own. **Store the returned `id` next to your source record**, because events, `item_id` seeds and updates all use it. Keep your own identifier (SKU, slug, URL) in `metadata` so you can look items up both ways.
+
+For repeat imports, use `metadata.source_item_id` as a stable identifier within your workspace. Sending the same source ID updates the existing item and returns its NSL integer ID. Without it, ingestion creates a new item; a custom `sku` field alone does not provide this guarantee. Do not repeat a source ID twice in the same batch.
+
+In [JavaScript](/sdk/introduction#items) and [PHP](/sdk/php), use `upsertItem` with one item or an array. In [Swift](/sdk/swift), use `upsertItem` for one item and `upsertItems` for an array. Method signatures for updates and deletion also differ by language; the table below uses JavaScript notation.
+
+## Update and retire items
+
+| Task | Call | SDK |
+| --- | --- | --- |
+| Change name, description or metadata | `POST /v1/items/{item_id}` | `patchItem({ itemId, ... })` |
+| Stop recommending an item, keep its history | `POST /v1/items/{item_id}` with `{"active": false}` | `setItemActive(itemId, false)` |
+| Remove an item entirely | `DELETE /v1/items/{item_id}` | `deleteItems({ itemId })` |
+
+Changing the name, description or metadata refreshes how NSL represents the item. Prefer deactivating over deleting when an item is out of stock or temporarily unavailable, so its event history still counts.
+
+## Keep the catalogue in sync
+
+A typical integration has two parts:
+
+1. **A sync job** that creates new items and updates changed ones on a schedule (or on change events from your system), storing returned IDs.
+2. **Real-time updates** for fields that change often and affect what may be shown, such as `availability` or `price`.
+
+Use a context filter or a `filter` rule to exclude unavailable items, for example `availability equals out_of_stock`. See [Rules Engine](/console/rules).
+
+## Check what NSL has
+
+- **Data → Items** lists every item with filters for name, status, metadata text and dates. See [Items](/console/items).
+- `GET /v1/items` and `GET /v1/items/{item_id}` read items back through the API. See the [Items reference](/api-reference/endpoint/list-items).
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Track events" icon="signal" href="/integrate/events">
+    Record what people do with your items.
+  </Card>
+  <Card title="Import history" icon="clock-rotate-left" href="/integrate/import-history">
+    Load past orders or pageviews so a model can train straight away.
+  </Card>
+</CardGroup>

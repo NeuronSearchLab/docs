@@ -1,88 +1,12 @@
 ---
-title: "Integration Changelog"
-icon: "plug"
-description: "Release history for the NeuronSearchLab Vercel integration, Next.js SDK, and personalized starter."
-rss: true
+title: "Integration updates"
+description: "Selected updates and current guidance for integrations."
 ---
 
-<Update label="October 12, 2026" rss="October 12, 2026: Vercel integration.">
+## October 2026: website display refinements
 
-### Vercel integration
+The website embed supports theme customization and handling for empty placements and image-less catalogue items. See [Website embed](/embed) for the current options.
 
-#### Features
+## Choose an integration
 
-- **Vercel integration** — Added native Vercel Marketplace provisioning, resource-level plans, server-only environment variables, credential rotation, and console SSO.
-- **Vercel integration** — Price Vercel plans at the direct list and add Growth
-- **Vercel integration** — Test the aligned Vercel plan ladder
-- One request pool and &#36;7.50 per 1,000 overage on Marketplace plans
-
-</Update>
-
-<Update label="September 23, 2026" rss="September 23, 2026: Next.js SDK.">
-
-### Next.js SDK
-
-#### Features
-
-- **SDK API contract** — Expanded SDK calls around recommendation contexts, event payloads, item identifiers, item deletion, request/session metadata, and the v1 API contract.
-- **SDK API contract** — Send searches as events that steer recommendations (#3)
-
-</Update>
-
-<Update label="August 21, 2026" rss="August 21, 2026: Next.js SDK, Next.js personalized starter.">
-
-### Next.js SDK
-
-#### Breaking changes
-
-- Require integer NSL resource IDs (#1)
-
-### Next.js personalized starter
-
-#### Breaking changes
-
-- Use generated integer NSL resource IDs (#1)
-
-</Update>
-
-<Update label="August 20, 2026" rss="August 20, 2026: Next.js SDK, Vercel integration, Next.js personalized starter.">
-
-### Next.js SDK
-
-#### Features
-
-- **Next.js integration** — Added a server-first Next.js SDK and deployable personalized content starter with catalogue sync, event tracking, safe fallbacks, and provisioned runtime identifiers.
-- **Next.js integration** — Add server-first Next.js SDK
-
-#### Bug fixes
-
-- Build package for git installs
-- Normalize events for Core API
-- Support numeric runtime identifiers
-- Make catalogue sync idempotent
-
-### Vercel integration
-
-#### Features
-
-- **Vercel integration** — Add Vercel Marketplace Partner API
-- **Vercel integration** — Forward Vercel resource attribution metadata
-
-#### Bug fixes
-
-- Inject default context and event identifiers
-
-### Next.js personalized starter
-
-#### Features
-
-- **Next.js integration** — Add personalized Next.js starter
-
-#### Bug fixes
-
-- Send canonical Core API events
-- Use provisioned runtime identifiers
-- Keep starter seamless during serving warm-up
-- Continue after idempotent catalogue sync
-
-</Update>
+Use the [platform guide](/embed/platforms) for storefront installation, [Integrations](/console/integrations) for catalogue connectors and video enrichment, or [Vercel](/platforms/vercel) for application provisioning. Catalogue ingestion and behaviour tracking are separate steps; verify both before launch.

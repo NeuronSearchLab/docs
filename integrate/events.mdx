@@ -1,0 +1,156 @@
+---
+title: 'Events'
+icon: 'signal'
+description: 'Record what people do with your items, credit it to the recommendations that caused it, and understand how searches and integration signals are counted.'
+---
+
+Events are the behaviour NSL learns from: a view, a click, an add-to-cart, a purchase, a skip, a search. They drive personalisation, analytics, experiments and model training. This page covers sending them. To create and weight event types in the console, see the [Events page](/console/events).
+
+## Event types and weights
+
+Each event refers to an **event type** by its integer ID, for example `42`. Event types are created in **Data → Events → Configure signals**, where each one has:
+
+| Property | Meaning |
+| --- | --- |
+| **ID** | The integer you send as `event_id`. It never changes, even if you rename the event. |
+| **Label** | A name for people, such as "Add to cart". Labels are never matched against what you send. |
+| **Weight** (0-100) | How much the action counts. A purchase at 100 counts ten times a click at 10. Weight 0 records the event without it influencing ranking or training. |
+| **Polarity** | Positive, neutral or negative. Negative events (skip, hide, report) teach the ranker to suppress similar items. |
+
+Every workspace starts with **View** (weight 20), **Click** (60) and **Purchase** (100). Add more from the event library, which has sensible default weights for common actions:
+
+| Group | Event types (default weight) |
+| --- | --- |
+| Browsing | Impression (10), View (20), Search (25), Dwell (45), Click (60) |
+| Commerce | Add to wishlist (65), Add to cart (70), Begin checkout (85), Purchase (100); negative: Remove from cart (20), Refund (5) |
+| Engagement | Like (70), Save (75), Comment (75), Rate (80), Follow (80), Share (90) |
+| Media | Watch start (30), Watch 50% (55), Watch complete (100); negative: Skip (15) |
+| Negative | Dislike (10), Not interested (5), Report (20), Unsubscribe (15) |
+
+You can also create custom event types, and change any label or weight later. Training uses new weights from its next run; request-time features that read weights, such as search intent and impression fatigue, use them straight away.
+
+## Send events
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.neuronsearchlab.com/v1/events \
+  -H "Authorization: Bearer <access_token>" \
+  -H "Content-Type: application/json" \
+  -d '[{
+    "user_id": "user-123",
+    "event_id": 42,
+    "item_id": 3187,
+    "context_id": 101,
+    "request_id": "c7f0d2bb-56b1-4ca7-8f09-84d8e4ed02b4",
+    "session_id": "sess-9",
+    "occurred_at": 1777478400
+  }]'
+```
+
+```ts JavaScript
+await sdk.trackEvent({ userId: "user-123", eventId: 42, itemId: 3187, contextId: 101 });
+```
+
+```php PHP
+$sdk->trackEvent(['userId' => 'user-123', 'eventId' => 42, 'itemId' => 3187, 'contextId' => 101]);
+```
+
+</CodeGroup>
+
+| Field | Required | Notes |
+| --- | --- | --- |
+| `user_id` | Yes | Your identifier for the person. Use the same value you pass when requesting recommendations. |
+| `event_id` | Yes (except searches) | The integer event type ID. |
+| `item_id` | Yes (except searches) | The NSL item ID. |
+| `context_id` | No | The context where it happened. Lets analytics report per placement. |
+| `request_id` | No, but recommended | The `request_id` of the recommendation or search response the user acted on. |
+| `session_id` | No | Groups events into a visit for analytics and journeys. |
+| `placement` | No | A free-text name for where on the page it happened. |
+| `occurred_at` | No | Unix seconds. Defaults to the time NSL receives it. Use it when sending events late. |
+| `metadata` | No | Any extra detail, such as `amount` and `currency` for a purchase. |
+
+A request can carry one event or an array of up to 200. The JavaScript, PHP and Swift clients buffer events; use their documented flush and completion methods before a short-lived process exits. The Next.js wrapper sends immediately and its `flush()` is a compatibility no-op.
+
+<Note>
+  Send purchases and other conversions from your server, where you know they really happened. Events that arrive from a browser can be forged by anyone who can read your page.
+</Note>
+
+## Credit events to recommendations
+
+Every recommendation and search response has a `request_id`. When a user clicks or buys something they saw in that response, send the same `request_id` with the event. This is how:
+
+- **Analytics** reports click-through and conversion per context and per request.
+- **Experiments** can associate behaviour with a variant. Read the [metric definitions and limitations](/console/experiments) before interpreting a result.
+- **Explainability** replays the exact decision a user saw.
+
+The JavaScript, PHP and Swift clients can remember the latest single-list or search `request_id` (`propagateRecommendationRequestId`, on by default). Next.js requires explicit attribution. For several rails or a client shared by concurrent users, always pass the matching response's `request_id`, context and session explicitly.
+
+## Searches are events
+
+A search says clearly what someone wants, so NSL records it as an event: one with a `query` and no `item_id`, on the event type your **search** signal is bound to. It carries that event type's weight, exactly as a click would.
+
+| Call | Who ran the search | What comes back |
+| --- | --- | --- |
+| `POST /v1/search` with `query` | NSL | Ranked search results |
+| `POST /v1/search` with `query` and `result_item_ids` | Your own search engine | Recommendations that complement your results |
+| `POST /v1/events` with `query` and no `item_id` | Your own search engine | The recorded event |
+
+```ts
+await sdk.trackSearch({
+  userId: "user-123",
+  query: "waterproof trail shoes",
+  resultItemIds: [3187, 3190, 3201], // what your engine showed, optional
+});
+```
+
+The items a search showed are stored as impressions, never as items the user chose, so they do not affect training, "don't re-show seen items" or popularity. When the user opens a result, send a normal click with that item, and optionally the `query` they came from.
+
+### How searches steer recommendations
+
+On each later recommendation request for that user, NSL weighs their searches from the last 14 days against their item events. Each signal counts its event weight and halves every 72 hours. The searches' share of that total decides how far recommendations lean towards them:
+
+- the items closest to each search join the candidates, with slots split between searches by weight, so three different searches bring three kinds of item rather than one blurred average;
+- after ranking, the order is blended towards whichever search each item matches best, by that share;
+- your rules still apply afterwards, so a boost or pin you configured wins.
+
+Requests that already state a narrower intent (a search, an `item_id` seed, a basket or an auto section) are left alone. The response reports what searches contributed in `search_intent`, and the user's drawer in **Data → Users** shows the same breakdown.
+
+To tune it, change the weight of your Search event. Set it to 0 to record searches without them steering anything, or turn off **Search intent** in a pipeline's scoring stage to exclude one context.
+
+## Integration signals
+
+The [embed](/embed), the Shopify app, the platform modules and the history importers record behaviour for you. None of them send an event name. Each reports a **signal**, a fixed concept NSL defines, and your workspace binds each signal to one of your event types.
+
+| Signal | Reported by | Default weight |
+| --- | --- | --- |
+| `view` | Embed, platform modules, Google Analytics import | 20 |
+| `click` | Google Analytics import | 60 |
+| `rec_impression` | Embed: a recommended card at least half visible for two seconds | 5 |
+| `rec_click` | Embed: a recommended card was clicked | 60 |
+| `add_to_cart` | Embed, platform modules, Google Analytics import | 70 |
+| `purchase` | Shopify order import, platform order connectors, Google Analytics import | 100 |
+| `order_reported` | Embed: `nsl('order', …)` from the browser | 0 |
+| `search` | `POST /v1/search` and search events | 25 |
+
+- **Enabling an integration creates its event types.** Creating an embed key or starting an import creates an event type for each signal it reports that is not yet bound. These count towards your plan's event-type limit.
+- **Nothing is matched by name.** An event you created called "clicked" is not assumed to be the click signal.
+- **Rebind to reuse an event you already track.** In **Data → Events → Configure signals → Integration signals**, choose which event type each signal lands on. The list shows which integrations report each signal.
+- **A bound event type cannot be deleted.** Rebind its signal first.
+
+This is what keeps behaviour consistent across sources: purchases from Shopify, your server and a CSV import all land on the event type bound to `purchase`.
+
+## Check events are arriving
+
+Open **Data → Events**. The live table shows each event with its user, item, placement, session and time, and you can filter to one user or item. A user's drawer in **Data → Users** lists their history. See [Events page](/console/events) and [Users](/console/users).
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Serve recommendations" icon="sparkles" href="/integrate/recommendations">
+    Ask for ranked items for each placement.
+  </Card>
+  <Card title="Import history" icon="clock-rotate-left" href="/integrate/import-history">
+    Load past behaviour so models train from day one.
+  </Card>
+</CardGroup>

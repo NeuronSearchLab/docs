@@ -49,99 +49,147 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentation",
+        "tab": "Guides",
+        "icon": "book",
         "groups": [
           {
-            "group": "Get Started",
-            "icon": "rocket",
+            "group": "Get started",
             "pages": [
               "introduction",
               "quickstart",
               "instant-start",
-              "connect-your-data",
-              "generate-recommendations",
-              "generate-search-results",
-              {
-                "group": "Website embed",
-                "pages": [
-                  "embed",
-                  "embed/shopify",
-                  "embed/platforms"
-                ],
-                "icon": "code"
-              },
-              "authentication"
+              "concepts"
+            ],
+            "icon": "rocket"
+          },
+          {
+            "group": "Integrate",
+            "pages": [
+              "integrate/authentication",
+              "integrate/catalogue",
+              "integrate/events",
+              "integrate/recommendations",
+              "integrate/search",
+              "integrate/import-history",
+              "integrate/identity"
+            ],
+            "icon": "plug"
+          },
+          {
+            "group": "Website and platforms",
+            "pages": [
+              "embed",
+              "embed/shopify",
+              "embed/platforms",
+              "platforms/vercel"
+            ],
+            "icon": "globe"
+          },
+          {
+            "group": "Playbooks",
+            "pages": [
+              "playbooks/launch-a-placement",
+              "playbooks/campaigns",
+              "playbooks/measure-performance",
+              "playbooks/troubleshooting"
+            ],
+            "icon": "route"
+          }
+        ]
+      },
+      {
+        "tab": "Console",
+        "icon": "browser",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "console/overview",
+              "console/assistant"
             ]
           },
           {
-            "group": "Recommendation Control",
-            "icon": "sliders",
+            "group": "Relevance",
             "pages": [
-              "contexts",
-              {
-                "group": "Contexts",
-                "pages": [
-                  "guides/contexts",
-                  "guides/how-to-launch-a-new-context",
-                  "guides/recommendation-control-demo"
-                ],
-                "icon": "sliders"
-              },
-              {
-                "group": "Ranking controls",
-                "pages": [
-                  "guides/pipeline-config",
-                  "guides/rules-engine",
-                  "guides/rerank-controls",
-                  "guides/explainability",
-                  "guides/ab-testing"
-                ],
-                "icon": "arrow-down-short-wide"
-              },
-              {
-                "group": "Audience and scenarios",
-                "pages": [
-                  "guides/user-segments",
-                  "guides/scenarios"
-                ],
-                "icon": "users"
-              }
+              "console/contexts",
+              "console/context-groups",
+              "console/rules",
+              "console/segments",
+              "console/pipeline"
             ]
           },
           {
-            "group": "NSL Connect",
-            "icon": "fingerprint",
+            "group": "Data",
             "pages": [
-              "guides/nsl-connect",
-              "guides/integrations",
-              "guides/vercel",
-              "guides/users-and-items",
-              "guides/events",
-              "guides/backfill"
+              "console/items",
+              "console/users",
+              "console/events"
             ]
           },
           {
-            "group": "Console Workflow",
-            "icon": "browser",
+            "group": "Insights",
             "pages": [
-              "guides/studio-workflow",
-              "guides/quick-search",
-              "guides/api-keys",
-              "guides/models",
-              "guides/analytics"
+              "console/analytics",
+              "console/experiments",
+              "console/explainability"
             ]
           },
           {
-            "group": "Developer How-To",
-            "icon": "code",
+            "group": "Models",
             "pages": [
-              "guides/how-to-serve-recommendations",
-              "guides/how-to-connect-catalog-and-events",
-              "guides/how-to-measure-recommendation-performance"
+              "console/models",
+              "console/model-architectures",
+              "console/training"
+            ]
+          },
+          {
+            "group": "Developers",
+            "pages": [
+              "console/website-embed",
+              "console/sdk-credentials",
+              "console/api-keys",
+              "console/integrations"
+            ]
+          },
+          {
+            "group": "Account",
+            "pages": [
+              "console/billing",
+              "console/members",
+              "console/activity",
+              "console/account"
             ]
           }
-        ],
-        "icon": "book"
+        ]
+      },
+      {
+        "tab": "SDKs",
+        "icon": "cube",
+        "groups": [
+          {
+            "group": "Choose an SDK",
+            "pages": [
+              "sdk/overview"
+            ]
+          },
+          {
+            "group": "Client libraries",
+            "pages": [
+              "sdk/introduction",
+              "sdk/nextjs",
+              "sdk/php",
+              "sdk/swift"
+            ]
+          },
+          {
+            "group": "Tools and migration",
+            "pages": [
+              "sdk/mcp",
+              "sdk/mcp-tools",
+              "sdk/integer-id-migration"
+            ]
+          }
+        ]
       },
       {
         "tab": "Core API",
@@ -285,9 +333,20 @@
                   "api-reference/platform-api/contexts/listContexts",
                   "api-reference/platform-api/contexts/createContext",
                   "api-reference/platform-api/contexts/updateContext",
-                  "api-reference/platform-api/contexts/getContextActiveModel"
+                  "api-reference/platform-api/contexts/getContextActiveModel",
+                  "api-reference/platform-api/contexts/deleteContext"
                 ],
                 "icon": "sliders"
+              },
+              {
+                "group": "Context groups",
+                "pages": [
+                  "api-reference/platform-api/context-groups/listContextGroups",
+                  "api-reference/platform-api/context-groups/createContextGroup",
+                  "api-reference/platform-api/context-groups/updateContextGroup",
+                  "api-reference/platform-api/context-groups/deleteContextGroup",
+                  "api-reference/platform-api/context-groups/saveContextGroupLayout"
+                ]
               },
               {
                 "group": "Rules",
@@ -310,14 +369,6 @@
                   "api-reference/platform-api/pipelines/deletePipeline"
                 ],
                 "icon": "diagram-project"
-              },
-              {
-                "group": "Rerank controls",
-                "pages": [
-                  "api-reference/platform-api/rerank-controls/getRerankControls",
-                  "api-reference/platform-api/rerank-controls/saveRerankControls"
-                ],
-                "icon": "arrows-up-down"
               },
               {
                 "group": "Experiments",
@@ -375,7 +426,6 @@
               "api-reference/platform-api/analytics/compareItems",
               "api-reference/platform-api/search/consoleSearch",
               "api-reference/platform-api/explainability/explainRecommendation",
-              "api-reference/platform-api/assistant/assistantChat",
               "api-reference/platform-api/assistant/studioChat"
             ],
             "icon": "chart-line"
@@ -407,55 +457,20 @@
         "icon": "gear"
       },
       {
-        "tab": "SDK",
+        "tab": "Changelog",
+        "icon": "clock-rotate-left",
         "groups": [
           {
-            "group": "JavaScript SDK",
-            "icon": "js",
+            "group": "Product updates",
             "pages": [
-              "sdk/introduction",
-              "sdk/integer-id-migration"
-            ]
-          },
-          {
-            "group": "PHP SDK",
-            "icon": "code",
-            "pages": [
-              "sdk/php"
-            ]
-          },
-          {
-            "group": "MCP Integration",
-            "icon": "robot",
-            "pages": [
-              "sdk/mcp"
-            ]
-          }
-        ],
-        "icon": "cube"
-      },
-      {
-        "tab": "Changelog",
-        "menu": [
-          {
-            "item": "All changes",
-            "icon": "list",
-            "pages": [
-              "changelog"
-            ]
-          },
-          {
-            "item": "By source",
-            "icon": "filter",
-            "pages": [
+              "changelog",
               "changelog/console",
               "changelog/sdk",
               "changelog/mcp",
               "changelog/integrations"
             ]
           }
-        ],
-        "icon": "clock-rotate-left"
+        ]
       }
     ],
     "global": {
@@ -500,5 +515,135 @@
       "github": "https://github.com/neuronsearchlab",
       "linkedin": "https://linkedin.com/company/neuronsearchlab"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/authentication",
+      "destination": "/integrate/authentication"
+    },
+    {
+      "source": "/connect-your-data",
+      "destination": "/integrate/catalogue"
+    },
+    {
+      "source": "/generate-recommendations",
+      "destination": "/integrate/recommendations"
+    },
+    {
+      "source": "/generate-search-results",
+      "destination": "/integrate/search"
+    },
+    {
+      "source": "/contexts",
+      "destination": "/console/contexts"
+    },
+    {
+      "source": "/guides/contexts",
+      "destination": "/console/contexts"
+    },
+    {
+      "source": "/guides/analytics",
+      "destination": "/console/analytics"
+    },
+    {
+      "source": "/guides/api-keys",
+      "destination": "/console/api-keys"
+    },
+    {
+      "source": "/guides/studio-workflow",
+      "destination": "/console/assistant"
+    },
+    {
+      "source": "/guides/ab-testing",
+      "destination": "/console/experiments"
+    },
+    {
+      "source": "/guides/explainability",
+      "destination": "/console/explainability"
+    },
+    {
+      "source": "/guides/integrations",
+      "destination": "/console/integrations"
+    },
+    {
+      "source": "/guides/users-and-items",
+      "destination": "/console/items"
+    },
+    {
+      "source": "/guides/models",
+      "destination": "/console/models"
+    },
+    {
+      "source": "/guides/quick-search",
+      "destination": "/console/overview"
+    },
+    {
+      "source": "/guides/pipeline-config",
+      "destination": "/console/pipeline"
+    },
+    {
+      "source": "/guides/rules-engine",
+      "destination": "/console/rules"
+    },
+    {
+      "source": "/guides/user-segments",
+      "destination": "/console/segments"
+    },
+    {
+      "source": "/guides/events",
+      "destination": "/integrate/events"
+    },
+    {
+      "source": "/guides/nsl-connect",
+      "destination": "/integrate/identity"
+    },
+    {
+      "source": "/guides/backfill",
+      "destination": "/integrate/import-history"
+    },
+    {
+      "source": "/guides/vercel",
+      "destination": "/platforms/vercel"
+    },
+    {
+      "source": "/guides/scenarios",
+      "destination": "/playbooks/campaigns"
+    },
+    {
+      "source": "/guides/how-to-launch-a-new-context",
+      "destination": "/playbooks/launch-a-placement"
+    },
+    {
+      "source": "/guides/how-to-measure-recommendation-performance",
+      "destination": "/playbooks/measure-performance"
+    },
+    {
+      "source": "/guides/how-to-connect-catalog-and-events",
+      "destination": "/integrate/catalogue"
+    },
+    {
+      "source": "/guides/how-to-serve-recommendations",
+      "destination": "/integrate/recommendations"
+    },
+    {
+      "source": "/guides/recommendation-control-demo",
+      "destination": "/playbooks/launch-a-placement"
+    },
+    {
+      "source": "/guides/rerank-controls",
+      "destination": "/console/contexts"
+    },
+    {
+      "source": "/api-reference/platform-api/assistant/assistantChat",
+      "destination": "/sdk/mcp"
+    },
+    {
+      "source": "/api-reference/platform-api/rerank-controls/getRerankControls",
+      "destination": "/console/contexts"
+    },
+    {
+      "source": "/api-reference/platform-api/rerank-controls/saveRerankControls",
+      "destination": "/console/contexts"
+    }
+  ]
 }
