@@ -1,0 +1,47 @@
+---
+title: 'Model Training'
+icon: 'dumbbell'
+description: 'Follow training runs, compare their results on your data, read their logs and stop runs you no longer need.'
+---
+
+**Models → Model Training** lists every training run in your workspace, whether you started it from [Models](/console/models), from [Events → Training settings](/console/events#training-settings), or a [scheduled retrain](/console/models#scheduled-retraining) started it for you.
+
+## Recent jobs
+
+The header counts total, completed, in-progress and failed runs. Each row shows the run, when it started and how long it took, and its status. **Refresh** updates the list.
+
+Select a run to open its details:
+
+| Section | Shows |
+| --- | --- |
+| **Training configuration** | The recommender, signal template and settings the run used |
+| **Runtime details** | Duration, approval status, the target it was promoted to, and when |
+| **Final metrics** | How the model scored on held-out data from your workspace (see below) |
+| **Logs** | The run's log, streamed live while it is running. **Restart** replays the stream from the beginning |
+
+**Stop job** cancels a run that is still in progress.
+
+## Metrics
+
+Runs are graded on data held back from training, so the scores reflect how the model would have done on real behaviour it had not seen.
+
+| Metric | Meaning | Higher is |
+| --- | --- | --- |
+| **NDCG@10** | Whether the items people went on to engage with appear near the top of the first 10 | Better |
+| **Recall@20** | Share of the items people engaged with that appear in the first 20 | Better |
+| **MRR@10** | How high the first relevant item ranks, within the first 10 | Better |
+| **Coverage@20** | Share of the catalogue that appears in someone's first 20 | Broader |
+| **Novelty** | How far recommendations go beyond the most popular items | More adventurous |
+| **Diversity** | How different the recommended items are from each other | More varied |
+| **Tail share** | Share of recommendations from less popular items | More long tail |
+| **Training cost**, **Training time**, **Inference p95** | What the run cost, how long it took, and how fast it serves | Lower is better |
+
+Each metric is marked **Good** or **Needs improvement** against typical values.
+
+## Compare runs
+
+Tick two or more completed runs to compare their metrics side by side. Runs trained in the same batch share a data snapshot and are directly comparable. Runs from different snapshots are flagged: treat their differences with caution, because the data they were graded on is not the same.
+
+## What happens next
+
+A finished run produces a model version in **Your models** on the [Models](/console/models) page. From there you deploy it to a context, or let scheduled retraining promote it if it beats the live model.

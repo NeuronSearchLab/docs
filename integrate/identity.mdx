@@ -1,0 +1,60 @@
+---
+title: "Identity (NSL Resolve)"
+description: "Link first-party identifiers, record consent and manage partner-scoped identities."
+---
+
+NSL Resolve connects identifiers that belong to the same recommendation subject. It is optional: if your application already sends one stable `user_id` across sessions and devices, use that ID directly for recommendations and events.
+
+Use resolution when anonymous visitors sign in, when several applications use different account identifiers, or when you need approved partner workflows. Keep account matching on your backend, where you can verify that the identifiers belong together.
+
+## Resolve an identity
+
+Call [Resolve identity](/api-reference/platform-api/identity/resolveIdentity) with a **Platform API key**, not a Core API access token. Send the identifiers you can verify and the consent decisions you have collected.
+
+```bash
+curl -X POST https://console.neuronsearchlab.com/api/identity/resolve   -H "Authorization: Bearer $NSL_API_KEY"   -H "Content-Type: application/json"   -d '{
+    "identifiers": [
+      {"type": "customer_user_id", "value": "customer-123"},
+      {"type": "anonymous_id", "value": "visitor-456"}
+    ],
+    "consent": {"identity_resolution": true, "recommendations": true}
+  }'
+```
+
+The response includes a canonical `identityId`, resolution status, confidence and consent information. Store that result in your application. If you use the canonical ID as your recommendation `user_id`, use it consistently for subsequent recommendations and events. Resolving identifiers alone is not a substitute for sending behaviour events or checking the purposes permitted by the response.
+
+| Identifier family | Types |
+| --- | --- |
+| Customer and account | `customer_user_id`, `account_id`, `crm_id`, `subscription_id` |
+| Anonymous and session | `anonymous_id`, `session_id`, `cookie_id`, `app_instance_id` |
+| Contact hashes | `email_sha256`, `phone_sha256` |
+| Device and household | `device_id`, `mobile_ad_id`, `ctv_device_id`, `household_id` |
+| Partner | `external_partner_id` |
+
+An identifier can also carry `namespace` and `source`. Keep namespaces stable when two systems could otherwise issue the same value to different people. For contact hash types, supply the expected normalized SHA-256 value rather than a raw address or number.
+
+## Record and review consent
+
+[Record consent](/api-reference/platform-api/identity/recordConsent) accepts `identityId`, a purpose-to-boolean `consent` map and an optional `source`. Purposes include `recommendations`, `personalisation`, `analytics`, `identity_resolution`, `cross_device_linking`, `measurement`, `third_party_activation` and `data_collaboration`.
+
+Record changes when the user's choices change. Your application must also apply those choices to the data it sends and the features it enables; recording consent is not a blanket permission for every use of the identity.
+
+Open **Data → Users**, select a user and review the **Identity** tab for resolution state, consent and partner mappings. Use [List consent records](/api-reference/platform-api/identity/listConsentRecords) for an API workflow.
+
+## Partner-scoped IDs
+
+Register a partner through [Create partner](/api-reference/platform-api/identity/createIdentityPartner), specifying its name, type and allowed purposes. Then [mint an NSL ID](/api-reference/platform-api/identity/mintNslId) for a resolved identity and that partner.
+
+A partner-scoped NSL ID differs between partners. Use it when a partner needs a stable subject identifier without receiving your application's original identifiers. The canonical `identityId` is returned to your authorized application by the resolution API; a partner-scoped ID is a separate value. Minting requires the relevant activation or collaboration consent.
+
+## Data collaborations
+
+A collaboration lets two workspaces calculate aggregate overlap for approved identifiers.
+
+1. [Create a collaboration](/api-reference/platform-api/identity/createDataCollaboration) with a partner workspace, allowed identifier types and optional expiry.
+2. Have the other workspace [approve it](/api-reference/platform-api/identity/approveDataCollaboration).
+3. [Contribute eligible identifiers](/api-reference/platform-api/identity/contributeDataCollaboration). Supported match types are `email_sha256` and `phone_sha256`.
+4. [Calculate overlap](/api-reference/platform-api/identity/calculateDataCollaborationOverlap) and interpret the aggregate result.
+5. [Revoke the collaboration](/api-reference/platform-api/identity/revokeDataCollaboration) when it is no longer needed.
+
+Check approval, expiry and consent before contributing. The overlap result is a count-based comparison; it does not supply the other workspace's raw customer records.

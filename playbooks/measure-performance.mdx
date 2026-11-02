@@ -1,0 +1,43 @@
+---
+title: 'Measure recommendation performance'
+icon: 'gauge'
+description: 'Verify instrumentation, choose meaningful denominators and compare ranking changes responsibly.'
+---
+
+Start with a question about one placement: are people engaging with it, are those engagements valuable, and did a change improve them?
+
+## Verify the measurement loop
+
+1. Request a result set and retain its `request_id` and context ID.
+2. Render the items and record the events your product actually observes.
+3. Send clicks and conversions with the correct item, user, context, session and request IDs.
+4. Find a sample event in **Data → Events** and replay the request in **Insights → Explainability**.
+5. Use real data in **Insights → Analytics**. Sample dashboards demonstrate the interface; they do not measure your traffic.
+
+NSL serving an item does not prove it was visible on screen. Define an impression event if your metric requires visibility, and avoid counting component mounting as visibility.
+
+## Choose the metric and denominator
+
+| Question | Measure |
+| --- | --- |
+| Does the placement reach people? | Served users, requests and items, scoped to the placement |
+| Do visible items attract clicks? | Attributed click events divided by your defined visible impressions |
+| Do recommendations lead to purchases? | Attributed purchases or purchasing users, with a stated attribution window |
+| Are results useful across the catalogue? | Coverage, diversity and item concentration alongside engagement |
+| Is the experience reliable? | Empty-result rate, failure rate and latency from your application's telemetry |
+
+The console's **Experiments** summary uses aggregate engagement proxies. Its **CTR** is currently all events divided by served records, and **Conversion** is users with any event divided by served users. Those labels do not mean click-only rate or purchase conversion. Use event-specific analytics or your own measurement pipeline when those distinctions matter.
+
+## Build a dashboard
+
+The [Analytics workbench](/console/analytics) requires the Data analytics add-on. Start from a template, select the time range and context, add the relevant event IDs, and save the view. Use the same filters when comparing periods.
+
+Drill from a user to a session to a request when a number looks wrong. Check duplicated instrumentation, missing request IDs, event mappings, catalogue availability and test traffic before changing ranking.
+
+## Compare a change
+
+Write a hypothesis, choose a primary metric and guardrails, then change one variable. Use a stable control and treatment when possible. Do not treat a before/after increase alone as proof: seasonality, a sale, traffic mix or catalogue changes can explain it.
+
+Keep variant definitions and traffic allocation stable during an experiment. The current results summary reconstructs cohorts from the configured allocation; changing it can change how past activity is grouped. Check [Experiments](/console/experiments) before interpreting lift.
+
+Choose a duration and sample size that suit your traffic and decision. A positive lift indicator is not a statistical-significance test. Record the conclusion, remaining uncertainty and the configuration you keep or roll back.

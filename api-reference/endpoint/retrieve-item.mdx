@@ -1,35 +1,9 @@
 ---
 title: "Retrieve item"
 description: "Retrieve a single catalog item."
-openapi: "GET /v1/items/{item_id}"
+openapi: "/api-reference/openapi.json GET /v1/items/{item_id}"
 ---
 
-## Request
+Read an item by its NSL integer ID, including its current metadata and availability. A source SKU or slug is not a substitute for this ID.
 
-```http
-GET /v1/items/7f3a2c9e
-```
-
-## Response
-
-```json
-{
-  "id": "7f3a2c9e",
-  "object": "item",
-  "name": "Wireless Headphones",
-  "description": "Noise-cancelling Bluetooth headphones.",
-  "metadata": {
-    "category": "electronics"
-  },
-  "active": true,
-  "created": 1777478400,
-  "updated_at": 1777478400
-}
-```
-
-## Errors
-
-| Status | Scenario |
-| --- | --- |
-| `400` | Malformed item ID |
-| `404` | Item does not exist for the authenticated tenant |
+Use [Update item](/api-reference/endpoint/update-item) to change it or [Catalogue](/integrate/catalogue) to plan synchronization.

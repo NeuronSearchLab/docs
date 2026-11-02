@@ -1,0 +1,37 @@
+---
+title: "Integrations"
+description: "Connect a catalogue, enrich video items, or configure identity partners."
+---
+
+Open **Developers → Integrations** to connect external data sources. Use [Items](/console/items) to check the resulting catalogue and [Events](/console/events) to verify behaviour tracking; connecting a catalogue does not automatically connect customer events.
+
+## Choose a connection
+
+| Connection | What you need | Next step |
+| --- | --- | --- |
+| Website crawl | Your public website address | Start a crawl, then review page coverage and imported items |
+| Shopify | A connected store; see [Shopify setup](/embed/shopify) for the supported installation path | Verify product sync, then add the storefront embed |
+| WooCommerce | Store URL, consumer key and consumer secret with product read access | Save the connection and check imported products |
+| BigCommerce | Store hash and an access token with product read access | Save the connection and check imported products |
+| S3 storage connector | Your bucket, region, optional prefix and scoped access credentials | Connect the catalogue source and verify ingestion |
+| CSV | No remote credentials | Enable the connection, then submit data through the catalogue ingestion workflow |
+
+The storage connector reads **your** catalogue source. Give it access only to the bucket and prefix containing that catalogue. The CSV connection switch does not upload a file by itself. See [Catalogue](/integrate/catalogue) for item formats and repeat imports.
+
+For every connection, check that item names, descriptions, URLs and filterable metadata arrive correctly. Save NSL item IDs if your application will send events. Reconnect or update the credentials when access changes; disconnect a source when you no longer want it used.
+
+## Video enrichment
+
+The **Twelve Labs** connection adds video understanding to eligible catalogue items. Provide the integration credentials and choose metadata fields containing accessible video URLs. Enable enrichment, start a sync and check its status before relying on those signals.
+
+Enrichment is separate from serving a recommendation request. A recently imported video may be available in the catalogue before enrichment finishes. Configure the relevant [context pipeline](/console/pipeline) to use the additional signals, and compare results in [Explainability](/console/explainability).
+
+## Identity and partners
+
+The identity controls support [NSL Resolve](/integrate/identity): register partners, manage partner-scoped IDs and create data collaborations. An external identity provider configuration is optional; it is separate from catalogue sync and from ordinary first-party `user_id` tracking.
+
+## Automate integrations
+
+Use [List integrations](/api-reference/platform-api/integrations/listIntegrations) to read connection state and [Save integration](/api-reference/platform-api/integrations/saveIntegration) to make changes with a Platform API key. Supported action names include `connect_provider`, `disconnect_provider`, `configure_twelve_labs`, `sync_twelve_labs`, `disable_twelve_labs` and `delete`.
+
+For application provisioning, see [Vercel](/platforms/vercel). For an assistant connection, see [MCP](/sdk/mcp).

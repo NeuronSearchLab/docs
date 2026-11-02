@@ -1,0 +1,18 @@
+{
+  "name": "nsl-public-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node scripts/check-docs.mjs",
+    "test": "node --test scripts/check-docs.test.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@mdx-js/mdx": "3.1.1",
+    "@apidevtools/swagger-parser": "12.1.0",
+    "gray-matter": "4.0.3",
+    "github-slugger": "2.0.0"
+  }
+}

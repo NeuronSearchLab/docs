@@ -1,0 +1,116 @@
+---
+title: 'Authentication'
+icon: 'lock'
+description: 'Which credential to use where, and how to turn SDK credentials into an access token.'
+---
+
+NeuronSearchLab has three kinds of credential. Pick the one that matches where your code runs.
+
+| Credential | Looks like | Use it for | Where it may live |
+| --- | --- | --- | --- |
+| **SDK credentials** | Client ID and client secret | Your application calling the [Core API](/api-reference/introduction): items, events, recommendations, search | Your servers only |
+| **API key** | `nsl_<prefix>_<token>` | Automation, internal tools and AI assistants calling the [Platform API](/api-reference/platform-api/introduction) | Your servers or an assistant's secure config |
+| **Publishable key** | `nsl_pk_…` | The [Website embed](/embed) in a visitor's browser | Public web pages, restricted to origins you list |
+
+<Warning>
+  Never put a client secret, an access token or an `nsl_` API key in browser or mobile code. Anyone who can read your page source or app bundle could use it. The publishable key is the only credential designed to be public.
+</Warning>
+
+Mobile apps should call your own backend, which holds the credentials and calls NSL. The [Swift SDK](/sdk/swift) accepts a static token for trusted runtimes; it does not make a workspace-wide token safe to distribute in a mobile app.
+
+## SDK credentials
+
+Create them in **Developers → SDK Credentials**. See [SDK Credentials](/console/sdk-credentials) for the console steps. Create one credential per application and environment, so you can revoke one without affecting the others.
+
+### Let the SDK manage tokens
+
+The JavaScript and PHP SDKs exchange the credentials for a token, cache it and refresh it before it expires:
+
+<CodeGroup>
+
+```ts JavaScript
+import NeuronSDK from "@neuronsearchlab/sdk";
+
+const sdk = new NeuronSDK({
+  baseUrl: "https://api.neuronsearchlab.com/v1",
+  oauthClientCredentials: {
+    clientId: process.env.NSL_CLIENT_ID!,
+    clientSecret: process.env.NSL_CLIENT_SECRET!,
+  },
+});
+```
+
+```php PHP
+use NeuronSearchLab\NeuronSDK;
+
+$sdk = new NeuronSDK([
+    'baseUrl' => 'https://api.neuronsearchlab.com/v1',
+    'oauthClientCredentials' => [
+        'clientId' => getenv('NSL_CLIENT_ID'),
+        'clientSecret' => getenv('NSL_CLIENT_SECRET'),
+    ],
+]);
+```
+
+</CodeGroup>
+
+If a token is rejected with `401`, the SDK fetches a new one and retries the request once. If you already run your own token service, pass `tokenProvider` (a function that returns a token) or a static `accessToken` instead.
+
+### Exchange credentials yourself
+
+Without an SDK, call the token endpoint with HTTP Basic authentication:
+
+```bash
+curl -X POST https://auth.neuronsearchlab.com/oauth2/token \
+  -H "Authorization: Basic <base64(client_id:client_secret)>" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=client_credentials"
+```
+
+```json
+{
+  "access_token": "eyJ...",
+  "expires_in": 3600,
+  "token_type": "Bearer",
+  "scope": "neuronsearchlab-api/read neuronsearchlab-api/write"
+}
+```
+
+Then send the token on every Core API call:
+
+```http
+Authorization: Bearer eyJ...
+```
+
+Use the returned `expires_in` value to determine token lifetime. Cache one per credential, compute `expires_at = now + expires_in`, and fetch a new token a minute or so before it expires. Do not request a token per API call: the token endpoint is rate-limited separately.
+
+### Scopes
+
+| Scope | Allows |
+| --- | --- |
+| `neuronsearchlab-api/read` | Recommendations, search, and reading items and events |
+| `neuronsearchlab-api/write` | Creating, updating and deleting items, and sending events |
+
+A token carries both scopes unless you ask for fewer with the `scope` form field. Treat scope strings as opaque and split them only on spaces.
+
+## API keys
+
+Create them in **Developers → API Keys**, choosing which areas each key can reach. See [API keys](/console/api-keys). Send a key as a bearer token:
+
+```bash
+curl https://console.neuronsearchlab.com/api/rules \
+  -H "Authorization: Bearer nsl_abc12345_..."
+```
+
+API keys are also how AI assistants connect through MCP. See [ChatGPT and MCP](/sdk/mcp).
+
+## Publishable keys
+
+Created in **Developers → Website embed**, together with the list of origins allowed to use them. A publishable key can only fetch recommendations and report engagement with what it was shown. It cannot read your catalogue, change configuration or create other credentials. See [Website embed](/console/website-embed).
+
+## Good practice
+
+- Use one credential per application and environment (production, staging).
+- Rotate secrets by creating the new credential, deploying it, then revoking the old one.
+- Revoke credentials as soon as a person or service no longer needs them. Revoking SDK credentials prevents new token issuance; already-issued access tokens may remain valid until expiry.
+- Review **Account → Activity** to see when credentials were created, changed or revoked.

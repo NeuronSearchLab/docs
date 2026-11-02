@@ -3,7 +3,7 @@
   "info": {
     "title": "NeuronSearchLab Platform API",
     "version": "1.0.0",
-    "description": "Control-plane API for the NeuronSearchLab console: contexts, rules, pipelines, models, training, analytics, and tenant administration."
+    "description": "Control-plane API for the NeuronSearchLab console: contexts, rules, pipelines, models, training, analytics, and workspace administration."
   },
   "servers": [
     {
@@ -43,10 +43,6 @@
     {
       "name": "Pipelines",
       "description": "Recommendation pipeline configuration."
-    },
-    {
-      "name": "Rerank Controls",
-      "description": "Per-context rerank controls."
     },
     {
       "name": "Experiments",
@@ -98,7 +94,7 @@
     },
     {
       "name": "Billing",
-      "description": "Stripe billing portal and plan changes."
+      "description": "billing portal and plan changes."
     },
     {
       "name": "Integrations",
@@ -760,6 +756,43 @@
             "$ref": "#/components/responses/Error404"
           }
         }
+      },
+      "delete": {
+        "operationId": "deleteContext",
+        "summary": "Delete context",
+        "tags": [
+          "Contexts"
+        ],
+        "description": "Delete a context. Requires an API key with admin scope.",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdNum"
+          }
+        ]
       }
     },
     "/api/context/{id}/active-model": {
@@ -1075,71 +1108,6 @@
         "responses": {
           "200": {
             "description": "Deleted"
-          },
-          "401": {
-            "$ref": "#/components/responses/Error401"
-          }
-        }
-      }
-    },
-    "/api/rerank-controls": {
-      "get": {
-        "operationId": "getRerankControls",
-        "summary": "Read rerank controls",
-        "tags": [
-          "Rerank Controls"
-        ],
-        "parameters": [
-          {
-            "name": "context_id",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Rerank controls",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Object"
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Error401"
-          }
-        }
-      },
-      "put": {
-        "operationId": "saveRerankControls",
-        "summary": "Save rerank controls",
-        "tags": [
-          "Rerank Controls"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RerankControlsInput"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Saved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Object"
-                }
-              }
-            }
           },
           "401": {
             "$ref": "#/components/responses/Error401"
@@ -2422,40 +2390,6 @@
         }
       }
     },
-    "/api/assistant/chat": {
-      "post": {
-        "operationId": "assistantChat",
-        "summary": "Console assistant chat",
-        "tags": [
-          "Assistant"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AssistantChatInput"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Assistant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Object"
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Error401"
-          }
-        }
-      }
-    },
     "/api/studio/chat": {
       "post": {
         "operationId": "studioChat",
@@ -2487,7 +2421,8 @@
           "401": {
             "$ref": "#/components/responses/Error401"
           }
-        }
+        },
+        "description": "Send messages to the workspace assistant. Requires admin scope; returns a streaming response. The assistant can use workspace tools, including configuration-changing tools."
       }
     },
     "/api/api-keys": {
@@ -2666,7 +2601,7 @@
       "post": {
         "operationId": "openBillingPortal",
         "summary": "Open billing portal",
-        "description": "Creates a Stripe billing portal session and returns the redirect URL.",
+        "description": "Creates a billing portal session and returns the redirect URL.",
         "tags": [
           "Billing"
         ],
@@ -3427,6 +3362,261 @@
           }
         }
       }
+    },
+    "/api/context/groups": {
+      "get": {
+        "operationId": "listContextGroups",
+        "summary": "List context groups",
+        "tags": [
+          "Contexts"
+        ],
+        "description": "List groups with ordered member contexts. Requires an API key with admin scope.",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createContextGroup",
+        "summary": "Create context group",
+        "tags": [
+          "Contexts"
+        ],
+        "description": "Create a group and optionally assign its members. Requires an API key with admin scope.",
+        "responses": {
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ContextGroupInput"
+                  },
+                  {
+                    "required": [
+                      "name"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/context/groups/{id}": {
+      "patch": {
+        "operationId": "updateContextGroup",
+        "summary": "Update context group",
+        "tags": [
+          "Contexts"
+        ],
+        "description": "Update group settings. Sending members replaces its member list; omitting members preserves it. Requires an API key with admin scope.",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdNum"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContextGroupInput"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteContextGroup",
+        "summary": "Delete context group",
+        "tags": [
+          "Contexts"
+        ],
+        "description": "Delete a group while keeping its contexts. Requires an API key with admin scope.",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdNum"
+          }
+        ]
+      }
+    },
+    "/api/context/groups/layout": {
+      "put": {
+        "operationId": "saveContextGroupLayout",
+        "summary": "Save group layout",
+        "tags": [
+          "Contexts"
+        ],
+        "description": "Replace the complete group membership layout. Omitted contexts become ungrouped. Requires an API key with admin scope.",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "groups"
+                ],
+                "properties": {
+                  "groups": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "members"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "members": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "context_id"
+                            ],
+                            "properties": {
+                              "context_id": {
+                                "type": "integer",
+                                "minimum": 1
+                              },
+                              "exempt": {
+                                "type": "boolean",
+                                "default": false
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3722,20 +3912,6 @@
           },
           "is_active": {
             "type": "boolean"
-          }
-        }
-      },
-      "RerankControlsInput": {
-        "type": "object",
-        "properties": {
-          "context_id": {
-            "type": "integer"
-          },
-          "diversity_weight": {
-            "type": "number"
-          },
-          "freshness_weight": {
-            "type": "number"
           }
         }
       },
@@ -4246,6 +4422,60 @@
                 }
               }
             }
+          }
+        }
+      },
+      "ContextGroupInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 280
+          },
+          "dedupe": {
+            "type": "boolean",
+            "description": "Prevent repeated items across member rails."
+          },
+          "backfill": {
+            "type": "boolean",
+            "description": "Refill from each rail\u2019s remaining ranked candidates."
+          },
+          "diversity_attribute": {
+            "type": "string",
+            "nullable": true,
+            "description": "Metadata field for the group cap; send with diversity_max_per_value."
+          },
+          "diversity_max_per_value": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "context_id"
+              ],
+              "properties": {
+                "context_id": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "exempt": {
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            },
+            "description": "Ordered members. Earlier rails have priority; a context belongs to at most one group."
           }
         }
       }

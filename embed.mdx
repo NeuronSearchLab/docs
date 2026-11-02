@@ -345,7 +345,7 @@ event-type limit like any other; the Free plan has room for the defaults plus
 the embed.
 
 These are ordinary event types. Rename them, change their weights, and choose
-which ones a training template uses on the [Events page](/guides/events). To
+which ones a training template uses on the [Events page](/integrate/events). To
 send a signal to an event you already track — say your server already records
 product views — open **Events → Integration signals** and pick that event.
 Nothing is ever matched by name, so a workspace whose events are called
@@ -360,7 +360,7 @@ it, and counting the two as one event teaches the model to agree with itself.
 The embed cannot send `purchase` or any event ID directly. Send verified
 conversions from your server with the
 [Events API](/api-reference/endpoint/submit-events), or import them with a
-[backfill](/guides/backfill).
+[backfill](/integrate/import-history).
 
 Strip events are checked against the recommendations actually served, so a key
 copied from your page source cannot report engagement for arbitrary items.

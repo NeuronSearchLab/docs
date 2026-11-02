@@ -1,30 +1,9 @@
 ---
 title: "Delete item"
 description: "Delete a catalog item."
-openapi: "DELETE /v1/items/{item_id}"
+openapi: "/api-reference/openapi.json DELETE /v1/items/{item_id}"
 ---
 
-## Request
+Delete an item by its NSL integer ID. Remove it from your application's recommendation display and source synchronization if it should not be re-imported.
 
-```http
-DELETE /v1/items/7f3a2c9e
-```
-
-## Response
-
-```json
-{
-  "message": "Item deleted successfully",
-  "itemId": 3187,
-  "deletedCount": 1,
-  "processing_time_ms": 42
-}
-```
-
-## Errors
-
-| Status | Scenario |
-| --- | --- |
-| `400` | Malformed item ID |
-| `401` | Missing or invalid Bearer token |
-| `403` | Token does not include `neuronsearchlab-api/write` |
+For an out-of-stock or temporarily unavailable item, use [Update item](/api-reference/endpoint/update-item) with `active: false` so you retain the record. See [Catalogue](/integrate/catalogue).

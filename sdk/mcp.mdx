@@ -1,106 +1,41 @@
 ---
-title: "ChatGPT plugin and MCP"
-icon: "robot"
-description: "Install NeuronSearchLab from the ChatGPT plugin directory, or connect another MCP-compatible client to the hosted service."
+title: "ChatGPT and MCP"
+description: "Connect an AI assistant to NeuronSearchLab and choose the right tool profile."
 ---
 
-The NeuronSearchLab plugin lets you use your recommendation engine from ChatGPT. Ask questions, manage your catalogue, debug rankings, and run experiments through natural language conversation. The same capabilities are also available to other MCP-compatible clients through the hosted endpoint.
+Use an MCP-compatible assistant to inspect your catalogue, investigate rankings and manage recommendation configuration. The connection acts on the workspace you authorize. Review proposed changes to live contexts, rules, experiments and training before asking the assistant to apply them.
 
-## ChatGPT
+## Connect to the hosted service
 
-1. Open the [ChatGPT plugin directory](https://chatgpt.com/plugins) and install **NeuronSearchLab**.
-2. Start a ChatGPT conversation with the NeuronSearchLab plugin enabled.
-3. When ChatGPT asks you to connect your account, select **Connect**.
-4. Sign up for NeuronSearchLab or log in to the [NeuronSearchLab console](https://console.neuronsearchlab.com).
-5. Approve access. The authorization flow returns you to ChatGPT with the plugin connected to your workspace.
+Add this remote MCP endpoint in your client's connector settings:
 
-<Note>
-  ChatGPT customers do not need to enable Developer mode, enter an MCP URL, create an API key, install an npm package, or run an MCP server locally. Those options are only for developers testing an unpublished plugin or connecting a different MCP client.
-</Note>
+```text
+https://console.neuronsearchlab.com/api/mcp
+```
 
-OpenAI publishes reviewed plugins through its universal plugin directory. See the [official OpenAI plugin overview](https://developers.openai.com/plugins) for the distinction between installing a published plugin and building or testing one.
+Use the client's OAuth sign-in flow to authorize your NSL account. Clients that support bearer headers can instead use an API key from **Developers → API Keys** with the required administration scope:
 
-## AI agents for recommendation operations
+```http
+Authorization: Bearer nsl_your_key
+```
 
-A useful recommendation agent should be able to complete a small operational loop: fetch recommendations, search the catalogue, record a feedback event with request attribution, and explain why an item ranked where it did. That turns the assistant from a passive chatbot into an operator-facing tool for relevance investigations.
+For ChatGPT, connect NeuronSearchLab through the app or plugin entry available to your account, then authorize your NSL workspace. Availability and connector settings depend on the client. You do not need to run a local server when using the hosted connection.
 
-Use the [AI agents for recommendation operations](https://www.neuronsearchlab.com/blog/ai-agents-for-recommendation-operations) article as the public framing, then run the demo path below to verify the MCP server against one real context.
+The hosted service exposes a selected administration tool profile. It does not expose the local server's general-purpose Platform API forwarding tools or API-key creation. Revoke the connection's key in [API Keys](/console/api-keys) when access is no longer required.
 
-For clients other than ChatGPT, there are two ways to connect:
+## Start with one useful task
 
-- **Hosted (recommended)** - point your client at `https://console.neuronsearchlab.com/api/mcp`. Nothing to install; sign in with OAuth or pass an API key. Listed on the official [MCP Registry](https://registry.modelcontextprotocol.io) as `com.neuronsearchlab/mcp` (search `neuronsearchlab` in the registry API or directory).
-- **Local (stdio)** - run `npx -y @neuronsearchlab/mcp` from your client, configured with environment variables.
+Ask the assistant to:
 
-## Connect another MCP client
+> List my contexts, fetch recommendations for a test user in one context, and explain the ranking of one returned item. Show me the evidence before proposing a rule change.
 
-The hosted endpoint exposes a submission-safe customer administration profile. Its 53 tools cover account plan and usage visibility, recommendations, catalogue inspection, contexts, pipelines, rules, segments, experiments, campaigns, training, analytics, integrations, and event types. Every hosted tool requires the authenticated team's `admin` scope.
+Recommendations consume usage and create request attribution records. They are not a zero-impact preview. If you record an interaction, preserve the matching `request_id`, context and item ID. Avoid writing test events for real customers.
 
-Credential creation, billing changes, and the arbitrary Platform API fallback are intentionally unavailable through the hosted endpoint. OAuth-created keys are named `Connector: <client>` and can be revoked at any time from [Console > Security](https://console.neuronsearchlab.com/security).
+The hosted connection also provides a sample-data journey: try a demo, refresh the rankings, record a synthetic interaction, and move to your own catalogue. A website connection can build a catalogue from public pages; it does not establish production event tracking. See the [complete tool reference](/sdk/mcp-tools).
 
-<Tabs>
-  <Tab title="claude.ai / Claude Desktop">
-    1. Open **Settings → Connectors → Add custom connector**.
-    2. Paste `https://console.neuronsearchlab.com/api/mcp` and click **Add**.
-    3. Click **Connect** - you'll be taken to your NeuronSearchLab console to sign in and approve the permission scopes.
+## Run a local stdio server
 
-    That's it: no npm, no config file, no copied keys.
-  </Tab>
-  <Tab title="Claude Code">
-    OAuth (browser sign-in):
-
-    ```bash
-    claude mcp add --transport http neuronsearchlab https://console.neuronsearchlab.com/api/mcp
-    ```
-
-    Or with an API key from [Console > Security](https://console.neuronsearchlab.com/security):
-
-    ```bash
-    claude mcp add --transport http neuronsearchlab https://console.neuronsearchlab.com/api/mcp \
-      --header "Authorization: Bearer nsl_your_key"
-    ```
-
-    Add `--scope project` to share the server with your team via a checked-in `.mcp.json`.
-  </Tab>
-  <Tab title="OpenAI Codex">
-    In `~/.codex/config.toml`:
-
-    ```toml
-    [mcp_servers.neuronsearchlab]
-    url = "https://console.neuronsearchlab.com/api/mcp"
-    bearer_token_env_var = "NSL_API_KEY"
-    ```
-
-    Then export `NSL_API_KEY=nsl_your_key` in your shell. You can also use `codex mcp add neuronsearchlab --url https://console.neuronsearchlab.com/api/mcp`.
-  </Tab>
-  <Tab title="Cursor / Windsurf">
-    Add to your editor's MCP settings (`.cursor/mcp.json` or equivalent):
-
-    ```json
-    {
-      "mcpServers": {
-        "neuronsearchlab": {
-          "url": "https://console.neuronsearchlab.com/api/mcp",
-          "headers": { "Authorization": "Bearer nsl_your_key" }
-        }
-      }
-    }
-    ```
-  </Tab>
-</Tabs>
-
-The endpoint implements Streamable HTTP with OAuth 2.1 discovery based on RFC 8414 and RFC 9728, so compatible remote MCP clients can connect with OAuth or bearer headers.
-
----
-
-## Local installation (stdio)
-
-This section is for developers using an MCP client that requires a local stdio process. It is not part of the ChatGPT plugin setup.
-
-For air-gapped environments, custom base URLs, or local MCP development, the server is published as [`@neuronsearchlab/mcp`](https://www.npmjs.com/package/@neuronsearchlab/mcp) and your client runs it automatically through `npx`.
-
-### Claude Desktop
-
-Add this to your Claude Desktop configuration file (`claude_desktop_config.json`):
+The npm package `@neuronsearchlab/mcp` requires Node.js 18 or later and network access to NSL. Configure your MCP client to launch:
 
 ```json
 {
@@ -109,200 +44,48 @@ Add this to your Claude Desktop configuration file (`claude_desktop_config.json`
       "command": "npx",
       "args": ["-y", "@neuronsearchlab/mcp"],
       "env": {
-        "NSL_CLIENT_ID": "your-client-id",
-        "NSL_CLIENT_SECRET": "your-client-secret"
+        "NSL_PLATFORM_MODE": "public",
+        "NSL_CLIENT_ID": "YOUR_CLIENT_ID",
+        "NSL_CLIENT_SECRET": "YOUR_CLIENT_SECRET"
       }
     }
   }
 }
 ```
 
-### Claude Code
+This example shows the configuration shape. Supply real secrets through your client's secure environment configuration and keep them out of source control.
 
-```bash
-claude mcp add neuronsearchlab -- npx -y @neuronsearchlab/mcp \
-  --env NSL_CLIENT_ID=your-client-id \
-  --env NSL_CLIENT_SECRET=your-client-secret
-```
+| Variable | Meaning |
+| --- | --- |
+| `NSL_PLATFORM_MODE` | `public` for Core API tools; `internal` for workspace administration. Default `public`. This is a credential mode, not a hosting option. |
+| `NSL_CLIENT_ID`, `NSL_CLIENT_SECRET` | [SDK credentials](/console/sdk-credentials), required in public mode |
+| `NSL_API_KEY` | A [Platform API key](/console/api-keys) with administration scope, required in internal mode |
+| `NSL_TOKEN_URL` | Optional token endpoint override; normally `https://auth.neuronsearchlab.com/oauth2/token` |
+| `NSL_API_BASE_URL` | Optional base URL override; defaults to the Core API host in public mode and the console host in internal mode |
+| `NSL_TIMEOUT_MS` | Request timeout in milliseconds; default `15000` |
 
-### Recommendation-ops demo path
+For administration, change the mode to `internal`, supply `NSL_API_KEY` and remove the client credentials. Local administration includes broader tools than the hosted profile, so give the key only to trusted clients.
 
-After connecting the published ChatGPT plugin or another MCP client, run the smallest end-to-end loop before adding custom prompts or automations. Keep the first pass read-only so the assistant can investigate ranking behavior without mutating a production surface.
+## Tools and errors
 
-1. **List contexts** and confirm the exact context/surface to inspect.
-2. **Fetch recommendations** for a test user and selected context.
-3. **Search the catalog** for a concrete product/content phrase and compare result IDs.
-4. **Explain one ranked item** with the `request_id` from the recommendation/search response when available.
-5. **Optional, sandbox only:** draft or toggle a rule after the explanation shows the expected leak.
+Use [MCP tools](/sdk/mcp-tools) for each tool's purpose, availability and inputs. The client's live `tools/list` response is authoritative for your installed or hosted version. Do not assume every profile exposes the same tools.
 
-```text
-Use the NeuronSearchLab MCP server in read-only mode first.
-List my recommendation contexts and choose the homepage-feed context.
-Get 10 recommendations for user demo-user@example.com using context homepage-feed.
-Search the catalog for waterproof jackets and show the top 5 item ids.
-Explain why the first recommended item ranked first, using the request_id from the recommendation response if available.
-If you see a relevance leak, draft the smallest rule that would fix it, but do not create or toggle the rule yet.
-```
+- Authentication failure: check the credential type, selected mode and workspace.
+- Tool missing: inspect the available tools; hosted and local profiles differ.
+- Permission denied: check the key's scope and your workspace access.
+- Invalid context or event: use integer IDs returned by that workspace's listing tools.
+- Partial recommendation batch failure: inspect each set's status and preserve attribution per set.
 
-For internal/admin mode, inspect operational state before proposing a change:
+Tool responses include structured results where supported and error details when a call fails. An assistant should report a failed operation rather than describe an intended change as completed.
 
-```text
-List ranking rules for the homepage-feed context.
-Show the latest ranking metrics for that context.
-Compare item jacket-123 with item jacket-456 and explain which rule or signal separates them.
-```
+## Programmatic exports
 
-This is the buyer-facing story: **ChatGPT audits a recommendation surface, explains the leak, and drafts the fix**. Operators stay in control because destructive MCP tools carry annotations and the safe demo prompt explicitly asks for a draft before any rule write.
+For developers embedding the server, the package exposes:
 
-### Configuration
+| Entry point | Public interface |
+| --- | --- |
+| `@neuronsearchlab/mcp/auth` | `TokenManager(clientId, clientSecret, tokenUrl?)`; `getToken()` returns a cached or refreshed access token |
+| `@neuronsearchlab/mcp/client` | `NeuronClient(config)`; `request(method, path, body?, queryParams?)`, `get`, `post`, `put`, `patch`, `delete` make authenticated requests |
+| `@neuronsearchlab/mcp/server` | `createServer(client, mode?, profile?)`, `getExportedTools(mode, profile)`, `HOSTED_PROFILE_VERSION`; `ServerMode` and `ToolProfile` types |
 
-All local configuration is done through environment variables:
-
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `NSL_CLIENT_ID` | Yes (Core API mode) | - | OAuth 2.0 client ID from Console > SDK Credentials |
-| `NSL_CLIENT_SECRET` | Yes (Core API mode) | - | OAuth 2.0 client secret |
-| `NSL_PLATFORM_MODE` | No | `public` | `public` or `internal` |
-| `NSL_API_KEY` | Yes (internal mode) | - | API key with admin scope |
-| `NSL_TIMEOUT_MS` | No | `15000` | Request timeout in milliseconds |
-
-**Core API mode** (default, `public`) uses OAuth 2.0 client credentials against the [Core API](/api-reference/introduction). It supports recommendations, events, and catalogue operations.
-
-**Internal mode** uses a static admin API key against the console API. It exposes the platform administration tools plus three trusted-client tools that are not available on the hosted endpoint: `create_api_key`, `list_platform_routes`, and `call_platform_api`.
-
-```json
-{
-  "mcpServers": {
-    "neuronsearchlab": {
-      "command": "npx",
-      "args": ["-y", "@neuronsearchlab/mcp"],
-      "env": {
-        "NSL_PLATFORM_MODE": "internal",
-        "NSL_API_KEY": "nsl_your_api_key"
-      }
-    }
-  }
-}
-```
-
----
-
-## Available tools
-
-The sections below show the combined tool surface. Core API mode supports recommendation, event, and catalogue tools. Hosted and internal modes support the platform administration tools. Every tool carries MCP annotations (`readOnlyHint` and `destructiveHint`) so compatible clients can distinguish read-only operations from writes.
-
-### Recommendations and catalog
-
-| Tool | Description |
-|------|-------------|
-| `get_recommendations` | Fetch personalised recommendations for a user |
-| `get_auto_recommendations` | Paginated auto-generated sections for infinite-scroll feeds |
-| `explain_ranking` | Debug why an item ranked at a given position |
-| `search_items` | Search your catalog by keyword |
-| `upsert_item` | Add or update a catalog item |
-| `patch_item` | Partially update an item (e.g. enable/disable) |
-| `delete_items` | Permanently remove items |
-| `track_event` | Record a user interaction event |
-
-### Segments
-
-| Tool | Description |
-|------|-------------|
-| `list_segments` | List all user segments |
-| `get_segment` | Get segment definition |
-| `create_segment` | Create a user segment |
-| `update_segment` | Modify a segment |
-| `delete_segment` | Remove a segment |
-| `get_segment_stats` | Get segment size and overlap stats |
-
-### Experiments
-
-| Tool | Description |
-|------|-------------|
-| `list_experiments` | List all A/B experiments |
-| `get_experiment` | Get experiment details |
-| `create_experiment` | Create an A/B test with variants |
-| `update_experiment` | Modify an experiment |
-| `start_experiment` | Begin traffic splitting |
-| `stop_experiment` | End an experiment |
-| `get_experiment_results` | Get statistical results |
-
-### Campaigns
-
-| Tool | Description |
-|------|-------------|
-| `list_campaigns` | List all campaigns |
-| `create_campaign` | Create a time-bound campaign |
-| `activate_campaign` | Enable a campaign |
-| `pause_campaign` | Pause a campaign |
-| `delete_campaign` | Remove a campaign |
-
-### Analytics
-
-| Tool | Description |
-|------|-------------|
-| `get_ranking_metrics` | Get ranking performance metrics |
-| `get_experiment_metrics` | Get live experiment stats |
-| `get_segment_metrics` | Get segment performance |
-| `get_user_analytics` | Per-user engagement analytics |
-| `get_item_analytics` | Per-item performance analytics |
-| `compare_items` | Side-by-side item comparison |
-| `top_items` | Top items by metric |
-
-### Platform administration
-
-| Tool | Description |
-|------|-------------|
-| `list_contexts` / `create_context` / `update_context` / `delete_context` | Manage recommendation contexts |
-| `list_pipelines` / `create_pipeline` / `activate_pipeline` / `clone_pipeline` | Manage ranking pipelines |
-| `list_rules` / `create_rule` / `toggle_rule` / `delete_rule` | Manage ranking rules |
-| `list_event_types` / `create_event_type` / `update_event_type` / `delete_event_type` | Manage event type definitions |
-| `get_account_plan` | Show the effective plan, resolved limits, current usage, and exact overages |
-| `list_training_jobs` / `get_training_job` / `create_training_job` / `cancel_training_job` | Manage model training jobs |
-| `list_api_keys` / `revoke_api_key` | Inspect and revoke API credentials |
-| `list_integrations` | Inspect configured integrations |
-| `create_api_key` | Create an API credential in trusted local internal mode only |
-| `list_platform_routes` / `call_platform_api` | Trusted local internal fallback for console capabilities without a dedicated tool |
-
----
-
-## Example conversations
-
-### Get recommendations
-
-> "Get 5 recommendations for user alice@example.com in the homepage context"
-
-The assistant calls `get_recommendations` and returns the ranked items with scores and metadata.
-
-### Debug a ranking
-
-> "Why did item prod-456 rank so low for user alice?"
-
-The assistant calls `explain_ranking` and shows the score breakdown, which rules matched, and how each pipeline stage affected the result.
-
-### Create a rule
-
-> "Create a boost rule that promotes items in the Electronics category with a 2x weight"
-
-The assistant calls `create_rule` with the appropriate conditions and actions.
-
-### Track an event
-
-> "Record that alice clicked on item prod-456"
-
-The assistant calls `track_event` with the user ID, item ID, and event type.
-
----
-
-## Error handling
-
-The MCP server includes automatic retry with exponential backoff for transient errors (429, 5xx, timeouts). All tool responses are formatted as human-readable text so the AI assistant can interpret and relay results clearly.
-
----
-
-## Next steps
-
-- Create an API key or SDK credentials in [Console > Security](https://console.neuronsearchlab.com/security).
-- Find the server on the [MCP Registry](https://registry.modelcontextprotocol.io) as `com.neuronsearchlab/mcp`.
-- Try the built-in [NeuronSearchLab AI](/guides/studio-workflow) assistant in the console - it uses the same MCP tools.
-- View the [JavaScript SDK](/sdk/introduction) for direct programmatic access.
+`ClientConfig` accepts a `tokenManager` or `staticToken`, plus optional `apiBase`, `timeoutMs` and `maxRetries`. The client defaults to a 15-second timeout and two retries for selected rate-limit and server errors. Consult the installed package's declarations when integrating a specific version.

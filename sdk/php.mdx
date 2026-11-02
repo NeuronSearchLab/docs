@@ -1,301 +1,166 @@
 ---
-title: "PHP SDK"
-icon: "code"
-description: "Install, configure, and use the official NeuronSearchLab PHP SDK in Laravel or any PHP application."
+title: 'PHP'
+icon: 'code'
+description: 'Install the PHP client, configure authentication and use the complete item, event and recommendation API.'
 ---
 
-<Note>
-The PHP SDK is published on [Packagist](https://packagist.org/packages/neuronsearchlab/sdk-php) and the source lives on [GitHub](https://github.com/NeuronSearchLab/neuronsearchlab-sdk-php). Install it with Composer in Laravel or any other PHP app.
-</Note>
-
-## Installation
+Requires PHP 8.2 or later and cURL, unless you provide an HTTP transport.
 
 ```bash
 composer require neuronsearchlab/sdk-php
 ```
 
-If you are using Laravel, this is the standard installation path. Composer pulls the package from Packagist automatically.
-
----
-
-## Initialize the client
-
-The SDK uses a Bearer token for authentication. Obtain an access token by exchanging your [SDK credentials](/authentication) and pass it when creating the client:
+## Configure the client
 
 ```php
 <?php
-
 require __DIR__ . '/vendor/autoload.php';
-
 use NeuronSearchLab\NeuronSDK;
 
 $sdk = new NeuronSDK([
     'baseUrl' => 'https://api.neuronsearchlab.com/v1',
-    'accessToken' => '<your_access_token>',
+    'oauthClientCredentials' => [
+        'clientId' => getenv('NSL_CLIENT_ID'),
+        'clientSecret' => getenv('NSL_CLIENT_SECRET'),
+    ],
+    'autoSessionId' => false,
+    'propagateRecommendationRequestId' => false,
 ]);
 ```
 
-### Configuration options
+Use one authentication method: `oauthClientCredentials`, a callable `tokenProvider`, or a static `accessToken`. OAuth credentials support optional `tokenUrl`, `scope`, `audience` and `additionalParameters`. A token provider receives `forceRefresh` and `reason`, returning a token string or an array with `accessToken`, optional `expiresAt` (epoch milliseconds) or `expiresInSeconds`. Refreshable authentication caches tokens and retries one `401` after refresh.
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `baseUrl` | string | required | API base URL |
-| `accessToken` | string | required | Bearer token from the auth token endpoint |
-| `timeoutMs` | int | `10000` | HTTP request timeout in ms |
-| `maxRetries` | int | `2` | Retry count on 429/5xx/timeouts |
-| `collateWindowSeconds` | float | `3` | Buffer events for this many seconds before flushing |
-| `maxBatchSize` | int | `200` | Flush immediately when the buffer reaches this size |
-| `maxBufferedEvents` | int | `5000` | Drop oldest events beyond this limit |
-| `maxEventRetries` | int | `5` | Retry count for buffered event sends |
-| `disableArrayBatching` | bool | `false` | Force single-event sends |
-| `propagateRecommendationRequestId` | bool | `true` | Auto-attach `request_id` from recommendations to subsequent events |
-| `sessionId` | string or null | `null` | Override the SDK-wide session ID |
-| `autoSessionId` | bool | `true` | Auto-generate a session UUID |
-| `httpClient` | callable | cURL | Custom HTTP transport for non-cURL environments or tests |
+Keep credentials in server configuration. For long-lived Laravel workers, send request and session IDs per event so one client's defaults do not mix visitors.
 
----
+| Configuration | Default | Meaning |
+| --- | --- | --- |
+| `baseUrl` | Required | Core API base URL |
+| `timeoutMs` | `10000` | Request timeout |
+| `maxRetries` | `2` | Transient request retries |
+| `tokenExpirySkewMs` | `60000` | Refresh before token expiry |
+| `collateWindowSeconds` | `3` | Event age checked during SDK activity; not a background timer |
+| `maxBatchSize` | `200` | Flush threshold |
+| `maxBufferedEvents` | `5000` | Buffer capacity; oldest events are dropped when exceeded |
+| `maxEventRetries` | `5` | Buffered-event retry limit |
+| `disableArrayBatching` | `false` | Force individual event sends |
+| `propagateRecommendationRequestId` | `true` | Remember the latest single-list/search request ID |
+| `sessionId` / `autoSessionId` | Unset / `true` | Instance session and automatic generation |
+| `httpClient` | cURL | Callable custom HTTP transport |
+| `backoffStrategy` | Built in | Callable retry-delay strategy |
 
-## Get recommendations
+## Recommendations and search
 
 ```php
 $result = $sdk->getRecommendations([
-    'userId' => 'user-123',
-    'contextId' => '101',
-    'limit' => 10,
+    'userId' => 'user-123', 'contextId' => 101, 'limit' => 10,
 ]);
-
-var_dump($result['recommendations']);
-```
-
-Each recommendation includes `id`, `object`, `item_id`, `rank`, `score`, and an embedded `item` object with the metadata you stored. The response also includes a `request_id` for event attribution.
-
-## Search
-
-Use `search` when the user supplies a free-text query and you want ranked catalog items back through the Core API data plane:
-
-```php
 $results = $sdk->search([
-    'query' => 'waterproof trail shoes',
-    'userId' => 'user-123',
-    'contextId' => '101',
-    'limit' => 10,
-    'filter' => ['category:footwear'],
+    'query' => 'waterproof shoes', 'userId' => 'user-123',
+    'contextId' => 101, 'filter' => ['category:footwear'],
 ]);
-
-var_dump($results['data']);
 ```
 
-The SDK posts to `https://api.neuronsearchlab.com/v1/search`, not the console Platform API. Search responses use the same item shape as recommendations and include `query`, `request_id`, `data`, and `recommendations`.
+| Method | Options and result |
+| --- | --- |
+| `getRecommendations(array $options)` | `userId`, optional `contextId`, `limit`, `scope`, `startingAfter`/`starting_after`; returns a recommendation response array |
+| `getAutoRecommendations(array $options)` | `userId`, optional `contextId`, `scope`, `limit`, `cursor`, `windowDays`, `candidateLimit`, `servedCap`; returns a section and continuation state |
+| `search(array $options)` | Required `query`; optional `userId`, `contextId`, `limit`, `filter`/`filters`, `scope`, `resultItemIds`, `queryRetrievalEnabled`, `fusionMethod`, `semanticWeight`, `keywordWeight`, `keywordFields`, `requestId`, `debug`, `explain`, `includeSuppressed` |
+| `getRecommendationSets(array $options)` | Explicit `sets`, with visitor and attribution options; returns `results`, keyed `sets` and `usage` |
 
-### Searches your own engine runs
+Read `data` or `recommendations` for the single-call result items, and preserve `request_id`. For auto sections, pass `next_cursor` to the next call and stop at `done` or when the cursor is absent.
 
-Every search is an event that steers the user's later recommendations by the weight of your Search event. If your own engine runs the search, send NSL the query and the IDs it showed:
-
-```php
-// Record it and get recommendations that complement your results
-// (the IDs you send are left out of the response).
-$extras = $sdk->search([
-    'query' => 'waterproof trail shoes',
-    'userId' => 'user-123',
-    'resultItemIds' => [3187, 3190, 3201],
-]);
-
-// Record only. eventId is optional and defaults to your Search event.
-$sdk->trackSearch([
-    'userId' => 'user-123',
-    'query' => 'waterproof trail shoes',
-    'resultItemIds' => [3187, 3190, 3201],
-])->wait();
-```
-
-Requires `neuronsearchlab/sdk-php` 2.2.0 or later. See [searches are events](/guides/events#searches-are-events).
-
-### Auto-generated sections
-
-Use `getAutoRecommendations` for paginated, auto-titled recommendation sections:
+### Several rails
 
 ```php
-$section = $sdk->getAutoRecommendations([
+$page = $sdk->getRecommendationSets([
     'userId' => 'user-123',
-    'limit' => 5,
-    'windowDays' => 7,
+    'sets' => [
+        ['key' => 'for_you', 'contextId' => 101, 'limit' => 8],
+        ['key' => 'similar', 'contextId' => 102, 'itemId' => 3187, 'limit' => 4],
+    ],
 ]);
-
-if (!empty($section['next_cursor'])) {
-    $next = $sdk->getAutoRecommendations([
-        'userId' => 'user-123',
-        'cursor' => $section['next_cursor'],
-    ]);
+$rail = $page['sets']['for_you'];
+if (!isset($rail['error'])) {
+    $items = $rail['data'];
 }
 ```
 
----
+Batch options include `userId` or `anonymousId`, `sessionId`, `requestId` and a non-empty `sets` array. Set fields are `key`, `contextId`, `limit`, `itemId`, `cartItemIds`, `pageType`, `filters`, `scope`, `query`. Keys must be unique and match `[A-Za-z0-9_.:-]{1,64}`.
 
-## Track events
+`NeuronSDK::MAX_RECOMMENDATION_SETS_PER_BATCH` is `8`. Larger explicit batches are split. Each rail has its own `status`, optional `error` and attribution `request_id`. An explicit batch request ID covers the first chunk only; later chunks receive separate IDs.
 
-Events provide the feedback loop that powers personalization. The PHP SDK buffers events in memory for the lifetime of the current process.
-
-```php
-$sdk->trackEvent([
-    'type' => 'click',
-    'userId' => 'user-123',
-    'itemId' => '7f3a2c9e',
-])->wait();
-```
-
-### How batching works in PHP
-
-<Steps>
-  <Step title="Buffer events">
-    Events are buffered with a timestamp that maps to `occurred_at` in the API.
-  </Step>
-  <Step title="Flush at max batch size">
-    The buffer flushes when it reaches `maxBatchSize`.
-  </Step>
-  <Step title="Force delivery when needed">
-    You can force delivery with `flushEvents()` or by calling `->wait()` on the returned `PendingResult`.
-  </Step>
-  <Step title="Flush during shutdown">
-    Remaining buffered events are flushed during PHP shutdown.
-  </Step>
-  <Step title="Retry failed sends">
-    Failed sends are retried with exponential backoff.
-  </Step>
-</Steps>
+## Events and PendingResult
 
 ```php
 $pending = $sdk->trackEvent([
-    'type' => 'view',
-    'userId' => 'user-123',
-    'itemId' => '7f3a2c9e',
+    'userId' => 'user-123', 'eventId' => 42, 'itemId' => 3187,
+    'contextId' => 101, 'requestId' => $result['request_id'],
+    'sessionId' => 'visit-456',
 ]);
-
 $pending->wait();
-
-$sdk->flushEvents();
 ```
 
-### Request ID propagation
+`trackEvent(array $data)` buffers one occurrence and returns `PendingResult`. Use integer event and item IDs, not names. Optional fields include `contextId`, `occurredAt` (Unix seconds), `requestId`, `sessionId`, `metadata`, `query` and a stable `deduplicationId` for retries.
 
-When `propagateRecommendationRequestId` is enabled, the SDK captures the `request_id` from `getRecommendations()` or `search()` and automatically attaches it to subsequent `trackEvent()` calls unless you explicitly provide `requestId` or `request_id`.
+`trackSearch(array $data)` accepts `userId`, a non-empty `query`, optional `resultItemIds`, `eventId` and attribution fields. It records a search without an item. `createEvent(array $data)` is an alias of `trackEvent`, not an event-type creation API.
+
+`flushEvents(array $options = [])` sends the pending buffer. PHP has no SDK background flush timer: flush explicitly in workers and short-lived handlers. The SDK also attempts a shutdown flush, which is not a durable delivery guarantee.
+
+| PendingResult method | Behaviour |
+| --- | --- |
+| `wait()` | Triggers a flush when pending; returns the result or throws the recorded error |
+| `isSettled()` | Reports whether the result has resolved or failed |
+| `resolve($value)` / `reject(Throwable $error)` | Settle a result once; intended for custom integrations, not normal event delivery |
+
+To batch, enqueue multiple events before flushing and waiting. Waiting immediately for each event sends them sequentially. Automatic attribution uses only the latest single-list/search call; always pass each rail's ID when displaying several rails.
+
+## Items
 
 ```php
-$recs = $sdk->getRecommendations([
-    'userId' => 'user-123',
-    'limit' => 5,
+$item = $sdk->upsertItem([
+    'name' => 'Trail shoes',
+    'description' => 'Lightweight waterproof running shoes',
+    'metadata' => ['source_item_id' => 'SKU-42', 'category' => 'footwear'],
 ]);
-
-$sdk->trackEvent([
-    'type' => 'click',
-    'userId' => 'user-123',
-    'itemId' => $recs['recommendations'][0]['item_id'],
-])->wait();
+$itemId = $item['id'];
+$sdk->patchItem(['itemId' => $itemId, 'name' => 'Trail shoes — new season']);
+$sdk->setItemActive($itemId, false);
 ```
 
----
+| Method | Behaviour |
+| --- | --- |
+| `upsertItem(array $data)` | Creates one item or an array of items. Do not supply an ID. A single result has `id`; a batch has `data`. |
+| `patchItem(array $input)` | Updates the integer `itemId` with supplied fields |
+| `setItemActive(int $itemId, bool $active)` | Changes availability without deleting the item |
+| `deleteItems(array $items)` | Deletes one `['itemId' => 3187]` or a list of such entries |
 
-## Manage catalog items
+Set `metadata.source_item_id` to your stable source identifier to update the same item on repeated ingestion. Other arbitrary metadata fields do not enable this matching. Store NSL's generated ID for events and direct `patchItem` updates. PHP does not expose a separate `createItem` method.
 
-### Create an item
+## Client state
 
-```php
-$sdk->upsertItem([
-    'itemId' => '7f3a2c9e',
-    'name' => 'Nike Running Shoes',
-    'description' => 'High-performance running shoes for daily training.',
-    'metadata' => [
-        'category' => 'Footwear',
-        'brand' => 'Nike',
-        'price' => 109.99,
-    ],
-]);
-```
+`setAccessToken(string $token)` replaces refreshable authentication with a static token. `setBaseUrl(string $url)` and `setTimeout(int $timeoutMs)` change connection settings. `setRequestId(?string $id)` / `getRequestId()` manage default attribution; `setSessionId(?string $id)` / `getSessionId()` manage the instance session. With automatic sessions enabled, a missing session may be regenerated.
 
-### Update an item
+## Errors and logging
+
+Catch `NeuronSearchLab\SDKAuthError` for token acquisition, `SDKHttpError` for HTTP failures (`status`, `statusText`, `body`), and `SDKTimeoutError` for timeouts (`timeoutMs`). Invalid arguments may throw `InvalidArgumentException`. Retry transient failures with bounded backoff; correct validation and permission errors before retrying.
 
 ```php
-$sdk->patchItem([
-    'itemId' => '7f3a2c9e',
-    'active' => false,
-]);
-```
-
-Or use the convenience helper:
-
-```php
-$sdk->setItemActive('7f3a2c9e', false);
-```
-
-### Delete items
-
-```php
-$sdk->deleteItems(['itemId' => '7f3a2c9e']);
-
-$sdk->deleteItems([
-    ['itemId' => '7f3a2c9e'],
-    ['itemId' => 'a8d1b247'],
-]);
-```
-
----
-
-## Error handling
-
-The SDK exposes `SDKHttpError` and `SDKTimeoutError`:
-
-```php
-<?php
-
-use NeuronSearchLab\SDKHttpError;
-use NeuronSearchLab\SDKTimeoutError;
-
-try {
-    $sdk->getRecommendations(['userId' => 'user-123']);
-} catch (SDKHttpError $error) {
-    error_log(sprintf('HTTP %d: %s', $error->status, $error->statusText));
-} catch (SDKTimeoutError $error) {
-    error_log(sprintf('Request timed out after %dms', $error->timeoutMs));
-}
-```
-
-Transient errors such as 429s, 5xxs, and timeouts are retried automatically.
-
----
-
-## Logging
-
-Configure structured logging for debugging and observability:
-
-```php
-<?php
-
 use function NeuronSearchLab\configureLogger;
-
-configureLogger([
-    'level' => 'DEBUG',
-    'enableNetworkBodyLogging' => true,
-    'enablePerformanceLogging' => true,
-]);
+use function NeuronSearchLab\logger;
+configureLogger(['level' => 'WARN', 'enableNetworkBodyLogging' => false]);
+logger()->warn('Recommendation fallback used', ['contextId' => 101]);
 ```
 
-Available log levels: `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`, `FATAL`.
+`configureLogger` configures the shared logger, also available through `SDKLogger::instance()`. Configuration accepts `level`, `enableNetworkBodyLogging`, `enablePerformanceLogging`, `transport` and `redactKeys`. The default level is `INFO`; payload and performance logging are off. Levels run from `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR` to `FATAL`.
 
----
+Logger methods are `configure`, `trace`, `debug`, `info`, `warn`, `error`, `fatal`, `shouldLog`, `canLogNetworkPayloads` and `isPerformanceLoggingEnabled`. Logging methods take a message and optional context array. Keep user payloads and credentials out of production logs.
 
-## Session management
+## Custom authentication and transport
 
-The SDK auto-generates a session UUID on initialization when `autoSessionId` is enabled. You can override or read it:
+`httpClient($url, $init)` provides the request transport. Return an array with integer `status`, string `statusText`, an array of `headers`, and a string `body` containing the response. Use this when cURL is unavailable or for controlled tests. `backoffStrategy($attempt)` returns a retry delay in milliseconds. For custom token acquisition, use the supported `tokenProvider` configuration rather than constructing authentication internals.
 
-```php
-$sdk->setSessionId('custom-session-id');
-var_dump($sdk->getSessionId());
-```
+See [Authentication](/integrate/authentication) and the [Core API](/api-reference/introduction) for the wire contract.
 
----
-
-## Links
-
-- [Install from Packagist](https://packagist.org/packages/neuronsearchlab/sdk-php)
-- [Source on GitHub](https://github.com/NeuronSearchLab/neuronsearchlab-sdk-php)
-- [Core API reference](/api-reference/introduction)
-- [JavaScript SDK](/sdk/introduction)
+<Note>
+  This reference targets PHP 2.3.0. To use [context groups](/console/context-groups), pass their member context IDs as explicit sets in one batch. Group rules apply automatically. This published client version does not expose a `groupId` helper.
+</Note>
