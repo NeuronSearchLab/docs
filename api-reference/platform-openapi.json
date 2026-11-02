@@ -1073,7 +1073,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PipelineInput"
+                "$ref": "#/components/schemas/PipelineUpdateInput"
               }
             }
           }
@@ -1088,26 +1088,6 @@
                 }
               }
             }
-          },
-          "401": {
-            "$ref": "#/components/responses/Error401"
-          }
-        }
-      },
-      "delete": {
-        "operationId": "deletePipeline",
-        "summary": "Delete pipeline",
-        "tags": [
-          "Pipelines"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/IdNum"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Deleted"
           },
           "401": {
             "$ref": "#/components/responses/Error401"
@@ -1732,6 +1712,35 @@
           "401": {
             "$ref": "#/components/responses/Error401"
           }
+        }
+      }
+    },
+    "/api/training-jobs/launch": {
+      "post": {
+        "operationId": "launchCatalogTraining",
+        "summary": "Train catalog recommenders",
+        "description": "Uses the same signal template, eligibility checks, plan gate and snapshot as the console model catalog.",
+        "tags": ["Training"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["templateId", "recommenderKeys"],
+                "properties": {
+                  "templateId": { "type": "integer", "minimum": 1 },
+                  "recommenderKeys": { "type": "array", "minItems": 1, "description": "Up to the number of entries in the current catalog.", "items": { "type": "string" } },
+                  "advancedSettings": { "type": "object", "additionalProperties": { "type": "object" } }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": { "description": "Snapshot created and at least one training job accepted" },
+          "401": { "$ref": "#/components/responses/Error401" },
+          "422": { "description": "A recommender or signal template is not ready" }
         }
       }
     },
@@ -3840,12 +3849,13 @@
           "modelFamilyId": {
             "type": "integer",
             "nullable": true,
-            "description": "Preferred model family. Null falls back to the general resolver."
+            "description": "Enabled model family. Null uses the default family."
           },
           "architectureOverride": {
             "type": "string",
             "nullable": true,
-            "description": "Optional retrieval architecture override."
+            "enum": ["content_embedding", "two_tower", "gsasrec", "semantic_id"],
+            "description": "Optional retrieval architecture. Must be compatible with the selected family."
           },
           "architecture_override": {
             "type": "string",
@@ -3856,6 +3866,11 @@
             "type": "object",
             "nullable": true,
             "additionalProperties": true
+          },
+          "activeTenantModelId": {
+            "type": "integer",
+            "nullable": true,
+            "description": "A ready, deployed model owned by this tenant. Catalog recommenders currently support personalized discovery and email digest contexts."
           }
         }
       },
@@ -3895,15 +3910,17 @@
       },
       "PipelineInput": {
         "type": "object",
+        "required": ["context_id"],
         "properties": {
           "name": {
             "type": "string"
           },
           "context_id": {
             "type": "integer",
-            "nullable": true
+            "minimum": 1,
+            "description": "The context whose execution stages are being configured. Workspace-wide pipeline creation is unavailable."
           },
-          "stages_json": {
+          "stages": {
             "type": "array",
             "items": {
               "type": "object",
@@ -3913,6 +3930,14 @@
           "is_active": {
             "type": "boolean"
           }
+        }
+      },
+      "PipelineUpdateInput": {
+        "type": "object",
+        "description": "Only stage configuration and activation can change; execution stays attached to its context.",
+        "properties": {
+          "stages": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+          "is_active": { "type": "boolean" }
         }
       },
       "ExperimentInput": {

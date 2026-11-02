@@ -365,8 +365,7 @@
                   "api-reference/platform-api/pipelines/listPipelines",
                   "api-reference/platform-api/pipelines/getPipeline",
                   "api-reference/platform-api/pipelines/createPipeline",
-                  "api-reference/platform-api/pipelines/updatePipeline",
-                  "api-reference/platform-api/pipelines/deletePipeline"
+                  "api-reference/platform-api/pipelines/updatePipeline"
                 ],
                 "icon": "diagram-project"
               },
@@ -403,6 +402,7 @@
               "api-reference/platform-api/serving-endpoints/updateModelEndpoint",
               "api-reference/platform-api/serving-endpoints/deleteModelEndpoint",
               "api-reference/platform-api/training/startTraining",
+              "api-reference/platform-api/training/launchCatalogTraining",
               "api-reference/platform-api/training/listTrainingJobs",
               "api-reference/platform-api/training/updateTrainingJob",
               "api-reference/platform-api/training/approveTrainingJob",

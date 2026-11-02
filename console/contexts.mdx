@@ -14,12 +14,12 @@ Open **Relevance → Contexts**.
 | --- | --- | --- |
 | **Model** | Details tab | Which trained model retrieves candidates |
 | **Recipe** | Inputs, Ranking and Safety tabs | Candidate sources, signal weights, reranking, discovery and guardrails |
-| **Pipeline** | Opened from the recipe | The stages a request runs through, and their limits. See [Pipeline](/console/pipeline) |
-| **Rules** | [Rules Engine](/console/rules) | Boosts, pins, filters and caps scoped to this context |
+| **Execution** | Execution tab | The stages a request runs through, and their limits. See [Context execution](/console/pipeline) |
+| **Rules** | Rules tab | Boosts, pins, filters and caps scoped to this context |
 | **Group** | Contexts table | Rules shared with the other rails on the same page. See [Context groups](/console/context-groups) |
 
 <Info>
-  Item eligibility filters, such as "only in-stock items" or "only this category", are `filter` rules in the [Rules Engine](/console/rules), scoped to the context. Keeping them there gives each context one place for all of its business logic.
+  Item eligibility filters, such as "only in-stock items" or "only this category", are `filter` rules in the context's **Rules** tab.
 </Info>
 
 ## The contexts table
@@ -44,7 +44,7 @@ Contexts can be arranged in [groups](/console/context-groups) for pages that sho
     Check the **Inputs**, **Ranking** and **Safety** tabs. A dot on a tab means it has non-default settings.
   </Step>
   <Step title="Create it">
-    Select **Create Context**. The context gets a numeric ID, shown in the table, which you pass as `context_id`.
+    Select **Create Context**. The editor stays open on **Execution**, where you can configure its stages. The context gets a numeric ID, shown in the table, which you pass as `context_id`.
   </Step>
   <Step title="Enable it">
     Use the switch in the editor header to enable the context and its pipeline. A context needs a saved recipe before it can be enabled.
@@ -73,6 +73,10 @@ Applying a template creates its rules. Re-applying one later keeps any rules you
 | **Name** | Required. Shown in the console, analytics and the embed settings. |
 | **Description** | A note for your team, shown beneath the name in the table. |
 | **Model** | **Automatic** uses the best deployed model for your workspace. Or pick one of **Your trained models**. Models you have not trained yet are listed too, with a **Train** shortcut. See [Models](/console/models). |
+| **Model family** | Choose which family of shared base models the context resolves from, or keep **Automatic**. |
+| **Retrieval architecture** | Choose a compatible architecture for the selected family, or keep **Automatic**. |
+
+Trained recommender endpoints currently accept a user ID and result count. They can be assigned to **Personalized discovery** and **Email digest** contexts. Search, related-item, continue-watching and merchandising contexts use their own retrieval behavior until their serving inputs are supported by a trained recommender endpoint.
 
 ## Recipe
 
