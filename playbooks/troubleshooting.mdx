@@ -1,0 +1,30 @@
+---
+title: 'Troubleshooting'
+icon: 'life-ring'
+description: 'Diagnose authentication, empty results, event ingestion, rule behaviour and missing analytics.'
+---
+
+Start with one reproducible request. Record the time, context ID, returned request ID and HTTP status. Keep credentials out of logs and support messages.
+
+| Symptom | First checks | Next step |
+| --- | --- | --- |
+| `401` | Correct API and credential type; token expiry | [Authentication](/integrate/authentication). Refreshable clients retry once; static-token clients need a replacement. |
+| `403` | Core token scopes or Platform key scopes | Verify the operation's scope and selected workspace. |
+| `400` on an event | Integer item/event/context IDs, known item, required user | [Events](/integrate/events) and [ID migration](/sdk/integer-id-migration). |
+| Empty recommendations | Active items, context, filters, seed and seen-item policy | Test a less restrictive request, then use [Explainability](/console/explainability). |
+| One failed rail | That rail's `status` and `error` | Handle partial results in [recommendation sets](/api-reference/endpoint/get-recommendation-sets). |
+| Repeated catalogue items | Stable `metadata.source_item_id` and ingestion path | [Catalogue](/integrate/catalogue). Arbitrary metadata identifiers are not deduplication keys. |
+| Rule has no effect | Active state, schedule, context, conditions, segment, Rules stage | [Rules Engine](/console/rules). Inclusion in an experiment does not activate an inactive rule. |
+| Embed is blank | Allowed origin, publishable key, catalogue display metadata, context | [Website embed](/embed). Inspect the browser network response. |
+| Events disappear at shutdown | Buffered events still pending | Flush while the runtime remains active and observe the individual send results. |
+| Analytics is missing or illustrative | Add-on state, retention, Real/Sample data selection, event arrival | [Analytics](/console/analytics). |
+| Training cannot start | Plan, signal template and readiness requirements | [Models](/console/models) and [Events](/console/events). |
+| Unexpected settings change | Current workspace and recent edits | [Activity](/console/activity). |
+
+## Results changed after an edit
+
+Compare the current context/model/rules with the audit trail. Replay an earlier request if an explanation is available; a recomputation uses current settings and cannot establish what the earlier user saw. Check whether an experiment was running.
+
+## Ask for help
+
+Send [support](mailto:contact@neuronsearchlab.com) the smallest failing request with credentials removed, its status and error body, the request ID, timestamp, context ID, and expected behaviour. Include the SDK name/version if relevant. Avoid sending a full user export when a single redacted example will do.

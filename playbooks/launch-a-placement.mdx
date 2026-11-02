@@ -1,0 +1,51 @@
+---
+title: 'Launch a placement'
+icon: 'compass'
+description: 'Take one recommendation surface from catalogue and context setup to measured production traffic.'
+---
+
+Use this checklist for a homepage feed, related-items rail, checkout upsell or email digest. Start with one surface so you can verify the full loop before adding others.
+
+## Prepare the data
+
+- Ingest the items the placement may show and store their returned integer IDs.
+- Include the metadata you need for eligibility and rendering: availability, category, URL and image, for example.
+- Confirm a known user event appears in **Data → Events** with the correct item and event-type IDs.
+- Decide the success measure and the event that represents it. A served list, a visible impression, a click and a purchase are different observations.
+
+See [Catalogue](/integrate/catalogue) and [Events](/integrate/events) for the integration contract.
+
+## Configure the context
+
+1. Open **Relevance → Contexts** and create a context from the closest template.
+2. Give it the placement's name and record its integer ID.
+3. On **Details**, choose **Automatic** or the trained model you intend to use.
+4. Review **Inputs**, **Ranking** and **Safety**. Enable only sources for which you have data.
+5. Add rules for required eligibility and merchandising in **Relevance → Rules Engine**.
+6. Save the recipe, enable the context and review readiness.
+
+Keep mandatory eligibility checks in every variant you test. For example, turning off all rules to measure a promotional boost would also turn off an availability rule in that stage.
+
+## Integrate and verify
+
+Call your backend with a representative visitor and request the new `context_id`. For related items, provide an integer seed `item_id`; for a basket rail, provide the basket item IDs through a supported request path.
+
+Verify these cases before sending real traffic:
+
+| Case | Check |
+| --- | --- |
+| Returning user | Relevant items and the intended context |
+| New visitor | A useful cold-start result or your own fallback |
+| Inactive or unavailable item | Excluded as intended |
+| Restrictive filters | Empty results handled gracefully |
+| Several rails | Group rules and per-rail request attribution |
+| Service error or timeout | Page still works |
+| Click or purchase | Event includes the result set's `request_id` |
+
+Use [Explainability](/console/explainability) for the served request and compare it with the current configuration. Recomputing an explanation after editing a context is not a replay of the earlier decision.
+
+## Release and measure
+
+Start with a small, controlled audience. Keep the context, event mapping and fallback stable while collecting a baseline. If you compare two configurations, use [Experiments](/console/experiments) and state the hypothesis before starting.
+
+Review [performance](/playbooks/measure-performance), then increase traffic when the observed result supports it. To roll back, restore the previous context settings/model or stop routing the placement to the new context. Keep a note of the owner, launch time, hypothesis and rollback choice.

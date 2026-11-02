@@ -1,0 +1,45 @@
+---
+title: 'Context groups'
+icon: 'layer-group'
+description: 'Apply rules across the rails a page shows together, such as never repeating an item between them.'
+---
+
+A page often shows several rails at once: "For you", "Similar items", "Trending near you". Each rail is its own [context](/console/contexts), ranked independently, so the same item can turn up in two of them. A **context group** adds rules that apply across the rails of one page.
+
+Group rules apply when a page asks for the group's rails together in one request: the [batch endpoint](/integrate/recommendations#several-rails-on-one-page), the [embed](/embed), or an SDK's `getRecommendationSets()`. Rails requested one at a time are not affected.
+
+## Create a group
+
+<Steps>
+  <Step title="Open Contexts">
+    Go to **Relevance → Contexts** and select **New group**.
+  </Step>
+  <Step title="Name it">
+    Name it after the page, such as "Homepage", and add an optional description.
+  </Step>
+  <Step title="Add rails">
+    Add contexts from the list, or drag them onto the group in the contexts table.
+  </Step>
+  <Step title="Order the rails">
+    Drag rails into priority order. The rail at the top claims items first.
+  </Step>
+  <Step title="Choose the rules">
+    Turn on the rules below and save.
+  </Step>
+</Steps>
+
+## Group rules
+
+| Rule | Effect |
+| --- | --- |
+| **Don't repeat items across rails** | An item appears in one rail at most. The highest rail that ranked it keeps it. |
+| **Keep rails full** | When group rules remove items from a rail, the rail takes the next ones from its own ranking, to try to fill its limit; it can still return fewer items when there are not enough eligible candidates. |
+| **Limit per attribute across the group** | Caps how many items share a metadata value across all the group's rails, for example at most 3 items per `author`. |
+
+## Exempt rails
+
+Mark a rail as **exempt** when it should ignore the group rules, such as a "Recently viewed" rail that is meant to repeat items. An exempt rail may repeat items, and the items it shows do not count against the other rails.
+
+## Removing a group
+
+Select **Delete group** in the group's settings. Its contexts stay as they are, in no group.

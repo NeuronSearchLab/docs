@@ -1,0 +1,40 @@
+---
+title: 'Items'
+icon: 'box'
+description: 'Browse, filter and inspect every item in your catalogue, and see how each one performs.'
+---
+
+**Data → Items** lists every item in your catalogue with its ID, name, status and dates. Use it to confirm that items arrived, check their metadata and see how individual items perform. To send items, see [Catalogue](/integrate/catalogue).
+
+## Find items
+
+The table pages through your catalogue and can be sorted by any column. Open **Advanced Filters** to narrow it down:
+
+| Filter | Matches |
+| --- | --- |
+| **Item ID**, **Name**, **Description** | Text in those fields |
+| **Status** | **Active** (can be recommended), **Inactive**, or **Any** |
+| **Metadata search** | Items whose metadata contains the text you enter, such as a brand or SKU |
+| **Created date**, **Last modified date** | Items created or changed in a date range |
+
+**Clear all** resets every filter.
+
+## Item details
+
+Select an item to open its panel.
+
+| Tab | Shows |
+| --- | --- |
+| **Details** | ID, name, description, status, all metadata, and when it was last modified |
+| **Embeddings** | Where the item sits relative to similar items in the model's embedding space, and which model version produced it |
+| **Analytics** | How often the item was recommended, the events it received, and its engagement over time |
+
+Item representations are refreshed when the item's name, description or metadata changes.
+
+## Delete items
+
+Select items with the checkboxes (or select all visible items) and choose **Delete selected items**. Deletion is permanent and removes the items from future recommendations. To stop recommending an item while keeping its history, set it inactive through the API instead. See [Update and retire items](/integrate/catalogue#update-and-retire-items).
+
+## When the table is empty
+
+A **Sample** label means your workspace has no items yet and the table shows example rows. Send items through the [API](/integrate/catalogue), connect a [platform](/embed/shopify) or [crawl your website](/instant-start).

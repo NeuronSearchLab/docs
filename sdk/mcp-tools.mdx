@@ -1,0 +1,727 @@
+---
+title: "MCP tool reference"
+description: "Inputs, purpose and profile availability for recommendation, administration and onboarding tools."
+---
+
+This reference covers the package's Core API and administration profiles, plus hosted onboarding tools. Connect using [ChatGPT and MCP](/sdk/mcp). Availability varies by version: inspect your client's live tool list before calling a tool. In the table below, **public** means local Core API mode, **admin** means local `internal` mode, and **hosted** means the hosted administration profile.
+
+Inputs use the names shown here, which may differ from SDK camelCase names. Structured objects follow the relevant [Core API](/api-reference/introduction) or [Platform API](/api-reference/platform-api/introduction) contract. Required fields are marked **required**; other listed fields are optional. The live input schema provides nested fields and validation constraints.
+
+## Core and administration tools
+
+### get_recommendations
+
+Fetch personalised recommendations for a user through the hosted console bridge. Serving a result records attribution and metering data and returns a request_id for subsequent events.
+
+**Available:** public, local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `user_id` | string | **Required** |
+| `context_id` | integer | Optional |
+| `limit` | integer | Optional |
+| `surface` | string | Optional |
+
+### get_recommendation_sets
+
+Fetch every recommendation rail of a page in one request (POST /v1/recommendations/batch). Each set is billed on its own and returns its own request_id — pass the matching one to track_event for interactions on that rail. A set that fails reports its own error without failing the others.
+
+**Available:** public, local.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `user_id` | string | Optional |
+| `anonymous_id` | string | Optional |
+| `sets` | array | **Required** |
+
+### get_auto_recommendations
+
+Fetch one auto-generated recommendation section for a user through the hosted console bridge. Serving a section records attribution and metering data and preserves section, next_cursor, and done response metadata.
+
+**Available:** public, local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `user_id` | string | **Required** |
+| `context_id` | integer | Optional |
+| `limit` | integer | Optional |
+| `cursor` | string | Optional |
+| `window_days` | integer | Optional |
+
+### track_event
+
+Record a user interaction event (click, view, purchase, etc.), or a search. Always pass the request_id from the recommendations call to enable attribution. Event IDs are configured in the NeuronSearchLab admin console under Events. To record a search, send query (and optionally result_item_ids) with no item_id: it steers the user's recommendations by the weight of the Search event.
+
+**Available:** public.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `event_id` | integer | Optional |
+| `user_id` | string | **Required** |
+| `item_id` | integer | Optional |
+| `query` | string | Optional |
+| `result_item_ids` | array | Optional |
+| `request_id` | string | Optional |
+| `session_id` | string | Optional |
+
+### upsert_item
+
+Add or update an item in the recommendation catalogue. The description field is used to generate the embedding — write it to be rich and descriptive. Use metadata for structured attributes (category, price, tags) that are returned with recommendations.
+
+**Available:** public.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `name` | string | **Required** |
+| `description` | string | **Required** |
+| `metadata` | object | Optional |
+
+### patch_item
+
+Partially update an existing item. Most commonly used to enable (active: true) or disable (active: false) an item without re-uploading the full catalogue entry.
+
+**Available:** public.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `item_id` | integer | **Required** |
+| `active` | boolean | Optional |
+
+### delete_items
+
+Permanently remove one or more items from the recommendation catalogue. This cannot be undone. To temporarily exclude items, use patch_item with active: false instead.
+
+**Available:** public.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `item_ids` | array | **Required** |
+
+### search_items
+
+Search the recommendation catalogue by keyword. Returns matching items with their IDs, names, descriptions, and status. Useful for looking up specific items before updating or removing them.
+
+**Available:** public, local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `query` | string | **Required** |
+| `limit` | number | Optional |
+
+### explain_ranking
+
+Explain why a specific item was (or would be) ranked at a particular position for a user. Returns a score breakdown showing embedding similarity and applied rules, plus a pipeline trace showing which stages passed or failed.
+
+**Available:** public, local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `item_id` | integer | **Required** |
+| `user_id` | string | Optional |
+| `context_id` | integer | Optional |
+
+### get_account_plan
+
+Get the authenticated team's current billing plan, resolved resource limits, live resource counts, metered usage, and exact overages. Always call this first when the user asks to clean up plan-limit overages, reduce usage to plan limits, or check remaining capacity.
+
+**Available:** local, hosted.
+
+No input fields.
+
+### list_contexts
+
+List all recommendation contexts (feeds) configured for your team. Contexts define how recommendations are scoped, filtered, and grouped.
+
+**Available:** local, hosted.
+
+No input fields.
+
+### create_context
+
+Create a new recommendation context (feed). A context defines a feed surface — e.g. a homepage feed, a "you may also like" section, or a search assist panel. After creating a context, create a pipeline and optionally rules to control ranking.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `context_name` | string | **Required** |
+| `context_key` | string | Optional |
+| `context_type` | string | Optional |
+| `description` | string | Optional |
+| `recommendation_type` | string | Optional |
+
+### update_context
+
+Update an existing recommendation context.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `context_id` | integer | **Required** |
+| `context_name` | string | Optional |
+| `context_type` | string | Optional |
+| `description` | string | Optional |
+| `recommendation_type` | string | Optional |
+
+### delete_context
+
+Delete a recommendation context. This also removes associated pipelines and rules.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `context_id` | integer | **Required** |
+
+### list_pipelines
+
+List all ranking pipelines. Pipelines define the sequence of stages (candidate generation, scoring, rules, post-processing) that transform raw candidates into a ranked feed.
+
+**Available:** local, hosted.
+
+No input fields.
+
+### create_pipeline
+
+Create a new ranking pipeline with default stages. Optionally attach it to a context. The pipeline starts active by default.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `name` | string | **Required** |
+| `description` | string | Optional |
+| `context_id` | integer | Optional |
+| `is_active` | boolean | Optional |
+
+### update_pipeline
+
+Update an existing ranking pipeline.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `pipeline_id` | number | **Required** |
+| `name` | string | Optional |
+| `description` | string | Optional |
+| `context_id` | integer | Optional |
+| `is_active` | boolean | Optional |
+
+### delete_pipeline
+
+Delete a ranking pipeline.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `pipeline_id` | number | **Required** |
+
+### list_rules
+
+List ranking rules, optionally filtered by context. Rules modify the ranking output — boost, bury, pin, filter, cap, or diversify items.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `context_id` | integer | Optional |
+
+### create_rule
+
+Create a new ranking rule. Rule types: boost (increase score), bury (decrease score), pin (fix position), filter (remove items), cap (limit fraction), diversity (spread categories). Each rule has conditions (which items match) and an action (what to do).
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `context_id` | integer | Optional |
+| `name` | string | **Required** |
+| `description` | string | Optional |
+| `priority` | number | Optional |
+| `rule_type` | string | **Required** |
+| `conditions` | array | **Required** |
+| `actions` | object | **Required** |
+
+### update_rule
+
+Update an existing ranking rule.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `rule_id` | number | **Required** |
+| `name` | string | Optional |
+| `description` | string | Optional |
+| `priority` | number | Optional |
+| `is_active` | boolean | Optional |
+| `conditions` | array | Optional |
+| `actions` | object | Optional |
+
+### delete_rule
+
+Delete a ranking rule.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `rule_id` | number | **Required** |
+
+### toggle_rule
+
+Enable or disable a ranking rule without deleting it.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `rule_id` | number | **Required** |
+| `is_active` | boolean | **Required** |
+
+### get_context
+
+Get the full configuration of a specific recommendation context by ID.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `context_id` | integer | **Required** |
+
+### get_pipeline
+
+Get the full configuration of a specific ranking pipeline by ID.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `pipeline_id` | number | **Required** |
+
+### activate_pipeline
+
+Activate a ranking pipeline so it begins serving ranked results.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `pipeline_id` | number | **Required** |
+
+### deactivate_pipeline
+
+Deactivate a ranking pipeline so it stops serving results without being deleted.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `pipeline_id` | number | **Required** |
+
+### clone_pipeline
+
+Duplicate an existing pipeline with all its stages and configuration. Useful for creating experiment variants or safe copies before making changes.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `pipeline_id` | number | **Required** |
+| `name` | string | **Required** |
+
+### get_rule
+
+Get the full configuration of a specific ranking rule by ID, including conditions and action.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `rule_id` | number | **Required** |
+
+### enable_rule
+
+Enable a ranking rule that was previously disabled.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `rule_id` | number | **Required** |
+
+### disable_rule
+
+Disable a ranking rule without deleting it. Useful for temporarily pausing rules during debugging or campaigns.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `rule_id` | number | **Required** |
+
+### list_segments
+
+List all user segments. Segments group users by shared behaviours or attributes and can be referenced in rules and campaigns.
+
+**Available:** local, hosted.
+
+No input fields.
+
+### get_segment
+
+Get the full definition of a specific user segment, including all its conditions.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `segment_id` | number | **Required** |
+
+### create_segment
+
+Create a new user segment with membership conditions. Condition types: behavioral (purchase/click history), demographic (age, location), computed (ML scores), item_interaction (affinity to categories or items). Example: power users who purchased 3+ times in 30 days.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `name` | string | **Required** |
+| `description` | string | Optional |
+| `conditions` | array | **Required** |
+| `is_active` | boolean | Optional |
+
+### update_segment
+
+Update an existing user segment definition.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `segment_id` | number | **Required** |
+| `name` | string | Optional |
+| `description` | string | Optional |
+| `is_active` | boolean | Optional |
+| `conditions` | array | Optional |
+
+### delete_segment
+
+Delete a user segment. Any rules referencing this segment will need to be updated.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `segment_id` | number | **Required** |
+
+### list_experiments
+
+List all A/B experiments with their current status (draft, running, paused, completed).
+
+**Available:** local, hosted.
+
+No input fields.
+
+### get_experiment
+
+Get the full configuration of a specific A/B experiment including variants, traffic splits, and current metrics.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `experiment_id` | number | **Required** |
+
+### create_experiment
+
+Create a new A/B experiment comparing pipeline variants. Specify 2+ variants with traffic fractions summing to 1.0. Each variant can point to a different pipeline_id. Start it with start_experiment after creating.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `name` | string | **Required** |
+| `description` | string | Optional |
+| `variants` | array | **Required** |
+
+### update_experiment
+
+Update an experiment that is in draft status.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `experiment_id` | number | **Required** |
+| `name` | string | Optional |
+| `description` | string | Optional |
+| `variants` | array | Optional |
+
+### start_experiment
+
+Start an A/B experiment. Traffic will begin splitting between variants immediately. The experiment moves from draft to running status.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `experiment_id` | number | **Required** |
+
+### stop_experiment
+
+Stop a running A/B experiment and mark it as completed. Results are preserved for analysis.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `experiment_id` | number | **Required** |
+
+### get_experiment_results
+
+Get the most recently calculated statistical results for a completed or running experiment without changing stored data.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `experiment_id` | number | **Required** |
+
+### refresh_experiment_results
+
+Recalculate experiment metrics from current recommendation and event data, store the refreshed metrics, and return the updated experiment results.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `experiment_id` | number | **Required** |
+
+### list_training_jobs
+
+List recent model training jobs with their status (running, completed, failed). Training jobs re-train the ranking model on new interaction data.
+
+**Available:** local, hosted.
+
+No input fields.
+
+### get_training_job
+
+Get a customer-facing status summary for a specific training job without returning infrastructure identifiers or raw logs.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `job_id` | string | **Required** |
+
+### create_training_job
+
+Start a model training job from an existing template. This consumes training quota and may incur usage charges; auto-promotion options can replace the model serving live traffic.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `template_id` | number | **Required** |
+| `training_options` | object | Optional |
+
+### cancel_training_job
+
+Cancel a running training job.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `job_id` | string | **Required** |
+
+### get_ranking_metrics
+
+Get ranking performance metrics for a pipeline or context: CTR by position, overall CTR, conversion rate, diversity score, catalogue coverage, and revenue per session.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `pipeline_id` | number | Optional |
+| `context_id` | integer | Optional |
+| `window` | string | Optional |
+
+### get_user_analytics
+
+Get served counts, event breakdown, unique-item activity, and click-through rate for a specific user over a time window.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `user_id` | string | **Required** |
+| `context_id` | integer | Optional |
+| `window` | string | Optional |
+
+### get_item_analytics
+
+Get served counts, event breakdown, watch/click counts, and click-through rate for a specific item over a time window.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `item_id` | integer | **Required** |
+| `context_id` | integer | Optional |
+| `window` | string | Optional |
+
+### compare_items
+
+Compare two items head-to-head by served count, events, clicks, and click-through rate over the same time window.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `item_a_id` | integer | **Required** |
+| `item_b_id` | integer | **Required** |
+| `context_id` | integer | Optional |
+| `window` | string | Optional |
+
+### top_items
+
+List the top items by served count or by matching event activity such as watch or click over a time window. For generic "top item" or "best performing item" questions, prefer metric="served" unless the user explicitly names an event type.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `metric` | string | Optional |
+| `event_name` | string | Optional |
+| `event_id` | integer | Optional |
+| `context_id` | integer | Optional |
+| `window` | string | Optional |
+| `limit` | number | Optional |
+
+### list_api_keys
+
+List all API keys for the team with their names, scopes, environments, and last-used timestamps.
+
+**Available:** local, hosted.
+
+No input fields.
+
+### create_api_key
+
+Create a new API key with specified permissions (scopes). The full key is returned once and cannot be retrieved again.
+
+**Available:** local.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `name` | string | **Required** |
+| `environment` | string | Optional |
+| `scopes` | array | Optional |
+
+### revoke_api_key
+
+Revoke an API key. This immediately invalidates the key and cannot be undone.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `key_id` | number | **Required** |
+
+### list_integrations
+
+List configured third-party integrations (webhooks, data connectors, export targets, etc.).
+
+**Available:** local, hosted.
+
+No input fields.
+
+### list_event_types
+
+List all configured event types (click, view, purchase, etc.) for the team. Returns each event type with its ID, name, weight/value (0–100), and recorded event count.
+
+**Available:** local, hosted.
+
+No input fields.
+
+### create_event_type
+
+Create a new event type that can be tracked in the recommendation model. The value (0–100) controls how much weight this signal has during training.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `event_name` | string | **Required** |
+| `value` | number | Optional |
+
+### update_event_type
+
+Update an existing event type's name or weight. Use list_event_types first to find the event_id.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `event_id` | integer | **Required** |
+| `event_name` | string | **Required** |
+| `value` | number | **Required** |
+
+### delete_event_type
+
+Permanently delete an event type. This cannot be undone. Existing tracked events referencing this type will remain in the database but the type definition will be removed.
+
+**Available:** local, hosted.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `event_id` | integer | **Required** |
+
+### list_platform_routes
+
+List the internal admin-console API routes that the standalone MCP can reach in internal mode. Use this when the user asks for a UI capability that does not have a dedicated MCP tool yet.
+
+**Available:** local.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `section` | string | Optional |
+
+### call_platform_api
+
+Fallback tool for internal mode only. Calls safe admin-console /api routes directly when no dedicated MCP tool exists. Prefer dedicated tools first, and use list_platform_routes when unsure which route to call.
+
+**Available:** local.
+
+| Input | Type | Requirement |
+| --- | --- | --- |
+| `path` | string | **Required** |
+| `method` | string | Optional |
+| `query` | object | Optional |
+| `body` | object | Optional |
+
+## Hosted onboarding tools
+
+These tools help a connected customer try sample data and connect a real catalogue. They are additional to the npm package profiles.
+
+| Tool | Inputs | Result and effect |
+| --- | --- | --- |
+| `try_demo` | Optional `preset`, `limit` (1–10) | Prepares a synthetic workspace and returns its status. Wait for `stage: ready` before rendering results. |
+| `get_demo_recommendations` | Optional reserved `user_id`, `limit` (1–10) | Refreshes recommendations for a sample user. |
+| `record_demo_interaction` | Required sample `user_id`, integer `item_id`, `action` (`view`, `click`, `purchase`) | Records one synthetic interaction; refresh recommendations afterwards. |
+| `render_demo_recommendations` | The complete ready result from `try_demo` | Presents the interactive sample card in a compatible client. |
+| `start_using_my_data` | Optional `route`: `catalogue`, `website` or `code` | Returns supported next steps for real data. |
+| `connect_my_site` | Required `site_url` | Starts building a catalogue from public pages. |
+| `get_onboarding_status` | No inputs | Returns progress and page coverage after connecting a site. |
+
+## Compatibility notes
+
+The local public profile includes `explain_ranking`, but its compatibility route is separate from the documented Core API reference. Use the hosted or local administration profile for the supported Platform API explainability workflow.
+
+Recommendation tools create usage and attribution records. Tools that create, update, delete, enable, disable, activate, start, stop or record data can affect the selected workspace. Keep the assistant's instructions explicit about whether to inspect or apply changes.

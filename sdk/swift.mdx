@@ -1,0 +1,164 @@
+---
+title: 'Swift'
+icon: 'swift'
+description: 'Use the native Swift client for recommendations, events, search and catalogue operations.'
+---
+
+The Swift SDK uses Swift concurrency and URLSession. It supports Swift 5.9+, iOS 15+, macOS 12+, tvOS 15+ and watchOS 8+.
+
+## Install
+
+In Xcode, choose **File → Add Package Dependencies** and enter:
+
+```text
+https://github.com/NeuronSearchLab/neuronsearchlab-swift-sdk.git
+```
+
+Select the `NeuronSearchLabSDK` product, then `import NeuronSearchLab`. With Swift Package Manager:
+
+```swift
+.package(url: "https://github.com/NeuronSearchLab/neuronsearchlab-swift-sdk.git", from: "1.2.0")
+```
+
+## Authentication and configuration
+
+The SDK accepts a static bearer token; it does not exchange client credentials or refresh tokens automatically. Keep workspace secrets on your server. For a distributed mobile application, prefer your own backend endpoints rather than giving every installation a workspace-wide token. Use the SDK directly only where the supplied token's access is appropriate for that runtime.
+
+```swift
+import NeuronSearchLab
+
+let sdk = try NeuronSDK(SDKConfig(
+  baseURL: "https://api.neuronsearchlab.com/v1",
+  accessToken: token,
+  autoSessionId: false
+))
+```
+
+`token` must come from your trusted application's authentication setup; never hard-code it in source.
+
+| SDKConfig field | Default | Purpose |
+| --- | --- | --- |
+| `baseURL`, `accessToken` | Required | API URL and bearer token |
+| `timeoutSeconds` | `10` | Request timeout in seconds |
+| `maxRetries` | `2` | Transient request retries |
+| `urlSession` | `URLSession.shared` | Any `HTTPDataLoading` implementation |
+| `collateWindowSeconds` | `3` | Event buffering window |
+| `maxBatchSize` | `200` | Flush threshold |
+| `maxBufferedEvents` | `5000` | Buffer capacity |
+| `maxEventRetries` | `5` | Buffered-event retry limit |
+| `disableArrayBatching` | `false` | Send events individually |
+| `propagateRecommendationRequestId` | `true` | Store the latest single-list/search attribution ID |
+| `sessionId`, `autoSessionId` | `nil`, `true` | Instance session and generation policy |
+
+## Recommendations and search
+
+```swift
+let result = try await sdk.getRecommendations(
+  RecommendationOptions(userId: "user-123", contextId: 101, limit: 8)
+)
+let search = try await sdk.search(
+  SearchOptions(query: "waterproof shoes", userId: "user-123",
+                contextId: 101, limit: 8, filters: .strings(["category:footwear"]))
+)
+```
+
+`getRecommendations(_:)` accepts `RecommendationOptions`: `userId`, optional `contextId`, `scope`, `limit`, `startingAfter`. It returns `RecommendationsResponse`.
+
+`getAutoRecommendations(_:)` takes `AutoRecommendationsOptions` with `userId`, optional `contextId`, `scope`, `limit`, `cursor`, `windowDays`, `candidateLimit`, `servedCap`. Read the section and `nextCursor`, and stop when `done` is true or no cursor is returned.
+
+`search(_:)` takes `SearchOptions`. Besides `query`, it supports `userId`, `contextId`, `limit`, `filters`, `scope`, `resultItemIds`, `queryRetrievalEnabled`, `fusionMethod`, `semanticWeight`, `keywordWeight`, `keywordFields`, `requestId`, `debug`, `explain`, `includeSuppressed`. `SearchFilters` represents string, string-list or structured filters. See the [search contract](/api-reference/endpoint/search).
+
+### Several rails
+
+```swift
+let page = try await sdk.getRecommendationSets(
+  RecommendationSetsOptions(userId: "user-123", sets: [
+    RecommendationSetRequest(key: "for_you", contextId: 101, limit: 8),
+    RecommendationSetRequest(key: "similar", contextId: 102, limit: 4, itemId: 3187)
+  ])
+)
+if let rail = page.sets["for_you"], rail.error == nil {
+  print(rail.data, rail.requestId)
+}
+```
+
+`getRecommendationSets(_:)` accepts `RecommendationSetsOptions`, including `userId` or `anonymousId`, `sessionId`, `requestId` and a non-empty `sets` array. Each `RecommendationSetRequest` supports `key`, `contextId`, `limit`, `itemId`, `cartItemIds`, `pageType`, `filters`, `scope`, `query`.
+
+Explicit lists larger than eight sets are split. An explicit request ID applies to the first chunk only; later chunks use separate IDs.
+
+Check each `RecommendationSetResult.status` and `error`, then preserve its `requestId` for events. The response also provides ordered `results` and `usage`.
+
+## Events
+
+```swift
+let pending = Task {
+  try await sdk.trackEvent(TrackEventPayload(
+    eventId: 42, userId: "user-123", itemId: 3187,
+    contextId: 101, requestId: result.requestId, sessionId: "visit-456"
+  ))
+}
+// Await delivery while the application remains active.
+_ = try await pending.value
+```
+
+`trackEvent(_:)` accepts `TrackEventPayload` and returns `JSONValue` after its buffered send completes. Required item-event fields are `userId`, integer `eventId` and integer `itemId`; optional fields include `contextId`, `occurredAt` (Unix seconds), `requestId`, `sessionId`, `metadata`, `query`, `resultItemIds` and `additionalFields`.
+
+`trackSearch(userId:query:resultItemIds:eventId:contextId:sessionId:)` records a search with no item. Only `userId` and a non-empty query are required. `createEvent(_:)` is a compatibility alias for `trackEvent`.
+
+`flushEvents()` asynchronously attempts to send buffered events and does not throw. Observe each tracking task for success or failure. Flush while your process still has execution time; an app being suspended or terminated cannot guarantee delivery. For concurrent users or multiple rails, send explicit request and session IDs instead of relying on instance state.
+
+## Items
+
+| Method | Input and result |
+| --- | --- |
+| `upsertItem(_:)` | One `ItemUpsertPayload`; returns `JSONValue` |
+| `upsertItems(_:)` | Array of item payloads; returns the batch envelope as `JSONValue` |
+| `createItem(_:)` | Alias for single-item creation |
+| `patchItem(_:)` | `PatchItemInput` with integer `itemId` and changed fields; returns `PatchItemResponse` |
+| `setItemActive(itemId:active:)` | Convenience availability update |
+| `deleteItems(_:)` | One `DeleteItemInput` or an array; returns `DeleteItemsResponse` |
+
+```swift
+let created = try await sdk.createItem(ItemUpsertPayload(
+  name: "Trail shoes", description: "Lightweight waterproof running shoes",
+  metadata: ["source_item_id": "SKU-42", "category": "footwear"]
+))
+guard case .object(let item) = created, let itemId = item["id"]?.intValue else {
+  throw SDKClientError.validation("Missing item ID in response")
+}
+_ = try await sdk.setItemActive(itemId: itemId, active: false)
+```
+
+NSL generates integer IDs. Store the returned ID for subsequent updates and events. The catalogue's `metadata.source_item_id` supports stable source mappings; see [Catalogue](/integrate/catalogue).
+
+## Client state
+
+| Method | Effect |
+| --- | --- |
+| `setAccessToken(_:)` | Replaces the static bearer token |
+| `setBaseURL(_:)` | Validates and changes the API URL; can throw |
+| `setTimeout(seconds:)` | Changes timeout in seconds |
+| `setRequestId(_:)`, `getRequestId()` | Set, clear or read default request attribution |
+| `setSessionId(_:)`, `getSessionId()` | Manage the instance session; automatic generation can replace a missing session |
+
+## Errors, JSON and transport
+
+Catch `SDKClientError` for validation/configuration, `SDKHTTPError` for HTTP status and response details, and `SDKTimeoutError` for timeout failures. Network and decoding failures can also propagate. A token rejected with `401` needs replacement through your authentication flow.
+
+`NeuronID` accepts a string or integer for application-owned user IDs. Item, context and event-type fields remain integers. `JSONValue` represents objects, arrays, strings, numbers, booleans and null; `JSONObject` is `[String: JSONValue]`. Use typed accessors such as `intValue` when reading a raw response. Codable types implement normal `init(from:)` and `encode(to:)` round trips.
+
+`HTTPDataLoading.data(for:)` is the transport protocol for custom URLSession adapters and tests. Supply it as `SDKConfig.urlSession`.
+
+## Logging
+
+`configureLogger(_:)` accepts `LoggerConfiguration`; `logger` and `SDKLogger.shared` expose the shared logger. Settings include `level`, `enableNetworkBodyLogging`, `enablePerformanceLogging`, `transport` and `redactKeys`. Levels are `.trace`, `.debug`, `.info`, `.warn`, `.error`, `.fatal`; normal logging defaults to `.info` with payload/performance logging off.
+
+Logger methods are `configure`, `trace`, `debug`, `info`, `warn`, `error`, `fatal`, `shouldLog`, `canLogNetworkPayloads` and `isPerformanceLoggingEnabled`. Logging methods accept a message and optional `JSONObject` context. A `LoggerTransport` receives `StructuredLogEntry`. Keep user data out of normal logs.
+
+## Response models
+
+`RecommendationResource`, `RecommendationsResponse` (also aliased as `SearchResponse`), `RecommendationSetResult`, `RecommendationSetsResponse`, `PatchItemResponse` and `DeleteItemsResponse` model the result types. Swift properties use camel case, such as `requestId`; JSON wire fields use snake case. Read the [Core API reference](/api-reference/introduction) for resource semantics.
+
+<Note>
+  This reference targets Swift 1.2.0. To use [context groups](/console/context-groups), pass their member context IDs as explicit sets in one batch. Group rules apply automatically. This published client version does not expose a `groupId` helper.
+</Note>

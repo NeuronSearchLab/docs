@@ -1,0 +1,165 @@
+---
+title: 'Recommendations'
+icon: 'sparkles'
+description: 'Ask for ranked items for a placement: personal feeds, "more like this" rails, basket upsells, several rails per page and anonymous visitors.'
+---
+
+A recommendation request asks: "what should this person see in this placement?". It names a context and, usually, a user, and returns a ranked list plus a `request_id`.
+
+## The basic request
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api.neuronsearchlab.com/v1/recommendations?user_id=user-123&context_id=101&limit=10" \
+  -H "Authorization: Bearer <access_token>"
+```
+
+```ts JavaScript
+const result = await sdk.getRecommendations({ userId: "user-123", contextId: 101, limit: 10 });
+```
+
+```php PHP
+$result = $sdk->getRecommendations(['userId' => 'user-123', 'contextId' => 101, 'limit' => 10]);
+```
+
+```swift Swift
+let result = try await sdk.getRecommendations(
+  RecommendationOptions(userId: "user-123", contextId: 101, limit: 10)
+)
+```
+
+</CodeGroup>
+
+| Parameter | Notes |
+| --- | --- |
+| `context_id` | The placement. Find it in **Relevance → Contexts**. Always send one: without it, only workspace-wide settings and rules apply. |
+| `user_id` | Your identifier for the person. Use the same value you send with their events. |
+| `limit` | 1 to 100. Defaults to 20. |
+| `item_id` | Seed item for "more like this" placements. Works with no user history at all. |
+| `cart_item_ids` | Comma-separated basket items. They are excluded from results and, if nothing else seeds the request, used as the seed. |
+| `filter` | A metadata filter for this request only, such as `category:footwear` or `type!=comment`. Repeat to combine. |
+| `query` | Turns the request into a search. See [Search](/integrate/search). |
+| `anonymous_id`, `session_id` | Identify a visitor before sign-in and group a visit. |
+
+See the [endpoint reference](/api-reference/endpoint/get-recommendations) for every parameter.
+
+### The response
+
+```json
+{
+  "object": "list",
+  "request_id": "c7f0d2bb-56b1-4ca7-8f09-84d8e4ed02b4",
+  "data": [
+    {
+      "object": "recommendation",
+      "item_id": 3187,
+      "rank": 1,
+      "score": 0.94,
+      "item": {
+        "id": 3187,
+        "name": "Trail running shoes",
+        "description": "Lightweight shoes with a waterproof upper.",
+        "metadata": { "category": "footwear", "price": 120, "image_url": "https://…" }
+      }
+    }
+  ],
+  "has_more": true,
+  "next_cursor": "…"
+}
+```
+
+Render from each item's `name` and `metadata`. Keep the `request_id`: send it with the clicks and purchases that follow. See [Credit events to recommendations](/integrate/events#credit-events-to-recommendations).
+
+## Common placements
+
+| Placement | How to request it |
+| --- | --- |
+| Personal feed or "For you" | A **Personalised discovery** context, with `user_id` |
+| "More like this" on a detail page | A **Related items** context, with `item_id` (and `user_id` if known) |
+| Basket or checkout upsell | `cart_item_ids` with the basket contents |
+| Category or listing page | A context filtered to the category, or `filter=category:…` per request |
+| Search results page | `POST /v1/search`. See [Search](/integrate/search) |
+| Email digest | An **Email digest** context, called from your send job per recipient |
+
+Create one context per placement, even if two placements look similar today. It lets you tune, measure and test each one separately. See [Launch a placement](/playbooks/launch-a-placement).
+
+## New and anonymous visitors
+
+Recommendations work before you know anything about someone:
+
+- **No history**: the context falls back to popular, trending and fresh items, and to content similarity when there is an `item_id` or basket seed.
+- **Anonymous visitors**: send a stable `anonymous_id` or a session-scoped `user_id`. When the visitor signs in, link the two identities so their earlier behaviour carries over. See [Identity](/integrate/identity).
+- **Brand new catalogue**: "more like this" works from item descriptions alone, before any events exist.
+
+## Several rails on one page
+
+A page with several rails should ask for them in one request. The visitor's history is read once for the page, identical sets are computed once, and each rail still has its own `request_id`.
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.neuronsearchlab.com/v1/recommendations/batch \
+  -H "Authorization: Bearer <access_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "user-123",
+    "requests": [
+      { "key": "for_you", "context_id": 101, "limit": 12 },
+      { "key": "similar", "context_id": 102, "item_id": 3187, "limit": 6 }
+    ]
+  }'
+```
+
+```ts JavaScript
+const page = await sdk.getRecommendationSets({
+  userId: "user-123",
+  sets: [
+    { key: "for_you", contextId: 101, limit: 12 },
+    { key: "similar", contextId: 102, itemId: 3187, limit: 6 },
+  ],
+});
+page.sets.for_you.data;        // items for that rail
+page.sets.similar.request_id;  // send with events from that rail
+```
+
+</CodeGroup>
+
+- Up to eight sets per request; the SDKs split larger pages for you.
+- Each set is billed as one recommendation request. Identical sets in one batch count once.
+- A failed set reports its own `status` and `error`; the others still return.
+- Use a stable `request_id` when retrying the same batch body so the service can reuse that batch. Do not reuse it for a different request. SDK calls split into several batches use additional request IDs; repeating the whole multi-batch call is not a guarantee that every chunk will be reused.
+
+To stop the same item appearing in two rails on a page, put those contexts in a [context group](/console/context-groups).
+
+## Paged and endless feeds
+
+- **Next page of one rail**: pass `starting_after` (or the `next_cursor` from the last response).
+- **Endless feed of titled sections**: `getAutoRecommendations()` (or `mode=auto`) returns one section at a time, such as "Because you liked Trail running shoes", with a cursor for the next.
+
+```ts
+const section = await sdk.getAutoRecommendations({ userId: "user-123", limit: 6 });
+section.section?.title; // "Because you liked Trail running shoes"
+const next = await sdk.getAutoRecommendations({ userId: "user-123", cursor: section.next_cursor });
+```
+
+## Handle failures
+
+Recommendations should never break a page. Set a short timeout (the SDKs default to 10 seconds; 1 to 2 seconds is usually right for page rendering), and if the call fails, render a fallback such as best-sellers from your own data or hide the rail.
+
+| Status | Meaning |
+| --- | --- |
+| `401` | Token missing or expired. JavaScript, PHP and Next.js can refresh and retry once when configured for managed authentication. Swift requires you to replace its token. |
+| `403` | Token lacks `neuronsearchlab-api/read`. |
+| `429` | Rate limited, or the Free plan's monthly allowance is used. The response says which. |
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Configure the context" icon="sliders" href="/console/contexts">
+    Choose the model, ranking recipe and safety settings for each placement.
+  </Card>
+  <Card title="Explain a result" icon="microscope" href="/console/explainability">
+    Paste a `request_id` to see why each item ranked where it did.
+  </Card>
+</CardGroup>

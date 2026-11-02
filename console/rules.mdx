@@ -1,0 +1,260 @@
+---
+title: 'Rules Engine'
+icon: 'scale-balanced'
+description: 'Business rules applied after scoring: boost, bury, pin, filter, cap, diversify, dedupe, reorder, group and weight by topic, scheduled and targeted at segments.'
+---
+
+The Rules Engine applies your business logic to scored candidates before the response is returned. Contexts decide how candidates are found and ranked; rules decide what must, must not, or should preferably appear, and where.
+
+Open **Relevance → Rules Engine**.
+
+Use rules when you need to:
+
+- promote or demote matching items
+- suppress repeats or cap over-represented content
+- pin items to exact positions
+- override sort order or inject controlled randomness
+- return grouped results instead of a flat list
+- weight results using user topic affinity
+
+---
+
+## Creating a rule
+
+<Steps>
+  <Step title="Start a new rule">
+    Select **New Rule**. You need at least one context first.
+  </Step>
+  <Step title="Describe it">
+    Give it a **Name** such as "Boost new arrivals" or "Cap sponsored items", and an optional **Description**.
+  </Step>
+  <Step title="Choose the type and scope">
+    Pick the **Rule type** (see the reference below). Set **Context** to apply it to one placement, or leave it empty to apply it to every context.
+  </Step>
+  <Step title="Set the priority">
+    Higher numbers are evaluated first.
+  </Step>
+  <Step title="Add conditions">
+    Conditions decide which items (or users) the rule applies to. Leave them empty to match every item.
+  </Step>
+  <Step title="Configure the action">
+    Each type has its own settings, such as a weight multiplier or a pin position. The **Preview** shows the effect on a sample list.
+  </Step>
+  <Step title="Schedule it (optional)">
+    Set a start and end date. Outside that window the rule is skipped even if active.
+  </Step>
+  <Step title="Activate it">
+    Turn on **Active** and save.
+  </Step>
+</Steps>
+
+<Note>
+  Rules run in the **Rules** stage of a context's [pipeline](/console/pipeline). A context needs an enabled recipe and pipeline, with the Rules stage on, for its rules to apply.
+</Note>
+
+Each rule also has a **History** tab listing every change made to it. **Pin**, **cap** and **diversity** rules need the Pro plan or above.
+
+---
+
+## Where rules fit
+
+| Configure in | Use it for |
+|-------------|------------|
+| **Contexts** | Which model and candidate sources a placement uses, how signals are weighted, and discovery and safety settings |
+| **Rules Engine** | Eligibility (`filter`), promotion and demotion, exact positions, caps, ordering and grouping |
+
+Rules are where all item eligibility lives, including "only in-stock items" or "only this category" for one placement: create a `filter` rule scoped to that context.
+
+---
+
+## Rule type reference
+
+| Type | What it does | Main action settings | Example configuration |
+|------|--------------|----------------------|-----------------------|
+| `boost` | Multiplies matching item scores upward so they rise in the ranked list. | `weight` | Conditions: `is_new_arrival = true` • Action: `weight = 1.8` |
+| `bury` | Multiplies matching item scores downward so they fall relative to stronger candidates. | `weight` | Conditions: `quality_band = low` • Action: `weight = 0.4` |
+| `filter` | Removes matching items from the result set entirely. | None | Conditions: `availability = out_of_stock` |
+| `pin` | Moves the first matching item to a fixed 1-based position after ranking. | `pin_position` | Conditions: `item_id = 3187` • Action: `pin_position = 1` |
+| `cap` | Limits how much of the final list matching items may occupy. | `cap_fraction` | Conditions: `content_type = sponsored` • Action: `cap_fraction = 0.2` |
+| `diversity` | Limits consecutive items that share a metadata value, so the list stays varied. | `diversity_field`, `diversity_max` | Action: `diversity_field = brand`, `diversity_max = 2` (at most 2 in a row) |
+| `dedupe` | Prevents the same item or entity from reappearing within a sliding result window. | `dedupe_window` | Action: `dedupe_window = 24` |
+| `randomize` | Shuffles result order to introduce variety on low-stakes or discovery-oriented surfaces. | None | Conditions: `surface = explore` |
+| `reorder` | Overrides the default relevance sort with a metadata field sort. | `order_field`, `order_direction` | Action: `order_field = published_at`, `order_direction = desc` |
+| `ensure_top` | Guarantees at least this many high-relevance items in the top positions, even when other rules are active. | `top_count` | Action: `top_count = 5` |
+| `group_by` | Returns groups of items sharing metadata values instead of a flat list. Groups are ranked by similarity to the user. | `group_by_fields` | Action: `group_by_fields = ["category", "brand"]` |
+| `weighted_topic` | Reweights items by a signal: a numeric metadata field, the user's learned topic affinity, or the ranker's predicted score. | `signal_source`, `topic_field`, `weight_mode`, `weight_strength` | Action: source `user topic affinity`, `topic_field = category`, mode `match`, strength `1.5` |
+
+---
+
+## Choosing the right rule
+
+Think about rules in four buckets:
+
+- **Score modifiers**: `boost`, `bury`, `weighted_topic`
+- **Hard constraints**: `filter`, `cap`, `diversity`, `dedupe`
+- **Ordering controls**: `pin`, `randomize`, `reorder`, `ensure_top`
+- **Response shaping**: `group_by`
+
+This makes rule design simpler:
+
+- Use **boost** or **bury** when you want relevance to matter, but not be absolute.
+- Use **filter** when an item must never appear.
+- Use **cap** or **diversity** when too much of one class of content is crowding the list.
+- Use **pin** when a specific item must occupy a specific slot.
+- Use **reorder** when relevance should be secondary to a known business sort such as recency.
+- Use **group_by** when the consuming surface is meant to show grouped entities rather than a flat list.
+
+---
+
+## Conditions
+
+Conditions decide which items a rule applies to. All conditions must match (AND). A rule with no conditions applies to every item in scope.
+
+A condition's **field** can be:
+
+- an item metadata key, such as `category`, `brand`, `price` or `availability`;
+- `segment_id`, to apply the rule only when the requesting user belongs to a [segment](/console/segments);
+- the ranker's predicted score;
+- `user.topic_affinity.<field>`, the user's learned affinity for the item's value of that field.
+
+Operators: equals, not equals, contains, does not contain, greater than, less than, in, not in, exists and does not exist.
+
+### Item metadata conditions
+
+Match against fields in the item's metadata:
+
+| Field | Operator | Value | Meaning |
+|-------|----------|-------|---------|
+| `genre` | `equals` | `action` | Item genre is action |
+| `price` | `greater_than` | `50` | Item costs more than 50 |
+| `stock_status` | `equals` | `out_of_stock` | Item is unavailable |
+
+### Segment conditions
+
+Target a rule to users in a specific segment:
+
+<Steps>
+  <Step title="Add a segment condition">
+    Add a condition and set the field to `segment_id`.
+  </Step>
+  <Step title="Choose from the dropdown">
+    A dropdown appears listing all available segments.
+  </Step>
+  <Step title="Select the segment">
+    Select the segment. The rule now only applies to users who belong to that segment.
+  </Step>
+</Steps>
+
+This is how you build targeted campaigns, such as boosting a new series only for users who have not yet watched it.
+
+---
+
+## Notes for each rule type
+
+### `boost`
+
+Use `boost` when you want a soft promotion rather than a hard override. Higher weights push matching items upward while still allowing genuinely stronger results to compete.
+
+### `bury`
+
+Use `bury` for items that should remain eligible but less prominent, such as low-margin products, stale inventory, or low-quality content.
+
+### `filter`
+
+Use `filter` for non-negotiable constraints such as compliance, availability, or market restrictions. Once filtered out, an item is gone for that request.
+
+### `pin`
+
+Use `pin` when a specific item must land in a precise slot. Pinning happens after ranking, so it is best for high-confidence placements like launch heroes or mandated disclosures.
+
+### `cap`
+
+Use `cap` when matching items are allowed, but only up to a share of the list. This is especially useful for sponsored, house-brand, or single-vendor content.
+
+### `diversity`
+
+Use `diversity` when a single attribute dominates the list. Common fields are `brand`, `category`, `series_id`, or `author`.
+
+### `dedupe`
+
+Use `dedupe` when repeated entities hurt trust or usefulness. Typical examples are not showing the same SKU twice in a carousel or the same article again in the next few positions.
+
+### `randomize`
+
+Use `randomize` on exploratory or serendipity-focused surfaces where exact ranking is less important than freshness and variety.
+
+### `reorder`
+
+Use `reorder` when business logic should temporarily outweigh relevance, such as sorting by `published_at desc` for a latest-news rail or by `price asc` for a clearance shelf.
+
+### `ensure_top`
+
+Use `ensure_top` to protect the top band from becoming entirely campaign-driven. It works well alongside boosts and pins when you still want the first few results to remain relevance-led.
+
+### `group_by`
+
+Use `group_by` when the consuming UI is designed around grouped entities, such as categories, brands, or collections instead of single items.
+
+### `weighted_topic`
+
+Use `weighted_topic` when users engage with recognisable topics and you want ranking to follow, or deliberately cut across, that affinity. Its settings:
+
+| Setting | Options |
+| --- | --- |
+| **Signal source** | A numeric item field, the user's learned topic affinity, or the ranker's predicted score |
+| **Topic field** | The metadata field that defines a topic, such as `category` or `topic` |
+| **Weight mode** | **Match** amplifies aligned items, **Invert** amplifies the opposite (for contrarian or discovery surfaces), **Explore** adds deterministic variety |
+| **Weight strength** | The multiplier applied to the signal |
+| **Affinity window** | How many recent events, over how many days, estimate the user's affinity |
+| **Position range** | Optionally limit the effect to a rank window, such as positions 1 to 3 |
+
+---
+
+## Scheduling
+
+Rules support time-based activation via start and end dates.
+
+| Configuration | Behaviour |
+|--------------|-----------|
+| Both dates set | Rule is active only within the window |
+| Start date only | Rule activates at that time, with no automatic end |
+| End date only | Rule is active now but deactivates after the deadline |
+| Neither date set | Rule is always active, subject to the **Active** toggle |
+
+### Setting a schedule
+
+<Steps>
+  <Step title="Choose dates">
+    In the rule editor, use the **Start date** and **End date** datetime pickers.
+  </Step>
+  <Step title="Check the scheduled badge">
+    Rules with a schedule show a **scheduled** badge in the table view.
+  </Step>
+  <Step title="Clear dates when needed">
+    Click **Clear schedule** to remove dates and make the rule always active.
+  </Step>
+</Steps>
+
+Schedules are evaluated on NSL's servers at request time, so they behave the same wherever the request comes from.
+
+---
+
+## Priority and execution order
+
+Rules execute in **descending priority order** (highest first). When multiple rules affect the same item:
+
+- A `pin` at priority 100 can still place an item ahead of a `boost` at priority 50.
+- A `filter` removes the item entirely, so later rules never see it.
+- A `cap` or `diversity` rule can trim over-represented content even after score adjustments.
+
+Use priority deliberately:
+
+- **100+** for hard business constraints and compliance-sensitive rules
+- **50-99** for campaigns, featured placements, and seasonal pushes
+- **1-49** for softer merchandising preferences
+
+---
+
+## How rules interact with experiments
+
+Each [experiment](/console/experiments) variant can choose which rules apply to its users, so you can test a rule or set of rules against a control group before rolling it out.

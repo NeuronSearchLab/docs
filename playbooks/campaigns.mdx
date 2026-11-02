@@ -1,0 +1,42 @@
+---
+title: 'Run a merchandising campaign'
+icon: 'calendar'
+description: 'Combine rules, audience segments and schedules without losing control of eligibility or measurement.'
+---
+
+A campaign combines **who** should see a change (segments), **what** should change (rules), **where** it applies (contexts) and **when** it runs (schedule). You manage these through the existing console pages; there is no separate Campaigns page in the sidebar.
+
+## Example: promote a collection for one weekend
+
+1. Check that collection items have consistent metadata, such as `collection: summer-sale`, and accurate availability.
+2. In **Relevance → Rules Engine**, create a `boost` rule scoped to the intended context. Match the `collection` field and choose a modest boost.
+3. Set the campaign's start and end time. Check the time zone shown in the schedule before saving.
+4. If the campaign is for a subset of users, create a [segment](/console/segments), then add it to the rule's targeting.
+5. Enable the rule and verify that the context's Rules stage is enabled.
+6. Test an eligible user and a non-eligible user with [Explainability](/console/explainability), using integer item IDs from **Data → Items**.
+
+A boost affects eligible candidates; it does not guarantee a fixed position. Use `pin` when a specific position is the requirement, and test competing pins and filters. Some rule types require a higher plan; see [Rules Engine](/console/rules).
+
+## Other patterns
+
+| Goal | Approach | Check |
+| --- | --- | --- |
+| Pin an editorial guide | A scheduled `pin` rule for its integer item ID | Required slot and conflicts with other pins |
+| Promote a new series | Metadata match plus a segment based on item interaction | Users who have and have not interacted with the series |
+| Avoid one brand dominating | A `cap` or `diversity` rule on the brand field | Enough eligible candidates remain to fill the list |
+| Avoid repeats between rails | A [context group](/console/context-groups) | Rail priority, exemptions and group request usage |
+| Keep content fresh | Freshness settings plus availability/expiry constraints | Older evergreen content is not unintentionally excluded |
+
+Use metadata that exists on your items. NSL does not infer a custom field such as `published_days_ago` unless your integration supplies it or the feature explicitly computes it.
+
+## Measure a rule change
+
+Create a draft experiment with a control and treatment. Configure the intended rules or recipe for each variant and test both before starting. Do not assume an empty **Include rules** selection disables all rules: an omitted override leaves the normal rule selection in place.
+
+Leave mandatory exclusions active in both variants. An experiment's include list selects from eligible active rules; it is not a way to activate an inactive rule. See [Experiments](/console/experiments) for result definitions and limitations.
+
+## End the campaign
+
+Verify that the schedule has ended and make a new request to confirm the promotional effect is gone. Complete the experiment and record the result. Preserve its configuration and history for later review rather than deleting it immediately.
+
+A scheduled rule can remain enabled in the editor while its time window prevents it from applying. If an item still appears, distinguish normal model relevance from a campaign rule that is still matching.

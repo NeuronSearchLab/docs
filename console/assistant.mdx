@@ -1,0 +1,95 @@
+---
+title: 'NeuronSearchLab AI'
+icon: 'wand-magic-sparkles'
+description: 'Ask the built-in assistant to inspect, explain and change your recommendation setup in plain language.'
+---
+
+NeuronSearchLab AI is a conversational assistant built into the console. Instead of navigating between pages to create rules, check recommendations, or debug rankings, you can describe what you want in plain language and the assistant will do it for you.
+
+Open it from the sidebar by clicking **NeuronSearchLab AI**.
+
+## What it can do
+
+The assistant has access to the same tools available in the [MCP server](/sdk/mcp), which means it can:
+
+- **Get recommendations** for any user and context
+- **Search your catalog** by keyword
+- **Explain rankings** - why an item appeared at a given position
+- **Create, update, and delete items** in your catalog
+- **Track events** on behalf of a user
+- **Manage contexts, pipelines and rules**
+- **Run experiments** and view results
+- **Manage segments**
+- **Inspect training jobs, analytics and catalogue state**
+
+Every action the assistant takes is shown inline as a tool call with a status indicator, so you can see exactly what happened. It asks you to confirm before deleting anything.
+
+## Getting started
+
+When you first open the assistant, you will see a set of starter prompts to help you explore what it can do. For example:
+
+- "Get 5 recommendations for user abc123"
+- "Explain why item X ranked where it did"
+- "Create a boost rule for items in the Electronics category"
+- "Search my catalog for running shoes"
+
+Type a message in the input field and press Enter. The assistant streams its response and shows any tool calls it makes along the way.
+
+## Continue in ChatGPT
+
+Select **Open in ChatGPT** above the composer to continue the workflow in the NeuronSearchLab ChatGPT plugin. If the composer contains text, the handoff includes that request. If it is empty, the handoff starts with a recommendation and ranking-explanation prompt.
+
+The handoff opens the ChatGPT app when a compatible native handler is available and otherwise opens `chatgpt.com`. Install NeuronSearchLab from the ChatGPT plugin directory if it is not already available in your conversation. When ChatGPT asks you to connect, sign up or log in to the NeuronSearchLab console and approve access.
+
+You do not need a local MCP server, Developer mode, an MCP URL, or an API key. See the [ChatGPT plugin setup steps](/sdk/mcp#connect-to-the-hosted-service).
+
+## How it connects to your data
+
+The assistant uses the SDK credentials configured under **Developers → SDK Credentials**. If your team has active credentials, the assistant can call the NeuronSearchLab API on your behalf. The assistant page shows which credential is active at the top of the chat.
+
+If no credentials are configured, the assistant shows **Open SDK Credentials** so you can create one first.
+
+## Conversation workflow
+
+A typical workflow looks like this:
+
+<Steps>
+  <Step title="Request recommendations">
+    Ask the assistant to get recommendations for a user.
+  </Step>
+  <Step title="Review ranked results">
+    Review the ranked results it returns.
+  </Step>
+  <Step title="Explain a ranking">
+    Ask it to explain why a specific item ranked where it did.
+  </Step>
+  <Step title="Adjust a rule">
+    If the ranking is wrong, ask it to create or adjust a rule.
+  </Step>
+  <Step title="Verify the change">
+    Get recommendations again to verify the change took effect.
+  </Step>
+</Steps>
+
+This replaces the need to switch between the Explainability, Rules, and Context pages for quick investigations.
+
+## When to use NeuronSearchLab AI vs the console pages
+
+The assistant is best for:
+
+- Quick investigations and debugging
+- One-off rule changes
+- Exploring your catalog or user data
+- Learning how the platform works
+
+Use the dedicated console pages when you need to:
+
+- Configure complex multi-condition rules with the visual editor
+- Set up A/B experiments with traffic splits
+- Build and manage pipeline stages
+- Review analytics dashboards over time
+- Manage team members, billing, or API keys
+
+## Tool visibility
+
+Every tool the assistant calls is displayed inline with its name and status. You can see the parameters it sent and the response it received. This transparency means you can verify the assistant is doing what you asked and learn the underlying API patterns at the same time.

@@ -1,0 +1,97 @@
+---
+title: 'Pipeline'
+icon: 'diagram-project'
+description: 'The stages a recommendation request runs through, and how to tune each one for a context.'
+---
+
+Every recommendation request runs through a **pipeline**: an ordered set of stages that retrieve candidates, score them, apply your rules and shape the final list. Each context has its own pipeline, created with its recipe, so a homepage feed and a "similar items" rail can work differently.
+
+Open a pipeline from a context's recipe, or from **Build a pipeline** on the Dashboard. The editor shows each stage as a card that you can turn on or off and configure. When opened from a context, the editor is locked to that context's pipeline.
+
+## Stages
+
+Requests pass through the stages in this order. Turning a stage off skips it entirely.
+
+| Stage | Shown as | What it does |
+| --- | --- | --- |
+| **Candidate generation** | Candidate Generation | Retrieves candidates from the context's sources, mainly the nearest items in the model's embedding index |
+| **Feature enrichment** | Signals | Attaches user, item and context signals used by later stages |
+| **Scoring** | Scoring | Scores candidates and applies discovery settings |
+| **Learned ranking** | Learned Reranker | A second-stage model that reorders candidates using behavioural features |
+| **Catalogue intelligence** | Catalog Signals | Blends item-to-item relationships and metadata similarity into scores |
+| **Intelligence layer** | LLM Reranker | Reranks the top of the list with a language model or cross-encoder against several objectives |
+| **Rules** | Rules Engine | Applies your [rules](/console/rules) |
+| **Ranking** | Final Sort | Combines scores into the final order |
+| **Post-processing** | Output Shaping | Removes duplicates, spreads out categories and trims to the page size |
+
+## Stage settings
+
+### Candidate generation
+
+- **Candidate limit**: how many items to retrieve before scoring. Higher values widen the candidate pool and can increase latency. Evaluate a larger pool if results lack variety.
+- **Query / search retrieval**: for search requests, adds keyword matching alongside meaning-based matching. Choose **Reciprocal rank fusion** (rank-based and stable) or **Weighted normalised scores**, set the **semantic** and **keyword** weights, and pick the **keyword fields** (built-in fields and metadata keys) to match against.
+
+### Scoring
+
+| Setting | Effect |
+| --- | --- |
+| **Freshness boost** | Score boost by item age: full for items under 7 days, half for 7 to 30 days |
+| **Impression fatigue** | Demotes items served repeatedly without meaningful engagement, judged by your event weights. Set **Strength** and the **Serve cap** |
+| **Trending backfill** | When personalised scores are weak, adds globally trending items so the list stays useful |
+| **Exploration slots** | Reserves a percentage of slots for items outside the user's usual profile |
+| **Search intent** | Leans recommendations towards what the user searched for recently. See [Searches are events](/integrate/events#searches-are-events) |
+
+### Learned ranking
+
+Choose the ranker type:
+
+| Ranker | Use it when |
+| --- | --- |
+| **XGBoost** | The default: a fast gradient-boosted ranker over behavioural, freshness and affinity features |
+| **MMoE** | Several objectives share one model (multi-gate mixture of experts) |
+| **PLE** | Objectives need stronger separation (progressive layered extraction) |
+
+**Ranking facets** tells the ranker which metadata fields to compute topic affinity over, such as `category` or `brand`. The first non-empty field on each item is used. Leave it empty to use standard category and genre keys.
+
+### Catalogue intelligence
+
+Blends relationships between items (similar, complementary, substitute, same collection, frequently used together, next best and others) into model scores.
+
+- **Catalogue influence**: how far these signals can shift scores, capped at 50% so model relevance stays primary.
+- **Relationship types** and **sources**: which relationships may be used.
+- **Max relationship candidates**: how many relationship-derived candidates may enter per request.
+
+### Intelligence layer
+
+An optional reranker for the top of the list.
+
+| Setting | Effect |
+| --- | --- |
+| **Model** | A managed cross-encoder (lowest latency), a self-hosted cross-encoder, or a language-model listwise reranker (slower, reasons over several objectives) |
+| **Objective** | **Balanced** and **Personalised** lean on relevance, **Discovery** favours diversity and freshness, **Compliance** prioritises policy. **Custom** shows a slider per objective |
+| **Depth** | How many top candidates are reranked. A greater depth considers more candidates and can increase latency; compare quality before raising it |
+| **Latency budget** | A hard timeout. If the reranker does not answer in time, the upstream order is kept |
+| **Fallback on error** | On by default: keep the upstream order if the reranker fails. Off makes the request fail instead |
+| **Explanations** | Off, brief or verbose reasons per item, shown in [Explainability](/console/explainability) |
+
+### Rules
+
+Turn this stage off to serve pure model ranking with no business rules, for example as the control arm of an [experiment](/console/experiments).
+
+### Post-processing
+
+- **Diversity**: limits consecutive items from the same category, pushing extras further down.
+- **Deduplicate**: removes duplicate items, keeping the highest-scored one.
+- **Page size**: how many items the response returns. Every earlier stage works on the full candidate set; the trim happens here.
+
+## Video understanding
+
+If [Twelve Labs video enrichment](/console/integrations#video-enrichment) is enabled for your workspace, the pipeline can use the stored video analysis for candidate vectors, with **Fallback to base embeddings** keeping recall stable for videos not yet enriched.
+
+## Defaults
+
+A new context's pipeline comes from its template. A workspace with no pipeline at all uses defaults: all stages on, a candidate limit of 100 and a page size of 20.
+
+## Pipelines and experiments
+
+An experiment variant can use a different recipe, and with it a different pipeline, so you can measure the effect of a stage. For example, run the rules stage off in one variant to see whether your rules help. See [Experiments](/console/experiments).

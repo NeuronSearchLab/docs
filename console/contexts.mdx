@@ -1,0 +1,150 @@
+---
+title: 'Contexts'
+icon: 'sliders'
+description: 'Configure each placement: the model that serves it, the recipe that ranks it, and the safety settings that keep it fresh.'
+---
+
+A **context** is one place in your product where recommendations appear: a homepage feed, a "similar items" rail on a listing page, a basket upsell, an email digest. Your application sends the context's ID with each request, and everything about how that placement behaves is configured here, without a code change.
+
+Open **Relevance → Contexts**.
+
+## What a context controls
+
+| Setting | Where | What it decides |
+| --- | --- | --- |
+| **Model** | Details tab | Which trained model retrieves candidates |
+| **Recipe** | Inputs, Ranking and Safety tabs | Candidate sources, signal weights, reranking, discovery and guardrails |
+| **Pipeline** | Opened from the recipe | The stages a request runs through, and their limits. See [Pipeline](/console/pipeline) |
+| **Rules** | [Rules Engine](/console/rules) | Boosts, pins, filters and caps scoped to this context |
+| **Group** | Contexts table | Rules shared with the other rails on the same page. See [Context groups](/console/context-groups) |
+
+<Info>
+  Item eligibility filters, such as "only in-stock items" or "only this category", are `filter` rules in the [Rules Engine](/console/rules), scoped to the context. Keeping them there gives each context one place for all of its business logic.
+</Info>
+
+## The contexts table
+
+Each row shows the context's name and description, its model, whether a recipe and pipeline are attached, how many rules apply to it, and when it last changed. Search by name at the top. Select a row to open the editor.
+
+Contexts can be arranged in [groups](/console/context-groups) for pages that show several rails together. Drag a context onto a group, or between rails in a group to set their priority.
+
+## Create a context
+
+<Steps>
+  <Step title="Start a new context">
+    Select **New Context**. The editor opens as a panel on the right.
+  </Step>
+  <Step title="Choose a template">
+    Use the template menu at the top right to start from a complete setup, or choose **Build from scratch** for a blank recipe. A template fills in the model, ranking and safety settings together; you can change any of them afterwards.
+  </Step>
+  <Step title="Name it">
+    On **Details**, give it a name people will recognise, such as "Listing page - similar items", and an optional description.
+  </Step>
+  <Step title="Review the recipe">
+    Check the **Inputs**, **Ranking** and **Safety** tabs. A dot on a tab means it has non-default settings.
+  </Step>
+  <Step title="Create it">
+    Select **Create Context**. The context gets a numeric ID, shown in the table, which you pass as `context_id`.
+  </Step>
+  <Step title="Enable it">
+    Use the switch in the editor header to enable the context and its pipeline. A context needs a saved recipe before it can be enabled.
+  </Step>
+</Steps>
+
+### Templates
+
+| Template | Best for |
+| --- | --- |
+| **Personalised discovery** | A personal feed or "For you" shelf. Balanced personalisation, freshness and controlled exploration. |
+| **Related items** | "More like this" on a detail page. Item-to-item relevance blended with catalogue relationships. |
+| **Search results / assist** | Query-driven surfaces. Relevance first, with a rule that keeps the most relevant results at the top. |
+| **Continue watching / watch next** | Resuming where someone left off, ordered by recent progress. |
+| **Email digest** | Outbound digests. Compact, freshness-aware selection. |
+| **Merchandising / campaign ranking** | Campaigns, collections and promoted modules where business rules lead. |
+
+**Reference algorithms** reproduce the published ranking approaches of well-known social feeds (For You, home feed and short-video styles). They come with a pack of rules, such as author caps, topic diversity and fatigue on skipped topics. They are useful starting points for feed-style products.
+
+Applying a template creates its rules. Re-applying one later keeps any rules you have edited.
+
+## Details
+
+| Field | Notes |
+| --- | --- |
+| **Name** | Required. Shown in the console, analytics and the embed settings. |
+| **Description** | A note for your team, shown beneath the name in the table. |
+| **Model** | **Automatic** uses the best deployed model for your workspace. Or pick one of **Your trained models**. Models you have not trained yet are listed too, with a **Train** shortcut. See [Models](/console/models). |
+
+## Recipe
+
+The recipe is the context's ranking strategy. It is split across three tabs.
+
+### Inputs
+
+**Candidate sources** decide where candidates come from, and what share of the candidate pool each one fills. The bar shows the mix.
+
+| Source | What it adds |
+| --- | --- |
+| **Vector** | Nearest items to the user or seed item, from the model's embedding index. The main source for most contexts. |
+| **Trending** | Items engaging the most people within a recency window you set. |
+| **Fresh** | Recently added items, so new items get a chance to gather evidence. |
+| **Cold start** | Items for users with little history, governed by quality gates and reserved slots. |
+| **Search** | Items related to the user's recent searches. |
+| **Similar**, **Follows**, **Graph**, **Community**, **Subscriptions** | Social and graph sources. These are saved as configuration and marked **Stored** until the matching data (for example a follow graph) is connected to your workspace. |
+
+**Ranking features** lists the facets the ranker computes user affinity over, such as category, genre or brand: the first non-empty field on each item wins. User topic affinity, predicted score, item freshness and impression fatigue are always used.
+
+**Event weights** shows each event type's weight and polarity as set on the [Events page](/console/events). Change a value here to override it for this context only; **Reset** returns it to the global value.
+
+### Ranking
+
+**Reranking** sets the objectives for an optional reranker that reorders the top of the list using a language model or cross-encoder: relevance, diversity, freshness and policy, either from a preset (Balanced, Discovery, Personalised, Compliance) or custom weights.
+
+**Discovery** controls how much room is given to the unexpected:
+
+| Setting | Effect |
+| --- | --- |
+| **Exploration slots** | Share of slots reserved for items the model is less sure about |
+| **Freshness boost** | Bonus for items under 7 days old (half for 7 to 30 days) |
+| **Trending backfill** | Fills with trending items when personalised scores are weak |
+| **Out-of-network quota** | Share of the list reserved for items outside the user's follows |
+| **Content-pool graduation thresholds** | View counts at which new items move into larger audiences |
+| **Onboarding interest IDs** | Topics collected at sign-up, used to seed a new user's profile |
+| **Demographic prior fallback** | Uses locale, device and age-band popularity when history is thin |
+
+### Safety
+
+**Seen items**: turn on **Don't re-show seen items** to exclude items this context has already served to a user, matched across sessions and devices. **Look-back window** sets how long an item stays excluded: 24 hours, 7, 30 or 90 days, or forever. Choose a shorter window for small catalogues so the placement does not run dry.
+
+**Guardrails** stop one thing taking over a session:
+
+| Setting | Effect |
+| --- | --- |
+| **Impression fatigue** and **Fatigue strength** | Items served repeatedly without engagement are progressively demoted |
+| **Session similarity decay** | Demotes items that closely resemble many recent items in the same session (0.70 to 0.95 is typical; 1.0 turns it off) |
+| **Topic concentration** | Maximum share of a session from one topic |
+| **Author concentration** | Maximum items per author per session |
+| **Position-in-session aware** | Lets the ranker learn that preferences change with position in the session |
+
+**Readiness** checks the context before it serves: activation, live retrieval sources, metadata guardrails, events, explanation replay and experiment setup. Fix anything marked as blocked.
+
+**Recipe management** removes the recipe while keeping its pipeline and rules.
+
+## Use the context in your code
+
+Pass the context's ID with each request:
+
+```bash
+curl "https://api.neuronsearchlab.com/v1/recommendations?user_id=user-123&context_id=101"
+```
+
+For the website embed, choose the context per placement in [Website embed](/console/website-embed). A workspace also has a default context, used by strips that do not name one.
+
+## Before you send traffic
+
+- The model is intentional, and shows as serving.
+- The recipe's sources are live, not just stored.
+- `filter` rules exclude anything that must never appear, such as unavailable items.
+- **Readiness** has nothing blocked.
+- A few real users and items look right in [Explainability](/console/explainability).
+
+See [Launch a placement](/playbooks/launch-a-placement) for the full checklist, including a staged rollout.

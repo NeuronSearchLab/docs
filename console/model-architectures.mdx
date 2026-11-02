@@ -1,0 +1,82 @@
+---
+title: Recommendation architectures
+description: Understand the recommenders in the catalogue and choose candidates to evaluate on your data.
+icon: shapes
+---
+
+An architecture describes how a recommender learns and scores items. A **trained model version** is the result of fitting that architecture to a particular dataset. Start in [Models](/console/models), choose eligible candidates, then compare them on the same training snapshot before deployment.
+
+There is no universally best architecture. Catalogue size, history length, available signals, latency and the objective you measure all affect the choice. The console's readiness checks determine whether your data meets the requirements for a particular training run.
+
+## Neighbourhood and content models
+
+| Recommender | How it works | Main tradeoff |
+| --- | --- | --- |
+| **ItemKNN** | Finds items that co-occur in user histories and scores neighbours of items a user engaged with | A useful behavioural baseline; new items without co-occurrence evidence need another source of relevance |
+| **VS-KNN** | Matches the current session to similar past sessions | Useful for session-driven intent; depends on relevant session history rather than a durable user profile |
+| **Content TF-IDF** | Matches item text to the content in the user's history | Can score new items from descriptions; limited descriptions reduce its ability to distinguish them |
+| **EASEᴿ** | Learns linear item-to-item relationships from interaction histories | A compact modelling approach whose memory requirements grow rapidly with catalogue size; respect the catalogue's size limit |
+| **iALS** | Learns latent user and item factors from implicit feedback | Learns broad preference patterns; relies on interaction coverage and meaningful feedback weights |
+| **LightGCN** | Propagates information across the user–item interaction graph | Can find indirect relationships; sparse evidence and popularity effects still need evaluation |
+
+## Sequence models
+
+These models use the order of a user's interactions. Choose them when changes in intent or the next likely action matter, and when your events contain reliable ordering and enough history.
+
+| Recommender | How it works |
+| --- | --- |
+| **GRU4Rec** | A recurrent network summarizes the ordered interaction sequence to predict what comes next |
+| **SASRec** | A causal transformer attends to earlier items in the sequence |
+| **BERT4Rec** | A bidirectional transformer learns by reconstructing masked items in histories |
+| **HSTU (Generative Recommenders)** | A sequential architecture uses position and time information to model changing interaction histories |
+
+Longer history or a more complex model is not automatically better. Compare sparse-history and dense-history users separately, and keep time-based evaluation consistent between candidates.
+
+## Retrieval followed by ranking
+
+A retrieval stage selects candidates; a ranking stage orders that smaller set. The ranker can improve the order of retrieved candidates, but cannot recover an item the retriever never supplied.
+
+| Recommender | Retrieval and ranking approach |
+| --- | --- |
+| **ItemKNN + MLP ranker** | Neighbourhood candidates reordered by a neural network using retrieval, history and content features |
+| **ItemKNN + Multi-task ranker** | Neighbourhood candidates with separate output heads for available engagement signals, combined using chosen weights |
+| **VS-KNN + GBDT** | Session-neighbour candidates reordered by gradient-boosted trees |
+| **EASEᴿ + LambdaMART** | Linear item-to-item candidates reordered by a listwise boosted ranker; inherits EASE's catalogue-size limit |
+| **Two-Tower + DCN-v2** | Separate user and item encoders retrieve candidates, followed by a deep-and-cross ranking network |
+| **Two-Tower Token-Mixer** | Two-tower retrieval followed by a token-mixing ranking architecture |
+| **ItemKNN + Option-Attention reranker** | Neighbourhood retrieval followed by candidate-specific attention over the user's recent history |
+| **Cheap full pass + Option-Attention reranker** | A low-cost catalogue scoring pass selects candidates for a more detailed attention-based pass |
+
+The catalogue's trained ranking stage is distinct from the optional stages you configure in a context's [Pipeline](/console/pipeline). Check both when investigating the final order.
+
+## Option scoring and generative models
+
+| Recommender | What distinguishes it |
+| --- | --- |
+| **Option-Attention Scorer (full catalogue)** | Scores each item against its own attended view of the user's history; cost grows with the number of items scored |
+| **Calibrated Multi-Outcome Option Scorer** | Predicts separate engagement outcomes and calibrates those predictions on held-out data before combining them |
+| **TIGER** | Encodes items as semantic codes and generates the codes of a likely next item |
+| **Semantic-ID Language Model** | Uses semantic item tokens and a staged training curriculum for generative retrieval |
+| **Multi-Token Foundation Recommender** | Predicts multiple future interactions from a unified history representation that also uses item content |
+| **Preference-Aligned Session Generator** | Generates a recommendation sequence jointly, then aligns it with a reward objective |
+| **Unified Action Transformer** | Uses a related transformer design for retrieval and ranking with semantic item representations |
+
+A generative recommender predicts items or item codes; it does not necessarily generate new product descriptions or chat responses. Its catalogue coverage, decoding limits and latency still need to be measured.
+
+Some catalogue entries implement published architectural ideas at a smaller scale. They are not the original company's model or a promise of that company's results. Read each entry's confidence label and caveat: an official implementation, a reference, a reproduction and a proxy provide different levels of correspondence to the named research.
+
+## Non-personalised comparison points
+
+**Popularity** ranks items by total interaction count. **Recency-Weighted Popularity** gives recent interactions more influence. Both return an order that does not depend on the requesting user's preferences. Entries marked **Baseline** are comparison references, not selectable training candidates.
+
+These comparisons matter: a model that cannot improve on a simple baseline for your objective may not justify added training or serving cost.
+
+## Choose and evaluate
+
+1. Check data readiness and select a small set of plausible architectures.
+2. Use the same signal template and snapshot when comparing runs.
+3. Inspect relevance, cold-start performance, long-tail exposure, novelty, diversity and multi-objective behaviour. Check how many datasets or users contributed to a comparison.
+4. Review latency and cost alongside quality. Catalogue reference figures are comparison estimates, not a guarantee for your workload.
+5. Evaluate on your own held-out events, then use a controlled [experiment](/console/experiments) to assess live behaviour.
+
+The console catalogue is the current source for availability, requirements and reference results. Use [Model Training](/console/training) for run metrics and [Models](/console/models#deploy-a-model) for deployment and rollback.

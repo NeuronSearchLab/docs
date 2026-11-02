@@ -1,175 +1,112 @@
 ---
-title: 'Quickstart'
-icon: 'bolt'
-description: 'Start building with NeuronSearchLab in just a few minutes'
+title: Quickstart
+icon: bolt
+description: Create credentials, import items, fetch recommendations and record an attributed event.
 ---
 
-## Set up your access
+Build a first recommendation flow with the Core API. This walkthrough uses a shell, `curl` and `jq`. For a managed client, start with [JavaScript](/sdk/introduction), [PHP](/sdk/php), [Next.js](/sdk/nextjs) or [Swift](/sdk/swift). For a website without backend code, use the [no-code start](/instant-start) and [embed](/embed).
 
-NeuronSearchLab is a hosted API service that provides real-time personalized recommendations through an API, SDK, and a web console. You do not need to deploy or install anything - just sign up and generate your API credentials.
+## 1. Prepare your workspace
 
-<Steps>
-  <Step title="Register or log in">
-    Go to [console.neuronsearchlab.com/signup](https://console.neuronsearchlab.com/signup) or [login](https://console.neuronsearchlab.com/login) to create an account. You can invite teammates later from the **User Management** page in Settings.
-  </Step>
-  <Step title="Generate client credentials">
-    Once logged in, open **SDK Credentials** in Settings and create a new client. Copy the **Client ID** and **Client Secret**. They are required to authenticate your backend services.
+1. [Create an account](https://console.neuronsearchlab.com/signup).
+2. Open **Developers → SDK Credentials**, select **New Credential**, and copy the client ID and secret. The secret is shown once.
+3. Open **Relevance → Contexts** and copy a context's integer ID. A new workspace includes a starter context; its name depends on your setup.
+4. Open **Data → Events → Configure signals** and copy the **Click** event's integer ID. Built-in event IDs can be negative; copy the actual value.
 
-    <Warning>
-      **Never expose the Client Secret in browser code or mobile apps.** Store it in your server-side environment variables or a secrets manager.
-    </Warning>
-  </Step>
-  <Step title="Add your first dataset">
-    Navigate to **Items** in the Explore section and use the upload flow to add a handful of representative items. Include metadata such as category, price, tags, and thumbnails to improve downstream recommendations.
-  </Step>
-</Steps>
-
----
-
-## Authenticate securely
-
-Create a backend route that exchanges your client credentials for an access token. The token scopes enforce what each service can do.
+Set `NSL_CLIENT_ID` and `NSL_CLIENT_SECRET` in your server environment. Keep the secret out of browser code, mobile bundles and source control. Set the IDs you copied:
 
 ```bash
-curl -X POST https://auth.neuronsearchlab.com/oauth2/token \
-  -H "Authorization: Basic <base64(client_id:client_secret)>" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "grant_type=client_credentials"
+export NSL_CONTEXT_ID=101  # replace with your context ID
+export NSL_CLICK_EVENT_ID=42  # replace with your Click event ID
 ```
 
-<Steps>
-  <Step title="Call the token endpoint">
-    Call the auth token endpoint from a trusted server environment.
-  </Step>
-  <Step title="Cache the access token">
-    Cache the resulting access token until it expires. Tokens default to 60 minutes.
-  </Step>
-  <Step title="Forward the token securely">
-    Forward the token to your frontend or edge workers via secure headers.
-  </Step>
-</Steps>
-
-<Tip>
-  Rotate credentials regularly and prefer one client per application so you can revoke access without downtime.
-</Tip>
-
----
-
-## Make your first API call
-
-With an access token you can request recommendations immediately. The following example retrieves homepage content for a known user using context ID `101`:
+## 2. Get an access token
 
 ```bash
-curl -X GET "https://api.neuronsearchlab.com/v1/recommendations?user_id=user-123&context_id=101&limit=10" \
-  -H "Authorization: Bearer <your_access_token>"
+NSL_TOKEN_RESPONSE=$(curl --fail-with-body --silent --show-error \
+  -u "$NSL_CLIENT_ID:$NSL_CLIENT_SECRET" \
+  -d grant_type=client_credentials \
+  https://auth.neuronsearchlab.com/oauth2/token)
+export NSL_TOKEN=$(printf '%s' "$NSL_TOKEN_RESPONSE" | jq -er '.access_token')
 ```
 
-Send optional query parameters such as `limit`, `filter`, or `scope` to tailor the response. Responses include ranked items with associated metadata so you can render UI components quickly.
+The response's `expires_in` tells you how long the token lasts. Reuse it until it needs refreshing. JavaScript, PHP and Next.js clients can handle token exchange and renewal for you. See [Authentication](/integrate/authentication).
 
-For query-driven product search, call the Core API search endpoint from the same backend boundary:
+## 3. Create two items
+
+Items are the products, articles or other records NSL may recommend. Give each one a useful description and a stable source identifier so repeating this example updates the same records.
 
 ```bash
-curl -X POST "https://api.neuronsearchlab.com/v1/search" \
-  -H "Authorization: Bearer <your_access_token>" \
-  -H "Content-Type: application/json" \
-  -d '{"query":"waterproof trail shoes","user_id":"user-123","context_id":101,"limit":10}'
+curl --fail-with-body --silent --show-error \
+  https://api.neuronsearchlab.com/v1/items \
+  -H "Authorization: Bearer $NSL_TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '[
+    {
+      "name": "Trail running shoes",
+      "description": "Lightweight running shoes with a waterproof upper.",
+      "metadata": {"source_item_id": "quickstart-shoes", "category": "footwear"}
+    },
+    {
+      "name": "Merino running socks",
+      "description": "Cushioned wool socks for long trail runs.",
+      "metadata": {"source_item_id": "quickstart-socks", "category": "accessories"}
+    }
+  ]'
 ```
 
-If you prefer higher level abstractions, use one of the official SDKs from your backend:
+NSL assigns each item an integer ID. Store those IDs alongside your own records for future updates and events. Check both items in **Data → Items**. For a full catalogue, see [Catalogue](/integrate/catalogue).
 
-- JavaScript/TypeScript: [`@neuronsearchlab/sdk` on npm](https://www.npmjs.com/package/@neuronsearchlab/sdk)
-- PHP/Laravel: [`neuronsearchlab/sdk-php` on Packagist](https://packagist.org/packages/neuronsearchlab/sdk-php)
-- Technical background: [recommendation systems reading path](https://www.neuronsearchlab.com/blog/recommendation-systems)
-- Explore use cases: [recommendation experiences by industry](https://www.neuronsearchlab.com/use-cases)
-- Platform overview: [features](https://www.neuronsearchlab.com/features)
+## 4. Request a recommendation list
 
----
+Use an application-owned test user ID. Keep it consistent when recording that user's events.
 
-## Explore the console
+```bash
+NSL_RESULT=$(curl --fail-with-body --silent --show-error --get \
+  https://api.neuronsearchlab.com/v1/recommendations \
+  -H "Authorization: Bearer $NSL_TOKEN" \
+  --data-urlencode 'user_id=quickstart-user' \
+  --data-urlencode "context_id=$NSL_CONTEXT_ID" \
+  --data-urlencode 'limit=2')
+printf '%s\n' "$NSL_RESULT" | jq .
+```
 
-In addition to the API and SDK, you can manage your data and monitor performance through the [NeuronSearchLab Console](https://console.neuronsearchlab.com). Key areas include:
+The response contains ranked records in `data` and a `request_id`. Each record identifies its item with `item_id`. With a tiny catalogue and no user history, this validates connectivity and retrieval; it does not demonstrate learned personalisation yet.
 
-- **Dashboard** - Usage overview, credit tracking, and setup checklist.
-- **Context** - Define contexts for each recommendation surface with retrieval settings and pre-query filters.
-- **Rules Engine** - Create business rules to boost, bury, pin, filter, cap, diversify, dedupe, randomize, reorder, group, or topic-weight results.
-- **Pipeline Config** - Control the multi-stage recommendation pipeline.
-- **Explainability** - Debug why a specific item was recommended to a specific user.
-- **Analytics** - Track recommendation volume, engagement events, and performance over time.
-- **Items & Users** - Browse your catalog and user embeddings.
-- **A/B Testing** - Split traffic between strategies and measure impact.
-- **NeuronSearchLab AI** - Conversational assistant for managing recommendations through natural language.
+If `data` is empty, check that the items are active and that your context's filters permit them. [Troubleshooting](/playbooks/troubleshooting) covers authentication, empty results and missing events.
 
-### Recommended training workflow
+## 5. Record a test click
 
-When you are ready to train your first recommendation version:
+Copy the first returned item and the request ID directly from the response. This keeps the interaction tied to the list that produced it.
 
-<Steps>
-  <Step title="Define event signals">
-    Define event signals and save a template in **Events**.
-  </Step>
-  <Step title="Start a training run">
-    Start a training run from that template.
-  </Step>
-  <Step title="Review the trained version">
-    Review the resulting trained version in **Models**.
-  </Step>
-  <Step title="Add team context">
-    Add an optional label and description for your team.
-  </Step>
-  <Step title="Approve the version">
-    Approve the trained version when it is ready.
-  </Step>
-  <Step title="Promote to serving">
-    Promote it to a serving target when you are ready to make it live.
-  </Step>
-</Steps>
+```bash
+NSL_ITEM_ID=$(printf '%s' "$NSL_RESULT" | jq -er '.data[0].item_id')
+NSL_REQUEST_ID=$(printf '%s' "$NSL_RESULT" | jq -er '.request_id')
+# Continue only if both values above were returned successfully.
+NSL_EVENT=$(jq -n \
+  --arg user_id 'quickstart-user' \
+  --argjson item_id "$NSL_ITEM_ID" \
+  --argjson event_id "$NSL_CLICK_EVENT_ID" \
+  --argjson context_id "$NSL_CONTEXT_ID" \
+  --arg request_id "$NSL_REQUEST_ID" \
+  '{user_id: $user_id, item_id: $item_id, event_id: $event_id,
+    context_id: $context_id, request_id: $request_id}')
+curl --fail-with-body --silent --show-error \
+  https://api.neuronsearchlab.com/v1/events \
+  -H "Authorization: Bearer $NSL_TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d "$NSL_EVENT"
+```
 
-This keeps training inputs, version review, and live rollout decisions clearly separated.
+Open **Data → Events** to confirm the test click arrived. In **Insights → Explainability**, enter the `request_id` to inspect the served decision. Keep test traffic separate from real customer identities.
 
----
+## Build the production flow
 
-## Extend your integration
+Your application repeats the same loop: keep the catalogue current, fetch a list for a user and context, render it, then send actual engagement with that list's request ID.
 
-NeuronSearchLab supports rich documentation and examples to help you integrate quickly and effectively.
-
-<CardGroup>
-  <Card title="PHP SDK" icon="code" href="/sdk/php">
-    Install the official PHP SDK with Composer for Laravel or any PHP service.
-  </Card>
-
-  <Card title="JavaScript SDK" icon="js" href="/sdk/introduction">
-    Use the official npm package from Node.js or TypeScript services.
-  </Card>
-</CardGroup>
-
-<CardGroup>
-  <Card title="Serve Recommendations" icon="sparkles" href="/guides/how-to-serve-recommendations">
-    Ship real-time personalized recommendations with context-aware request patterns.
-  </Card>
-
-  <Card title="Connect Catalog + Events" icon="database" href="/guides/how-to-connect-catalog-and-events">
-    Keep item metadata and engagement signals flowing for recommendation quality.
-  </Card>
-
-  <Card title="Launch New Contexts" icon="compass" href="/guides/how-to-launch-a-new-context">
-    Roll out a new recommendation surface with measurable business outcomes.
-  </Card>
-</CardGroup>
-
-<CardGroup>
-  <Card title="Track Events" icon="activity" href="/api-reference/endpoint/submit-events">
-    Log impressions, clicks, and conversions to power near real-time learning.
-  </Card>
-
-  <Card title="Submit Items" icon="database" href="/api-reference/endpoint/submit-items">
-    Send product or content metadata to build and refresh your catalog.
-  </Card>
-
-  <Card title="Get Recommendations" icon="sparkles" href="/api-reference/endpoint/get-recommendations">
-    Retrieve personalized results that respect context filters and ranking rules.
-  </Card>
-
-  <Card title="Search" icon="magnifying-glass" href="/generate-search-results">
-    Run query-driven retrieval through the Core API search endpoint.
-  </Card>
+<CardGroup cols={2}>
+  <Card title="Key concepts" icon="book" href="/concepts">Understand contexts, events, pipelines, rules and models.</Card>
+  <Card title="Track events" icon="signal" href="/integrate/events">Choose event types and preserve attribution across placements.</Card>
+  <Card title="Serve recommendations" icon="sparkles" href="/integrate/recommendations">Add similar-item rails and several placements on a page.</Card>
+  <Card title="Launch a placement" icon="compass" href="/playbooks/launch-a-placement">Configure, verify and roll out a production context.</Card>
 </CardGroup>

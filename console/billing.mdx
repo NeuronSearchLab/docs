@@ -1,0 +1,39 @@
+---
+title: 'Billing and plans'
+icon: 'credit-card'
+description: 'Understand request usage, plan limits, analytics add-ons, payment details and invoices.'
+---
+
+Open **Account → Billing** for the selected workspace's plan, current usage, payment status and invoices. The prices and limits displayed there are the terms to review before changing your subscription.
+
+## Requests and limits
+
+A recommendation list or search contributes to request usage. A batch containing several recommendation sets is not a single billable set: each set is accounted for separately. Inspect the response's `usage` object when using [recommendation sets](/api-reference/endpoint/get-recommendation-sets).
+
+Plans also limit resources such as contexts, rules, event types, credentials and members. A disabled creation control can mean the workspace has reached a resource limit even when it still has requests available.
+
+Use the current-period usage display to compare consumption with your allowance. Review the plan's overage terms before sending production traffic. Do not infer cost from HTTP request count alone.
+
+## Change plan
+
+1. Compare the plan cards and their limits.
+2. Select **Upgrade** or **Downgrade** for the target plan.
+3. Review the confirmation, billing details and any immediate charge or change to allowances.
+4. Complete the payment or confirmation step.
+5. Return to Billing and verify the active plan.
+
+If you bought through a platform integration, follow that integration's billing flow: [Shopify](/embed/shopify) or [Vercel](/platforms/vercel). Their subscription and usage terms may differ from a direct subscription.
+
+## Data analytics and retention
+
+**Data analytics** is an optional add-on for Pro and Enterprise. The current plan card shows its status and the active retention period. Enable the add-on and choose the retention tier when you need the [Analytics workbench](/console/analytics).
+
+Retention controls how much history is available for reporting. Increasing it does not recreate data that has already expired. Review the price and effective retention before confirming a change.
+
+## Payment details and invoices
+
+Use **Billing Details** for the billing contact and company details, and **Invoices** to view invoice history. **Open Billing Portal** provides payment-method and subscription management.
+
+If the page shows a payment issue, follow **Update payment method** and check any displayed grace-period deadline. A payment restriction is distinct from exhausting a usage allowance.
+
+For a billing discrepancy, contact [support](mailto:contact@neuronsearchlab.com) with your workspace, billing period and the relevant usage or invoice reference. Do not include payment-card details or credentials.

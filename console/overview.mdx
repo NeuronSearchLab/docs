@@ -1,0 +1,58 @@
+---
+title: 'Console tour'
+icon: 'browser'
+description: 'How the console is laid out, what the Dashboard shows, and the shortcuts that save time.'
+---
+
+The [console](https://console.neuronsearchlab.com) is where you configure what people see, inspect your data and measure results. This section of the docs follows the console's sidebar, so each page here matches one page there.
+
+## The sidebar
+
+| Section | Pages | What you do there |
+| --- | --- | --- |
+| | **Dashboard** | See usage, setup progress and top items at a glance |
+| | **NeuronSearchLab AI** | Ask the [assistant](/console/assistant) to inspect or change things for you |
+| **Relevance** | [Contexts](/console/contexts), [Rules Engine](/console/rules), [Segments](/console/segments) | Decide what each placement shows, and to whom |
+| **Data** | [Items](/console/items), [Users](/console/users), [Events](/console/events) | Inspect the catalogue, people and behaviour flowing in |
+| **Insights** | [Analytics](/console/analytics), [Experiments](/console/experiments), [Explainability](/console/explainability) | Measure, test and debug |
+| **Models** | [Models](/console/models), [Model Training](/console/training) | Choose, train and deploy recommenders |
+| **Developers** | [Website embed](/console/website-embed), [SDK Credentials](/console/sdk-credentials), [API Keys](/console/api-keys), [Integrations](/console/integrations) | Connect your site, code and data sources |
+| **Account** | [Billing](/console/billing), [Members](/console/members), [Activity](/console/activity) | Plan, people and audit trail |
+
+Some pages are reached from elsewhere: the [Pipeline](/console/pipeline) editor opens from a context's recipe, your [profile](/console/account) opens from the profile menu at the bottom of the sidebar, and the full [notifications](/console/account#notifications) list opens from the bell in the header.
+
+The icons at the bottom of the sidebar open support email and these docs.
+
+## Dashboard
+
+The Dashboard is the first page after sign-in.
+
+- **Setup checklist**: the steps that get a new workspace serving, such as adding your site, creating SDK credentials, creating a context, configuring rules and building a pipeline. Each item links to the page that completes it and ticks itself off. The checklist disappears once everything is done.
+- **Usage snapshot**: requests used against your plan's monthly allowance for the current period.
+- **Key figures**: total requests, average response time, active users and events, each compared with the previous period. Select a figure to open it in [Analytics](/console/analytics).
+- **Top items**: the most-interacted items in the selected period. Select one to open it in [Items](/console/items).
+- **Quick actions**: shortcuts to create an API key, invite a team member, set up billing, view models and track usage.
+
+A **Sample data** label means the workspace has no real traffic yet and the figures are illustrative.
+
+## Quick search
+
+Press <kbd>Cmd</kbd> + <kbd>K</kbd> (macOS) or <kbd>Ctrl</kbd> + <kbd>K</kbd> (Windows, Linux) on any page to search across:
+
+- pages of the console
+- rules, pipelines, experiments and segments, by name
+- users and items, by ID or name
+
+Results are grouped by type, and only include what your workspace can see. It is the quickest way to jump to a rule by name, or to check that a user or item exists before explaining a result.
+
+## Workspaces
+
+If you belong to more than one workspace, switch between them from the profile menu at the bottom of the sidebar, which also has your profile and **Sign out**. Everything in the console, including credentials and usage, belongs to the workspace that is selected.
+
+## Notifications
+
+The bell in the console header lists notifications about training readiness and run outcomes, serving quality, experiments and data health. See [Account and settings](/console/account#notifications) to choose which also reach your inbox, or to turn on desktop alerts.
+
+## Light and dark mode
+
+The console follows your system theme. Change it with the theme switcher at the bottom of the sidebar.

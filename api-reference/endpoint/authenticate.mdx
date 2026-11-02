@@ -1,48 +1,11 @@
 ---
 title: "Create access token"
 description: "Exchange SDK credentials for a short-lived access token."
-openapi: "POST /oauth2/token"
+openapi: "/api-reference/openapi.json POST /oauth2/token"
 ---
 
-## Endpoint
+Exchange [SDK credentials](/integrate/authentication) for a Core API bearer token. Use HTTP Basic authentication with your client ID and secret, and send `grant_type=client_credentials` as form data.
 
-```http
-POST https://auth.neuronsearchlab.com/oauth2/token
-```
+Cache the returned token and use `expires_in` to schedule renewal. Do not request a new token for every API call. Keep the client secret and access token on a trusted server. Platform API keys and embed publishable keys are different credential types.
 
-This endpoint is unauthenticated. Send SDK credentials with HTTP Basic authentication from a trusted server.
-
-## Request
-
-```bash
-curl -X POST https://auth.neuronsearchlab.com/oauth2/token \
-  -H "Authorization: Basic <base64(client_id:client_secret)>" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "grant_type=client_credentials&scope=neuronsearchlab-api/read%20neuronsearchlab-api/write"
-```
-
-| Field | Type | Required | Description |
-| --- | --- | --- | --- |
-| `grant_type` | string | yes | Must be `client_credentials`. |
-| `scope` | string | no | Space-delimited scopes. Omit to use the scopes configured for the client. |
-
-## Response
-
-```json
-{
-  "access_token": "<token>",
-  "expires_in": 3600,
-  "token_type": "Bearer",
-  "scope": "neuronsearchlab-api/read neuronsearchlab-api/write"
-}
-```
-
-Use `access_token` as the Bearer token for Core API resource calls. `expires_in` is a lifetime in seconds; compute `expires_at = now + expires_in` in your token cache and refresh before that time.
-
-## Errors
-
-| Status | Scenario |
-| --- | --- |
-| `400` | Unsupported grant type or malformed request body |
-| `401` | Invalid client credentials |
-| `429` | Token request rate limit exceeded |
+JavaScript, PHP and Next.js can manage this exchange for you; see [Choose an SDK](/sdk/overview).
