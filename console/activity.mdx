@@ -1,0 +1,22 @@
+---
+title: 'Activity'
+icon: 'clock-rotate-left'
+description: 'Inspect configuration changes, who made them and the fields that changed.'
+---
+
+Open **Account → Activity** to investigate changes to your workspace. This is the configuration audit trail. User interactions with recommendations appear in [Data → Events](/console/events).
+
+## Find a change
+
+Use the resource-type filter to narrow the list, then search by resource name, changed field or actor. Review the timestamp, action and resource, and select an entry to open its details.
+
+The detail view shows the recorded change, including before-and-after values where available. An actor may be a person or an automated action. Hover over a relative timestamp when you need its absolute time.
+
+## Investigate an unexpected result
+
+1. Find the time when the behaviour changed.
+2. Look for edits to the affected context, recipe, rules or model assignment.
+3. Open the current resource and compare it with the recorded change.
+4. Use [Explainability](/console/explainability) to inspect a served request from that period.
+
+Activity records evidence; it is not an undo control. Restore the intended configuration on the resource's own page, then make a new request to verify it.

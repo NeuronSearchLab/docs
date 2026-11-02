@@ -1,5 +1,9 @@
 ---
 title: "Patch item"
 description: "Update an existing catalog item using the compatibility PATCH method."
-openapi: "PATCH /v1/items/{item_id}"
+openapi: "/api-reference/openapi.json PATCH /v1/items/{item_id}"
 ---
+
+This PATCH operation is an alternative item-update route. The SDK `patchItem` helpers use [POST Update item](/api-reference/endpoint/update-item).
+
+Use the NSL integer item ID and provide only fields you intend to change. For temporary unavailability, set `active` to `false` instead of deleting the item.

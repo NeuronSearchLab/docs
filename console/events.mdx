@@ -1,0 +1,111 @@
+---
+title: 'Events'
+icon: 'signal'
+description: 'Watch behaviour arrive, define and weight event types, build signal templates for training, bind integration signals and import history.'
+---
+
+**Data → Events** has two views:
+
+- **Events** (the default) shows the behaviour arriving from your integrations, as it arrives.
+- **Configure signals** is where you define event types, their weights and the templates that models train from.
+
+To send events from code, see [Events](/integrate/events).
+
+## The event log
+
+Each row is one event: its type, user, item, placement, session and time. Use it to confirm that an integration is working before you look at recommendation quality.
+
+- **Search** finds events by user, item or event type.
+- The filter buttons (**All**, **Event**, **User**, **Item**, **Placement**, **Session**) narrow the table to one value. Select a value in a row to filter by it, and **Clear filter** to go back.
+- **Analyze** opens the current filter in [Analytics](/console/analytics) for a fuller breakdown.
+
+A **Sample** label means no real events have arrived yet.
+
+## Configure signals
+
+Select **Configure signals** to manage the event types your workspace accepts and how much each one counts.
+
+### Event types
+
+The table lists each event type with its **value** (weight, 0 to 100), how much data exists for it (**Data availability**), and a link to its analytics. The integer shown with each event is the ID your code sends as `event_id`.
+
+- **Event library** adds standard event types with sensible default weights, grouped into browsing, recommendation strips, engagement, commerce, media and negative signals. See the [full list with defaults](/integrate/events#event-types-and-weights).
+- **Add Custom…** creates your own: give it a name, an initial value and a **polarity**. Negative signals, such as skip, hide or report, teach the ranker to suppress similar items.
+- **Edit** changes a label, value or polarity. The ID never changes, so your integration keeps working.
+- Change several values in the table, then **Save Values**.
+
+Every workspace starts with View, Click and Purchase. The number of custom event types depends on your plan.
+
+### Signal templates
+
+A **signal template** is the input to model training: which event types count, their weights, and the minimum data required.
+
+| Field | Meaning |
+| --- | --- |
+| **Template name** | For example "Commerce conversion v2" |
+| **Status** | **Draft** while you work on it; **Published** when it is ready to train from |
+| **Min total events** | Training is blocked until the selected signals have this many events in total |
+| **Min per-signal events** | Training is blocked unless every selected signal has at least this many events |
+
+Start from an **NSL preset** or from **Your templates**:
+
+| Preset | Leans towards |
+| --- | --- |
+| General engagement | Balanced browsing, clicks and high-intent engagement |
+| Commerce conversion | Product discovery through basket and purchase |
+| Checkout intent | The last steps before an order |
+| Content completion | Watch depth, completion and sharing |
+| Media discovery | Playback depth, with skips counted against an item |
+| Social feed | Reactions and follows over passive impressions |
+| Search relevance | Query-driven clicks through to conversion |
+| Negative-aware ranking | Explicit dislikes and hides balanced against positives |
+| Save and return | Bookmarks, ratings and repeat interest |
+| Cold start | Two implicit signals only: the smallest workable set |
+
+Editing a template loads its events into the table. Change them there, then **Update Template**. **Reset to default** restores the preset's weights.
+
+### Integration signals
+
+**Integration signals** shows what the embed, order connectors and history imports record, and which of your event types receives each one. Change the event type to send a signal somewhere you already track. See [Integration signals](/integrate/events#integration-signals).
+
+### Import history
+
+**Import history** uploads a CSV of past behaviour: a user, an item (your SKU, the NSL item ID or a page URL), an event and a timestamp. You choose which event type each event name in the file becomes, or leave it out. See [Import history](/integrate/import-history).
+
+### Training settings
+
+**Training settings** starts a training run from the selected template.
+
+<Steps>
+  <Step title="Choose recommenders">
+    Add one or more recommenders. Each runs as an independent job against one shared snapshot of your data.
+  </Step>
+  <Step title="Check readiness">
+    **Signal readiness** shows whether each selected signal meets the template's minimums. Recommenders with unmet data requirements are flagged.
+  </Step>
+  <Step title="Review cost">
+    The estimated training cost and the data snapshot are shown before you start.
+  </Step>
+  <Step title="Start training">
+    Select **Start training**. Follow progress in [Model Training](/console/training) and review results in [Models](/console/models).
+  </Step>
+</Steps>
+
+Recommenders that support tuning expose these settings. The defaults suit most workspaces.
+
+| Setting | Default | Effect |
+| --- | --- | --- |
+| **Epochs** | 5 | More passes can fit better, but cost more and risk overfitting |
+| **Batch size** | 512 | Larger batches train faster |
+| **Learning rate** | 0.001 | Too high diverges; too low trains slowly |
+| **Evaluation K** | 50 | The K in recall@K used to grade the run |
+| **Max training events** | 0 (no cap) | Caps cost for large workspaces while you iterate |
+| **Sequence length** | 10 | Recent interactions used per training example |
+| **Optimiser** | AdamW | AdamW or Adagrad |
+| **Temperature** | 0.1 | Lower values sharpen similarity scores |
+| **Temporal split** | Off | Split train and test data by time instead of at random |
+| **Early stopping** | Off | Stop when validation loss stops improving |
+| **Freshness decay** | Off | Weight older interactions less |
+| **Hard negatives** | Off | Use negative-polarity events as hard negatives |
+
+Custom training is available on the Pro plan and above.

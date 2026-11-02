@@ -1,0 +1,31 @@
+---
+title: 'Website embed'
+icon: 'code'
+description: 'Configure browser access, website placements and the installation snippet in the console.'
+---
+
+Open **Developers → Website embed** to connect a website without building a recommendation backend. The embed displays items and records engagement using a publishable key.
+
+## Set up a website
+
+1. Choose the workspace that owns the website's catalogue.
+2. Create a publishable key and allow the site's origins, including any staging origin you will use for testing. An origin includes the scheme and host, such as `https://shop.example.com`.
+3. Select the default context and configure the placements your pages need. Use a related-items context on a product page and a discovery context on the homepage.
+4. Copy the generated installation snippet into your site, or use the platform installation instructions.
+5. Open a real page, verify that items render, then check **Data → Events** for views and clicks.
+
+The [Website embed guide](/embed) is the full reference for installation, HTML attributes, the JavaScript API, styling, consent and debugging. Keep your site's code aligned with that guide.
+
+## What to check before launch
+
+| Check | Why it matters |
+| --- | --- |
+| Allowed origins include your production domain | Unrecognised sites cannot use your key |
+| Items have usable titles, destination URLs and images | The embed needs display metadata as well as ranking data |
+| Each placement uses the intended context | A product rail and a homepage feed usually need different ranking |
+| Views and clicks reach the correct event types | Those signals drive personalisation and measurement |
+| Consent matches your site's requirements | Configure collection before tracking visitors |
+
+A publishable key can appear in page source. Client secrets and Platform API keys cannot. If a key must be replaced, update the installed snippet and verify the replacement before revoking the old key.
+
+For several rails on one page, see [Context groups](/console/context-groups). For platform-specific setup, see [Shopify](/embed/shopify) and [other platforms](/embed/platforms).

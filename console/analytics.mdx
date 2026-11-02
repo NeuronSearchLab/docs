@@ -1,0 +1,62 @@
+---
+title: 'Analytics'
+icon: 'chart-line'
+description: 'Build dashboards of served recommendations and events, then drill from a trend down to one user, session or request.'
+---
+
+**Insights → Analytics** is a dashboard builder over two kinds of data: the recommendations NSL served, and the events your users generated. Use it to see how each placement performs, which items and events drive engagement, and how people move through your product.
+
+<Info>
+  The full analytics workbench (saved dashboards, funnels, journeys, comparisons and drill-downs) is the **Data analytics** add-on, available on the Pro and Enterprise plans. An **Add-on inactive** label means it is not enabled for your workspace. Usage figures are always on the [Dashboard](/console/overview#dashboard).
+</Info>
+
+## Dashboards
+
+A dashboard is a saved arrangement of widgets with its own filters.
+
+- **New from template** creates a dashboard from a starting point that you then own and can rearrange: **Overview**, **Events**, **Items**, **Users**, **Funnels**, **User journeys**, **Comparisons** or **Experiments**. Or start empty.
+- **Save as** saves the current view under a new name.
+- In **Dashboard settings**, rename a dashboard or **Set as team default**, so it loads first for everyone in the workspace.
+- **Share** copies a link to the dashboard with its current filters.
+- **Refresh** reloads every widget.
+
+## Widgets
+
+Select **Add widget**, choose a type, and pick what it measures. Drag a widget's corner to resize it.
+
+| Widget | Shows | Good for |
+| --- | --- | --- |
+| **KPI** | One number for the period, with the change from the previous period | Headline figures |
+| **Time series** | Metrics over time, as a line, bar or area chart | Trends and the effect of a change |
+| **Breakdown** | A metric split by a dimension | Event mix, performance per context |
+| **Top list** | The leading values of a dimension | Top items, most active users |
+| **Funnel** | How many reach each step of a sequence of events | View to basket to purchase |
+| **Comparison** | Several items, users or contexts side by side | Comparing placements or products |
+| **Journey** | The ordered paths people take through events, by session, request or user | Understanding behaviour after a recommendation |
+
+### Metrics
+
+Served requests, served items, served users, events, weighted event value (events multiplied by their weights), event users, event items, sessions and engagement rate, plus a count and a rate for each of your event types.
+
+### Dimensions
+
+Event type, context, item, user, session, request, placement, model version and pipeline version. Rare values are grouped as **Other**.
+
+## Filters
+
+- **Time range**: 24 hours, 7, 30 or 90 days, 6 or 12 months, year to date, this or last week, month or year, or a custom range.
+- **Context**: one placement, or all contexts.
+- **Data**: **Auto** shows sample data until real data exists, then real data. Choose **Real data** or **Sample data** to force one.
+- **Drill-down**: narrow from a **user**, to one of their **sessions**, to a single **request**. Any combination applies at once, so you can isolate one journey.
+- **Event IDs**: limit event metrics to particular event types.
+
+## Reading the results
+
+- **Many served requests, few clicks**: the placement is serving but not resonating. Review its recipe and rules, and check a few results in [Explainability](/console/explainability).
+- **A sudden change in one event type**: compare with releases or campaigns from the same day, and use the session filter to rule out test traffic.
+- **A drop after a model change**: break served requests and events down by **model version** to compare the old and new versions directly.
+- **Comparing variants**: the **Experiments** template breaks results down by pipeline and model version. For proper A/B tests with lift, use [Experiments](/console/experiments).
+
+## Retention
+
+How far back analytics can query depends on your plan and retention add-on (90, 180 or 365 days, or custom on Enterprise). A label beside the page title shows the retention that applies.

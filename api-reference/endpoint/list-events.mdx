@@ -1,49 +1,9 @@
 ---
 title: "List events"
 description: "List ingested events with cursor pagination."
-openapi: "GET /v1/events"
+openapi: "/api-reference/openapi.json GET /v1/events"
 ---
 
-## Request
+List recorded event occurrences. Event-type configuration is separate: use [Events in the console](/console/events) or the Platform API to create labels and weights.
 
-```http
-GET /v1/events?user_id=user-abc123&type=click&limit=50
-```
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `limit` | integer | no | Number of events to return. Defaults to `20`, maximum `100`. |
-| `starting_after` | string | no | Event ID cursor such as `12345`. |
-| `user_id` | string | no | Filters to events for one user. |
-| `type` | string | no | Filters to one event type. |
-
-## Response
-
-```json
-{
-  "object": "list",
-  "data": [
-    {
-      "id": "12345",
-      "object": "event",
-      "user_id": "user-abc123",
-      "item_id": 3187,
-      "event_id": 42,
-      "click": {},
-      "session_id": null,
-      "request_id": null,
-      "context_id": 101,
-      "placement": null,
-      "metadata": {
-        "context_id": 101,
-        "click": {}
-      },
-      "occurred_at": 1777478400,
-      "created": 1777478405
-    }
-  ],
-  "has_more": true,
-  "next_cursor": "12345",
-  "url": "/v1/events"
-}
-```
+Use the filters and pagination below to inspect a user's or item's history. A search event can have no item; its query and result IDs describe the search. See [Events](/integrate/events) for the ingestion contract.

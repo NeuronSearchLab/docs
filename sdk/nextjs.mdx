@@ -1,0 +1,128 @@
+---
+title: 'Next.js'
+icon: 'react'
+description: 'Use server-side recommendations and catalogue sync with React helpers for engagement tracking.'
+---
+
+```bash
+npm install @neuronsearchlab/nextjs
+```
+
+The package supports Next.js 14.2–16 and React 18.2–19. Import server functions from `@neuronsearchlab/nextjs/server` and browser helpers from `@neuronsearchlab/nextjs/react`. The root export contains the server functions too.
+
+## Server configuration
+
+Set `NSL_CLIENT_ID`, `NSL_CLIENT_SECRET` and `NSL_CONTEXT_ID` in your server environment. A [Vercel integration](/platforms/vercel) can provision these; you can also create [SDK credentials](/console/sdk-credentials) yourself. Never prefix a secret with `NEXT_PUBLIC_`.
+
+```ts
+import { nsl } from "@neuronsearchlab/nextjs/server";
+const result = await nsl.recommend({ userId: "user-123", limit: 8 });
+```
+
+`nsl` is a lazy shared client. For explicit configuration, call `createNSL(config)`:
+
+| Field | Environment/default |
+| --- | --- |
+| `clientId` | `NSL_CLIENT_ID`; required |
+| `clientSecret` | `NSL_CLIENT_SECRET`; required |
+| `contextId` | Positive integer `NSL_CONTEXT_ID`; default for recommendation/search contexts |
+| `apiUrl` | `NSL_API_URL` or `https://api.neuronsearchlab.com/v1` |
+| `tokenUrl` | `NSL_TOKEN_URL` or `https://auth.neuronsearchlab.com/oauth2/token` |
+| `fetch` | Runtime fetch; replace for testing or custom transport policy |
+
+The client caches access tokens, refreshes before expiry and retries once after a `401`. It does not expose the general JavaScript SDK's buffering or retry configuration.
+
+## Server methods
+
+| Method | Input and result |
+| --- | --- |
+| `recommend(input)` | `userId`, optional `contextId`, `limit`, `scope`; returns `RecommendationsResponse`. A context must be supplied or configured as the default. |
+| `recommendSets(input)` | `userId`, optional `sessionId`, `requestId`, and required `sets`; returns ordered `results`, a keyed `sets` map and `usage` |
+| `search(input)` | `query`, optional `userId`, `contextId`, `limit`, `filter`, `resultItemIds`; returns recommendation-shaped search results |
+| `track(input)` | Required `userId`, integer `eventId`, integer `itemId`; optional `contextId`, `requestId`, `sessionId`, `metadata`; sends immediately |
+| `trackSearch(input)` | `userId`, `query`, optional `resultItemIds`, `eventId`, `contextId`, `requestId`, `sessionId`; sends a search event |
+| `syncContent(items)` | One item or an array, with name, description and metadata; returns the Core API response |
+| `flush()` | Returns a resolved promise for API compatibility; this client does not buffer events |
+
+Every method is available on both `nsl` and the value returned by `createNSL`.
+
+### Several rails
+
+```ts
+const page = await nsl.recommendSets({
+  userId: "user-123",
+  sets: [
+    { key: "for_you", contextId: 101, limit: 8 },
+    { key: "similar", contextId: 102, itemId: 3187, limit: 4 },
+  ],
+});
+const rail = page.sets.for_you;
+// Render rail.data only after checking rail.status and rail.error.
+```
+
+Set fields are `key`, `contextId`, `limit`, `itemId`, `filters` and `scope`. Keys are unique and match `[A-Za-z0-9_.:-]{1,64}`. Omitted context IDs use the configured default.
+
+Explicit lists exceeding `MAX_RECOMMENDATION_SETS_PER_BATCH` (`8`) are split. An explicit request ID applies to the first chunk only. Send each rail's returned `request_id` with its engagement events.
+
+## Event Route Handler
+
+Create `app/api/nsl/events/route.ts` in your application:
+
+```ts
+import { createEventRoute } from "@neuronsearchlab/nextjs/server";
+export const POST = createEventRoute({ maxBodyBytes: 16384 });
+```
+
+`createEventRoute(options)` returns a POST handler using the shared `nsl` client. It requires JSON, enforces a body-size limit (default 16,384 bytes), validates integer IDs and returns `202` after forwarding the event. A body with `query` and no `itemId` is routed as a search event. Error responses include `415` for content type, `413` for size and `400` for malformed input.
+
+The optional `path` field does not mount a route: the file location determines the URL. This helper validates payload shape; add your application's authentication, consent and rate controls around it. Derive the permitted user identity from your session when accepting signed-in events.
+
+`searchEventError(body)` is an exported validator returning an error string or `null`; it does not send an event.
+
+## React helpers
+
+These helpers call your application's endpoints. They do not receive NSL credentials.
+
+| Export | Behaviour |
+| --- | --- |
+| `trackNSLEvent(event, endpoint?)` | Sends an item or search event to `/api/nsl/events` by default; uses `sendBeacon` when accepted, otherwise fetch with keepalive |
+| `trackNSLSearch(search, endpoint?)` | Search-event convenience wrapper |
+| `NSLTracker` | Records an event when mounted; accepts item-event fields plus `endpoint` and `once` (default true) |
+| `NSLRecommendations<T>` | Fetches your recommendation endpoint and calls `children(items)` to render results |
+
+An item browser event has `userId`, `itemId`, `eventId`, and optional `contextId`, `requestId`, `sessionId`. A browser search event has `userId`, `query`, optional `resultItemIds`, `eventId`, `contextId`, `sessionId`.
+
+```tsx
+"use client";
+import { trackNSLEvent } from "@neuronsearchlab/nextjs/react";
+
+export function ResultLink(props: {
+  href: string; title: string; itemId: number; userId: string;
+  clickEventId: number; contextId: number; requestId: string;
+}) {
+  return <a href={props.href} onClick={() => {
+    void trackNSLEvent({
+      userId: props.userId, itemId: props.itemId, eventId: props.clickEventId,
+      contextId: props.contextId, requestId: props.requestId,
+    }).catch(() => { /* Report through your application's telemetry. */ });
+  }}>{props.title}</a>;
+}
+```
+
+Beacon acceptance means the browser queued delivery, not that NSL accepted the event. `NSLTracker` records mounting, not viewport visibility: use your own visibility logic when measuring actual impressions.
+
+### Recommendation component contract
+
+`NSLRecommendations<T>` requires `userId`, `contextId` and a render function `children`. Optional props are `endpoint` (default `/api/nsl/recommendations`), `limit` (default `10`) and `fallback` (default `null`). It calls your endpoint with `userId`, `contextId` and `limit` query parameters.
+
+Implement that GET endpoint yourself, validate inputs and call `nsl.recommend` on the server. Return an item array or an object with `data`, `items` or `recommendations`. The component displays `fallback` while loading and calls `children([])` after a failed request. It does not automatically track clicks or impressions, or pass the response's request ID into the render callback. For exact attribution, fetch and preserve the full response in your own component.
+
+## Errors and exported types
+
+The wrapper throws standard `Error` objects for missing configuration, invalid input, token failures and failed API calls. A batch can also contain individual failed rails. `syncContent` permits a `409` response through to the caller: inspect the body rather than assuming every resolved call created all items.
+
+Server types are `NSLServerConfig`, `NSLTrackInput`, `NSLSearchEventInput`, `NSLSearchInput`, `NSLRecommendInput`, `NSLRecommendSetInput`, `NSLRecommendSetsInput`, `NSLRecommendationSetResult` and `NSLRecommendationSetsResponse`. Browser types are `BrowserEvent` and `BrowserSearchEvent`.
+
+<Note>
+  This reference targets Next.js 1.2.0. To use [context groups](/console/context-groups), pass their member context IDs as explicit sets in one batch. Group rules apply automatically. This published client version does not expose a `groupId` helper.
+</Note>

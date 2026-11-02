@@ -1,60 +1,11 @@
 ---
 title: "Update item"
 description: "Update an existing catalog item."
-openapi: "POST /v1/items/{item_id}"
+openapi: "/api-reference/openapi.json POST /v1/items/{item_id}"
 ---
 
-## Description
+Update the fields supplied for an existing item. Despite the SDK method name `patchItem`, its standard wire request uses **POST** on this item URL.
 
-Updates an existing item. All body fields are optional, but at least one field must be supplied. If `name`, `description`, or `metadata` changes, the item embedding is refreshed.
+Set `active` to `false` to stop recommending the item while retaining it. Prefer this for temporary unavailability. Send the complete metadata object you intend to retain when replacing metadata, including `source_item_id` if you use repeat imports.
 
-`PATCH /v1/items/{item_id}` is also available as a compatibility alias with the same request and response shape.
-
-## Request
-
-```http
-POST /v1/items/7f3a2c9e
-```
-
-```json
-{
-  "name": "Wireless Headphones v2",
-  "metadata": {
-    "category": "electronics",
-    "availability": "in_stock"
-  },
-  "active": true
-}
-```
-
-| Field | Type | Required | Description |
-| --- | --- | --- | --- |
-| `name` | string | no | Replacement item name. |
-| `description` | string | no | Replacement description. |
-| `metadata` | object | no | Replacement metadata object. |
-| `active` | boolean | no | Whether the item is eligible for recommendations. |
-
-## Response
-
-```json
-{
-  "id": "7f3a2c9e",
-  "object": "item",
-  "name": "Wireless Headphones v2",
-  "description": "Noise-cancelling Bluetooth headphones.",
-  "metadata": {
-    "category": "electronics",
-    "availability": "in_stock"
-  },
-  "active": true,
-  "created": 1777478400,
-  "updated_at": 1777478500
-}
-```
-
-## Errors
-
-| Status | Scenario |
-| --- | --- |
-| `400` | Malformed item ID, empty body, or invalid field |
-| `404` | Item does not exist for the authenticated tenant |
+See [Catalogue](/integrate/catalogue#update-and-retire-items) and your [SDK reference](/sdk/overview).

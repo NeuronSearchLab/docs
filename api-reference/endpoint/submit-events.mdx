@@ -1,112 +1,28 @@
 ---
 title: "Submit events"
 description: "Submit user interaction events."
-openapi: "POST /v1/events"
+openapi: "/api-reference/openapi.json POST /v1/events"
 ---
 
-## Description
-
-Records user behavior that powers personalization, attribution, analytics, and model training. `event_id` must be the non-zero integer shown for an event in your dashboard. Event names such as `"click"` are display labels and are not accepted as identifiers.
-
-## Request
-
-```http
-POST /v1/events
-```
+Record an interaction or an array of up to 200 interactions. Use your application-owned `user_id`, the NSL integer `item_id`, and the non-zero integer event-type ID shown in **Data → Events**. Built-in event-type IDs can be negative.
 
 ```json
 {
-  "user_id": "user-abc123",
+  "user_id": "user-123",
   "item_id": 3187,
-  "context_id": 101,
   "event_id": 42,
-  "occurred_at": 1777478400,
-  "metadata": {
-    "surface": "home_feed",
-    "amount": 4999,
-    "currency": "usd"
-  }
+  "context_id": 101,
+  "request_id": "c7f0d2bb-56b1-4ca7-8f09-84d8e4ed02b4",
+  "session_id": "visit-456"
 }
 ```
 
-| Field | Type | Required | Description |
-| --- | --- | --- | --- |
-| `user_id` | string | yes | End-user identifier. |
-| `item_id` | integer | yes, except on a search event | Item ID returned by NSL ingestion, such as `3187`. |
-| `context_id` | integer | no | Context ID generated when the context is created in the dashboard. |
-| `event_id` | integer | yes, except on a search event | Event ID generated when the event is created in dashboard Event configuration. |
-| `query` | string | no | What the user searched for. With no `item_id`, the event is a search event. With an `item_id`, it is kept as the search the user reached the item from. |
-| `result_item_ids` | integer[] | no | Search events only: item IDs your engine showed for `query`, in rank order. |
-| `session_id` | string | no | Session identifier for attribution and analytics. |
-| `request_id` | string | no | Recommendation request ID returned by `GET /v1/recommendations`. |
-| `placement` | string | no | Surface or placement where the event occurred. |
-| `occurred_at` | integer | no | Unix timestamp for when the action happened. Defaults to ingestion time. |
-| `metadata` | object | no | Additional event context. |
+## Attribution and retries
 
-### Search events
+Copy `request_id` from the list the user acted on. Use `occurred_at` in Unix seconds for delayed or historical events. Reuse a `deduplication_id` only for retries of the same occurrence. Check the returned `inserted` and `processed` counts; additional diagnostic fields may be present.
 
-A search is an event with a `query` and no `item_id`. It weighs into that user's recommendations by the weight of its event type, like any other event. `event_id` is optional: it defaults to the event your `search` signal is bound to, and one named **Search** (weight 25) is created on first use when nothing is bound yet. The items in `result_item_ids` are stored as impressions, never as items the user chose.
+## Search events
 
-```json
-{
-  "user_id": "user-abc123",
-  "query": "waterproof trail shoes",
-  "result_item_ids": [3187, 3190, 3201],
-  "session_id": "session-42"
-}
-```
+A search event has a non-empty `query` and no `item_id`. Its `event_id` can be omitted to use the workspace's Search signal binding. Include `result_item_ids` when your own search engine displayed results; those IDs do not count as clicked items.
 
-To record a search and get recommendations back in one call, send it to [`POST /v1/search`](/api-reference/endpoint/search) with `result_item_ids` instead.
-
-Camel-case aliases `userId`, `itemId`, `eventId`, `contextId`, `sessionId`, `requestId`, and `resultItemIds` remain available, but all identifier aliases carry the same integer values. Event batches are capped at 200 events per request by default.
-
-## Response
-
-```json
-{
-  "object": "list",
-  "data": [
-    {
-      "id": 12345,
-      "object": "event",
-      "user_id": "user-abc123",
-      "item_id": 3187,
-      "event_id": 42,
-      "session_id": null,
-      "request_id": null,
-      "context_id": 101,
-      "placement": null,
-      "metadata": {
-        "surface": "home_feed",
-        "context_id": 101
-      },
-      "occurred_at": 1777478400,
-      "created": 1777478405
-    }
-  ],
-  "has_more": false,
-  "url": "/v1/events",
-  "inserted": 1,
-  "processed": 1,
-  "session": {
-    "with_session_id": 0,
-    "with_request_id": 0
-  },
-  "embedding_refresh": {
-    "users_in_batch": 1,
-    "enqueued": true,
-    "mode": "async",
-    "min_seconds": 30
-  }
-}
-```
-
-The response also returns ingestion stats (`inserted`, `processed`, `session`) and an `embedding_refresh` block describing the async user-embedding refresh job that was enqueued for the affected users.
-
-## Errors
-
-| Status | Scenario |
-| --- | --- |
-| `400` | Missing required fields, invalid JSON, unknown item, unknown event type, an empty `query` on an event with no item, or `result_item_ids` on an item event |
-| `401` | Missing or invalid Bearer token |
-| `403` | Token does not include `neuronsearchlab-api/write` |
+Use [Search](/api-reference/endpoint/search) to record a search and fetch results in one call. See [Events](/integrate/events) for signal configuration, batching and delivery behaviour.

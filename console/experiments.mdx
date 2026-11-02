@@ -1,0 +1,136 @@
+---
+title: 'Experiments'
+icon: 'flask'
+description: 'Run controlled experiments to compare ranking strategies and measure their impact on user engagement.'
+---
+
+Experiments split live traffic between ranking configurations and measure which performs better. Test a new model, a different recipe, or a set of rules against a control group before rolling it out to everyone.
+
+Open **Insights → Experiments** (the page is titled **A/B Testing**). Experiments are available on the Pro plan and above.
+
+---
+
+## Creating an experiment
+
+<Steps>
+  <Step title="Open Experiments">
+    Go to **Insights → Experiments**.
+  </Step>
+  <Step title="Start a new experiment">
+    Click **New Experiment**.
+  </Step>
+  <Step title="Name the hypothesis">
+    Enter a name and description. The description should capture your hypothesis, for example "Pinning new releases to top 3 will increase click-through rate by 15%."
+  </Step>
+  <Step title="Configure variants">
+    Add at least two variants with **Add variant**:
+
+    - **Control** - the baseline experience (typically your current configuration).
+    - **Treatment** - the change you want to test.
+  </Step>
+  <Step title="Set traffic">
+    Set each variant's **Traffic** share. The total is shown and should be 100%.
+  </Step>
+  <Step title="Create the experiment">
+    Click **Create Experiment**.
+  </Step>
+</Steps>
+
+The experiment starts in **draft** status and does not affect live traffic until you move it to **running**.
+
+---
+
+## Variant configuration
+
+Each variant has:
+
+| Field | Description |
+|-------|-------------|
+| **Name** | A label such as "Control" or "SASRec model" |
+| **Description** | What this variant tests |
+| **Traffic** | Share of users assigned to this variant |
+| **Model family** | Optional. Serve this variant from a different model family than the context's default |
+| **Retrieval algorithm** | Optional. Override the context's retrieval algorithm |
+| **Context recipe** | Optional. Use a different recipe, and with it a different pipeline |
+| **Include rules** | Optional. Limit which rules apply to this variant's users |
+
+Change one thing per variant, so a difference in results has one cause. To measure whether your rules help at all, give the treatment a recipe whose pipeline has the Rules stage turned off, with required eligibility constraints preserved. An empty Include rules selection does not necessarily disable rules.
+
+---
+
+## Traffic assignment
+
+A stable user ID receives a consistent variant while the variant order and traffic shares stay unchanged. Use the same user ID across devices when you want consistent assignment. Changing traffic shares can move users between variants and affect how historical metrics are grouped.
+
+Experiments can overlap. Avoid changing the same context through several experiments at once unless you have designed and checked that interaction.
+
+---
+
+## Experiment lifecycle
+
+| Status | What happens |
+|--------|-------------|
+| **Draft** | Experiment is configured but not live. No users are assigned. |
+| **Running** | Live. Users are assigned to variants and data is collected. `start_date` is set automatically on first transition to running. |
+| **Paused** | The experiment is not applied to new serving requests. Resume only after checking its configuration. |
+| **Completed** | Experiment is over. `end_date` is set automatically. The measurement window closes; refreshed results can still reflect subsequently ingested activity within it. |
+
+To change status, open the experiment and use the status buttons on the **Setup** tab. The **History** tab records every change to the experiment.
+
+---
+
+## Measuring results
+
+The **Results** tab shows computed metrics for each variant.
+
+### Available metrics
+
+| Metric | Definition |
+|--------|-----------|
+| **Click-through rate** | All recorded events divided by served records for the assigned users; an engagement proxy, not click-only CTR |
+| **Conversion** | Share of assigned served users with any recorded event; not purchase-only conversion |
+| **Avg dwell** | Only interpret this when populated; the current metrics refresh does not calculate dwell duration |
+| **Sample size** | Unique users assigned to the variant during the experiment |
+| **Impressions** | Recommendations served to the variant's users |
+| **Events** | Events from the variant's users |
+| **Weighted value** | Event weights summed on a 0–1 scale (the configured 0–100 weight divided by 100) |
+
+### Lift calculation
+
+For each treatment variant, the Results tab shows **lift vs. control**:
+
+- Positive lift (green) means the treatment outperformed the control.
+- Negative lift (red) means the treatment underperformed.
+- Lift is calculated as `(treatment_metric - control_metric) / control_metric`.
+
+### Refreshing metrics
+
+Select **Refresh metrics** to recompute from the latest data. Metrics are computed by:
+
+<Steps>
+  <Step title="Query served users">
+    Query all users who were served recommendations during the experiment window.
+  </Step>
+  <Step title="Reassign variants">
+    Deterministically re-assign each user to a variant using the same hash as the live engine.
+  </Step>
+  <Step title="Aggregate metrics">
+    Aggregate served impressions and user events per variant.
+  </Step>
+</Steps>
+
+Refresh as often as you need - each click pulls the latest data.
+
+---
+
+## Best practices
+
+- **Choose a suitable measurement window** for your traffic, business cycle and sample-size needs.
+- **Don't change rules mid-experiment** unless you intentionally want to measure the impact of the change.
+- **Use meaningful sample sizes.** If one variant has very few users, the metrics will be noisy. Ensure traffic fractions give each variant enough volume.
+- **Document your hypothesis** in the experiment description so you can review what you were testing months later.
+- **Complete experiments** when done. This sets the end date and freezes the measurement window.
+
+## Interpretation limits
+
+The summary groups workspace activity by served users over the experiment window. It does not restrict every event to an attributed click or purchase on the tested placement. Keep allocation stable, use event-specific analytics for precise outcomes, and treat lift as descriptive evidence rather than a significance test. See [Measure performance](/playbooks/measure-performance).
