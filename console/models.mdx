@@ -80,7 +80,7 @@ Rename a model from its header to give it a label your team recognises. The syst
 
 ## Deploy a model
 
-Deploying means choosing the model for a context. Open the context in [Contexts](/console/contexts), and on **Details** pick it from **Model** under **Your trained models**. The model is deployed for that context and starts serving once it is ready; until then, the context keeps its previous model.
+Open a compatible context in [Contexts](/console/contexts) and choose the packaged model under **Details → Model**. Select **Review & deploy**, inspect its customer evaluation, and confirm deployment to that context. The context uses its fallback until the endpoint is ready. The current trained recommender endpoint accepts a user ID and count, so trained catalogue recommenders can serve **Personalized discovery** and **Email digest** contexts. Other context types keep their purpose-built retrieval path.
 
 To roll back, choose the previous model or **Automatic** in the same place.
 
@@ -99,7 +99,7 @@ The panel shows the next and last run, and each run's outcome: **Promoted**, **K
 
 ## Model families
 
-Each model belongs to a **family** that describes its job, such as general recommendations, similar items, trending or email digest. Open **Model families** from the Models page to see, for each family:
+Each model belongs to a **family** that describes its job, such as general recommendations, similar items, trending or email digest. Choose the family and compatible retrieval architecture in the context's **Details** tab. A family contains:
 
 - the **base models** NSL publishes, any of which can seed your own fine-tune;
 - your **fine-tuned versions**, the newest ready one of which overrides the base for your workspace;

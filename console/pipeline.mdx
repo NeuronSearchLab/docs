@@ -1,12 +1,12 @@
 ---
-title: 'Pipeline'
+title: 'Context execution'
 icon: 'diagram-project'
 description: 'The stages a recommendation request runs through, and how to tune each one for a context.'
 ---
 
-Every recommendation request runs through a **pipeline**: an ordered set of stages that retrieve candidates, score them, apply your rules and shape the final list. Each context has its own pipeline, created with its recipe, so a homepage feed and a "similar items" rail can work differently.
+Every recommendation request runs through execution stages that retrieve candidates, score them, apply your rules and shape the final list. Each context configures its own stages, so a homepage feed and a "similar items" rail can work differently.
 
-Open a pipeline from a context's recipe, or from **Build a pipeline** on the Dashboard. The editor shows each stage as a card that you can turn on or off and configure. When opened from a context, the editor is locked to that context's pipeline.
+Open **Relevance → Contexts**, select a context, then open **Execution**. The editor shows each stage as a card that you can turn on or off and configure. A new context can create its execution configuration there after you save the context.
 
 ## Stages
 
@@ -86,12 +86,12 @@ Turn this stage off to serve pure model ranking with no business rules, for exam
 
 ## Video understanding
 
-If [Twelve Labs video enrichment](/console/integrations#video-enrichment) is enabled for your workspace, the pipeline can use the stored video analysis for candidate vectors, with **Fallback to base embeddings** keeping recall stable for videos not yet enriched.
+If [Twelve Labs video enrichment](/console/integrations#video-enrichment) is enabled for your workspace, execution can use the stored video analysis for candidate vectors, with **Fallback to base embeddings** keeping recall stable for videos not yet enriched.
 
 ## Defaults
 
-A new context's pipeline comes from its template. A workspace with no pipeline at all uses defaults: all stages on, a candidate limit of 100 and a page size of 20.
+A new context's stages come from its template. A workspace with no context execution configuration uses serving defaults: all stages on, a candidate limit of 100 and a page size of 20.
 
-## Pipelines and experiments
+## Execution and experiments
 
-An experiment variant can use a different recipe, and with it a different pipeline, so you can measure the effect of a stage. For example, run the rules stage off in one variant to see whether your rules help. See [Experiments](/console/experiments).
+An experiment variant can use a different recipe and execution configuration, so you can measure the effect of a stage. For example, run the rules stage off in one variant to see whether your rules help. See [Experiments](/console/experiments).
