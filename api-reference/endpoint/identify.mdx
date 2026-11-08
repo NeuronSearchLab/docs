@@ -1,0 +1,36 @@
+---
+title: "Identify a visitor"
+description: "Link an anonymous visitor to a known user when they sign in."
+openapi: "/api-reference/openapi.json POST /v1/identify"
+---
+
+Call this when a visitor signs in. Send the anonymous ID their events used before signing in, and your user ID for them.
+
+```json
+{
+  "anonymous_id": "aid_7f3c2b91e0",
+  "user_id": "user-123"
+}
+```
+
+Events still recorded under the anonymous ID move onto the user, and the user's profile is rebuilt with them. What someone browsed before signing in then shapes their recommendations, on that device and on every other device where they sign in. After the call, send `user_id` for that person on later events and recommendation requests.
+
+The JavaScript SDK calls this for you from `identify(userId)`. See [Identity](/integrate/identity) for the full sign-in and sign-out flow.
+
+## What moves
+
+- Only events still recorded under the anonymous ID move. An event moves once.
+- Events older than the workspace's retention period stay where they are, as do events beyond the newest 5,000.
+- The anonymous ID stays on each event, so **Data → Users** can show which device it came from.
+
+## When nothing moves
+
+A refused link still returns `200`, with `linked: false` and a `reason`:
+
+| `reason` | Meaning |
+| --- | --- |
+| `linked_to_other_user` | The anonymous ID is already linked to someone else, for example on a shared device. Call `reset()` in the SDK, or start a new anonymous ID, when a user signs out. |
+| `erased` | One of the two IDs was erased at a user's request. |
+| `same_id` | The anonymous ID and the user ID are the same value. |
+
+Calling it again for the same pair is safe. It returns `already_linked` and moves anything sent anonymously since the last call.

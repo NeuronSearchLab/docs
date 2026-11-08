@@ -7,6 +7,10 @@ Product changes are grouped by the task they help you complete. This is a curate
 
 ## November 2026
 
+### Visitors keep their history when they sign in
+
+[`POST /v1/identify`](/api-reference/endpoint/identify) links an anonymous visitor to your user ID at sign-in and moves their earlier events onto it, so one profile follows them across devices. JavaScript SDK 2.4.0 adds `identify()`, `reset()`, a consent-aware anonymous ID and session timeouts, and tags each event with its platform. **Data → Users** shows each user's devices, sessions and the platform of every event. See [Identity](/integrate/identity).
+
 ### Context groups
 
 Organize related recommendation contexts into a group, arrange their rails and request the group together. Each rail retains its context and request attribution. See [Context groups](/console/context-groups) and [recommendation sets](/api-reference/endpoint/get-recommendation-sets).
