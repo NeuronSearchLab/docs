@@ -230,6 +230,13 @@
             "icon": "signal"
           },
           {
+            "group": "Identity",
+            "pages": [
+              "api-reference/endpoint/identify"
+            ],
+            "icon": "id-card"
+          },
+          {
             "group": "Recommendations",
             "pages": [
               "api-reference/endpoint/get-recommendations",

@@ -1,11 +1,86 @@
 ---
-title: "Identity (NSL Resolve)"
-description: "Link first-party identifiers, record consent and manage partner-scoped identities."
+title: "Identity"
+description: "Recognise returning visitors, link them when they sign in, and keep their history across devices."
 ---
 
-NSL Resolve connects identifiers that belong to the same recommendation subject. It is optional: if your application already sends one stable `user_id` across sessions and devices, use that ID directly for recommendations and events.
+NSL recommends for whoever sends the events. You choose the identifier, and the same person should keep the same identifier across visits and devices. There are three:
 
-Use resolution when anonymous visitors sign in, when several applications use different account identifiers, or when you need approved partner workflows. Keep account matching on your backend, where you can verify that the identifiers belong together.
+| Identifier | What it is | Lives |
+| --- | --- | --- |
+| `user_id` | Your own stable account ID | In your system. The only identifier that works across devices on its own. |
+| `anonymous_id` | A random ID for a visitor who has not signed in | On the device: a first-party ID in the browser, or an install ID in an app |
+| `session_id` | One visit | On the device, rotated after 30 minutes of inactivity by the SDKs |
+
+No cookies are needed. NSL never uses third-party cookies, fingerprinting or advertising IDs.
+
+## Anonymous visitors
+
+Until someone signs in, send their anonymous ID as both `user_id` and `anonymous_id`. The JavaScript SDK (2.4.0 and later) creates one for you and uses it whenever you leave `userId` out. Swift support is coming; until then, generate a random install ID, store it, and send it yourself.
+
+<CodeGroup>
+
+```ts JavaScript
+const sdk = new NeuronSDK({
+  baseUrl: "https://api.neuronsearchlab.com/v1",
+  tokenProvider,
+  persistence: "localStorage", // remember the visitor across visits
+  consent: false,              // until your consent banner says yes
+});
+
+// Later, from your consent platform
+sdk.setConsent(true);
+
+await sdk.trackEvent({ eventId: 42, itemId: 3187 }); // sent as the anonymous visitor
+```
+
+</CodeGroup>
+
+In a browser, the anonymous ID is kept in first-party storage only when you enable persistence and consent has been given. Without consent the SDK keeps it in memory: recommendations still work for the current page, but the visitor is not recognised on their next visit. In the UK and EU, recognising a returning visitor for personalisation generally needs consent; use your existing consent platform rather than adding another banner.
+
+The [website embed](/embed) manages its own anonymous ID and session. Pass your consent platform's decision with `nsl('consent', true | false)`.
+
+## When a visitor signs in
+
+Call `identify` with your user ID. The visitor's anonymous history moves onto that user, and from then on the SDK sends the user ID.
+
+<CodeGroup>
+
+```ts JavaScript
+await sdk.identify("user-123");
+```
+
+```bash cURL
+curl -X POST https://api.neuronsearchlab.com/v1/identify \
+  -H "Authorization: Bearer <access_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"anonymous_id": "aid_7f3c2b91e0", "user_id": "user-123"}'
+```
+
+</CodeGroup>
+
+Each device links when the person signs in on it, so their laptop and phone history end up on one profile while their sessions stay separate. Two anonymous devices that never sign in stay two visitors: NSL does not guess that they are the same person.
+
+See [Identify a visitor](/api-reference/endpoint/identify) for what moves and when a link is refused.
+
+## When a visitor signs out
+
+Call `reset()`. The SDK starts a new anonymous visitor and session, so the next person on a shared device is not linked to the previous one. An anonymous ID is only ever linked to the first user who signs in with it.
+
+```ts
+sdk.reset();
+```
+
+## Seeing it in the console
+
+Open **Data → Users** and select a user. The **Identity** tab lists their devices, with the platform each one reported, whether it was linked at sign-in and how many earlier events moved, followed by their recent sessions. Each event on the **Events** tab shows the platform it came from.
+
+## Erasure and export
+
+Erasing a user removes their events, including those moved from anonymous IDs, and the links themselves. Links are included in the workspace export as `identity_links`.
+
+## Identity resolution for partners
+
+NSL Resolve is a separate, optional identity graph for partner workflows: matching hashed identifiers, recording consent purposes, minting partner-scoped IDs and data collaborations. It does not change recommendations; use `identify` for that.
 
 ## Resolve an identity
 
@@ -39,7 +114,7 @@ An identifier can also carry `namespace` and `source`. Keep namespaces stable wh
 
 Record changes when the user's choices change. Your application must also apply those choices to the data it sends and the features it enables; recording consent is not a blanket permission for every use of the identity.
 
-Open **Data → Users**, select a user and review the **Identity** tab for resolution state, consent and partner mappings. Use [List consent records](/api-reference/platform-api/identity/listConsentRecords) for an API workflow.
+In **Data → Users**, the **Identity** tab shows a user's resolved identity, consent and partner mappings below their devices, once they have one. Use [List consent records](/api-reference/platform-api/identity/listConsentRecords) for an API workflow.
 
 ## Partner-scoped IDs
 

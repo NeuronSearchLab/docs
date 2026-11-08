@@ -118,9 +118,21 @@ const results = await sdk.search({
 
 Snake-case aliases exist for the corresponding wire fields. Prefer one spelling consistently. See the [search reference](/api-reference/endpoint/search) for semantics and limits.
 
+## Identity
+
+Each client has an anonymous ID (`anonymousId` config or generated, read it with `getAnonymousId()`). When you leave `userId` out of an event or recommendation call, the client sends the signed-in user if you called `identify`, otherwise the anonymous ID.
+
+| Method | Effect |
+| --- | --- |
+| `identify(userId)` | Links the anonymous visitor to the user through [`POST /v1/identify`](/api-reference/endpoint/identify) and makes them the default. Calling it again for the same user sends nothing. |
+| `reset()` | New anonymous ID and session, no user. Call it on sign-out. |
+| `setConsent(granted)` | With `persistence: "localStorage"`, stores the anonymous ID and session (`nsl_aid`, `nsl_sid`) only while consent is granted. Withdrawing consent removes them and starts a new visitor. |
+
+Sessions the client manages rotate after 30 minutes without an event (`sessionTimeoutMs`). A session ID you set yourself never rotates. Every event also carries `platform` (`web` in a browser, `server` elsewhere, or the `platform` config) and `client` (`js-sdk/<version>`). Requires 2.4.0 or later. See [Identity](/integrate/identity).
+
 ## Events and delivery
 
-`trackEvent(payload)` buffers an interaction and returns a promise for its send result. Supply `userId`, integer `eventId` and integer `itemId`; add `contextId`, `requestId`, `sessionId`, `occurredAt` (Unix seconds) and `metadata` as needed.
+`trackEvent(payload)` buffers an interaction and returns a promise for its send result. Supply integer `eventId` and integer `itemId`, and `userId` unless the client's identified user or anonymous ID should be used; add `contextId`, `requestId`, `sessionId`, `occurredAt` (Unix seconds) and `metadata` as needed.
 
 ```ts
 const pending = sdk.trackEvent({

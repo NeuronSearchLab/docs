@@ -13,8 +13,8 @@ Search by user ID or name, and sort by any column. Select a user to open their p
 | Tab | Shows |
 | --- | --- |
 | **Details** | User ID, name, status, metadata and last update, plus an **explainable profile**: plain-language statements about the user's interests, each with the events that support it |
-| **Identity** | The user's resolved identity from [NSL Resolve](/integrate/identity): linked identifiers, resolution status, consent purposes and external partner mappings |
-| **Events** | The user's event history, newest first: event type, item, time and placement. Also shows how much their recent searches are steering their recommendations |
+| **Identity** | **Devices & sessions**: each device the user's events came from, with its platform, whether it was linked when they signed in and how many earlier events moved over, then their recent sessions. Partner identity details from NSL Resolve follow when the user has them. See [Identity](/integrate/identity) |
+| **Events** | The user's event history, newest first: event type, item, time, placement and the platform it came from (Web, iOS, Server and so on; hover for the SDK and device). Also shows how much their recent searches are steering their recommendations |
 | **Embeddings** | Where the user sits relative to items in the model's embedding space |
 | **Analytics** | How many recommendations the user was served and how they engaged |
 
@@ -25,5 +25,6 @@ The explainable profile can be deleted from the **Details** tab. This removes th
 ## Common checks
 
 - **Events not arriving**: if a user you expect is missing, or their **Events** tab is empty, check that the `user_id` your integration sends matches the one you are searching for, including case.
-- **Duplicate people**: the same person under two IDs (for example an anonymous ID and an account ID) means identity is not being linked at sign-in. See [Identity](/integrate/identity).
+- **Duplicate people**: the same person under two IDs (for example an anonymous ID and an account ID) means `identify` is not being called at sign-in. See [Identity](/integrate/identity).
+- **Device missing from Identity**: the device's events were sent without `anonymous_id`, for example from a backend. They are counted below the device list as events sent with only the user ID.
 - **Unexpected recommendations**: compare the profile statements and recent events with what they were shown, then use [Explainability](/console/explainability) on a specific item.

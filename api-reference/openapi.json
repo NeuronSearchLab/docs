@@ -34,6 +34,10 @@
       "description": "User interaction event ingestion, lookup, and pagination."
     },
     {
+      "name": "Identity",
+      "description": "Link anonymous visitors to known users."
+    },
+    {
       "name": "Recommendations",
       "description": "Personalized recommendation serving, request-scoped filtering, and auto-section generation."
     },
@@ -690,6 +694,95 @@
           },
           "404": {
             "$ref": "#/components/responses/Error404"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      }
+    },
+    "/v1/identify": {
+      "post": {
+        "operationId": "identify",
+        "summary": "Identify a visitor",
+        "tags": [
+          "Identity"
+        ],
+        "description": "Link an anonymous visitor to a known user when they sign in. Events still recorded under the anonymous ID move onto the user, so what they did before signing in shapes their recommendations on every device they use. Call it each time a visitor signs in on a device; repeated calls are safe.",
+        "security": [
+          {
+            "oauth2": [
+              "neuronsearchlab-api/write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdentifyPayload"
+              },
+              "examples": {
+                "login": {
+                  "summary": "A visitor signs in",
+                  "value": {
+                    "anonymous_id": "aid_7f3c2b91e0",
+                    "user_id": "user-123",
+                    "source": "login"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Link result. A refused link is still a 200 with `linked: false` and a `reason`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentifyResult"
+                },
+                "examples": {
+                  "linked": {
+                    "value": {
+                      "object": "identify",
+                      "anonymous_id": "aid_7f3c2b91e0",
+                      "user_id": "user-123",
+                      "linked": true,
+                      "events_moved": 12,
+                      "reason": "linked",
+                      "embedding_refresh": {
+                        "enqueued": true
+                      }
+                    }
+                  },
+                  "sharedDevice": {
+                    "value": {
+                      "object": "identify",
+                      "anonymous_id": "aid_7f3c2b91e0",
+                      "user_id": "user-456",
+                      "linked": false,
+                      "events_moved": 0,
+                      "reason": "linked_to_other_user",
+                      "embedding_refresh": {
+                        "enqueued": false
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
           },
           "500": {
             "$ref": "#/components/responses/Error500"
@@ -1726,6 +1819,40 @@
           "sessionId": {
             "type": "string",
             "description": "CamelCase alias for `session_id`."
+          },
+          "anonymous_id": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "The anonymous visitor ID on the device that sent the event: a browser's first-party ID or an app's install ID. Kept on the event after [Identify](/api-reference/endpoint/identify) links the visitor to a user, so the console can show which device each event came from.",
+            "example": "aid_7f3c2b91e0"
+          },
+          "anonymousId": {
+            "type": "string",
+            "description": "CamelCase alias for `anonymous_id`."
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "web",
+              "ios",
+              "android",
+              "server",
+              "magento",
+              "shopify",
+              "woocommerce",
+              "bigcommerce",
+              "prestashop",
+              "shopware"
+            ],
+            "description": "Where the event was sent from. The SDKs set this for you. Any other value is ignored. Shown on the event in **Data → Users**.",
+            "example": "web"
+          },
+          "client": {
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^[A-Za-z0-9._+/-]+$",
+            "description": "The sending library and version, for example `js-sdk/2.4.0`. The SDKs set this for you.",
+            "example": "js-sdk/2.4.0"
           },
           "request_id": {
             "type": "string",
@@ -3099,6 +3226,86 @@
           },
           "include_suppressed": {
             "type": "boolean"
+          }
+        }
+      },
+      "IdentifyPayload": {
+        "type": "object",
+        "required": [
+          "anonymous_id",
+          "user_id"
+        ],
+        "description": "Links an anonymous visitor to a known user. `anonymousId` and `userId` are accepted as aliases.",
+        "properties": {
+          "anonymous_id": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "The anonymous ID the visitor's events were sent with before they signed in.",
+            "example": "aid_7f3c2b91e0"
+          },
+          "user_id": {
+            "oneOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Your stable user ID for the person who signed in. Use the same value for later events and recommendations.",
+            "example": "user-123"
+          },
+          "source": {
+            "type": "string",
+            "maxLength": 64,
+            "description": "Optional label for what made the link, shown in the console. The JavaScript SDK sends `js-sdk`.",
+            "example": "checkout-login"
+          }
+        }
+      },
+      "IdentifyResult": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "enum": [
+              "identify"
+            ]
+          },
+          "anonymous_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "linked": {
+            "type": "boolean",
+            "description": "True when the anonymous ID is now linked to this user."
+          },
+          "events_moved": {
+            "type": "integer",
+            "description": "Earlier events moved from the anonymous ID onto the user by this call."
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "linked",
+              "already_linked",
+              "linked_to_other_user",
+              "same_id",
+              "erased"
+            ],
+            "description": "`linked`: first link. `already_linked`: linked to this user before; any events sent anonymously since were moved. `linked_to_other_user`: the anonymous ID belongs to someone else (for example a shared device), nothing moved. `same_id`: the two IDs are equal. `erased`: one of the IDs was erased, nothing moved."
+          },
+          "embedding_refresh": {
+            "type": "object",
+            "properties": {
+              "enqueued": {
+                "type": "boolean"
+              }
+            },
+            "description": "Whether the user's profile is being rebuilt with the moved events."
           }
         }
       }

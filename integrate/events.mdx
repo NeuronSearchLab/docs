@@ -61,6 +61,7 @@ $sdk->trackEvent(['userId' => 'user-123', 'eventId' => 42, 'itemId' => 3187, 'co
 | Field | Required | Notes |
 | --- | --- | --- |
 | `user_id` | Yes | Your identifier for the person. Use the same value you pass when requesting recommendations. |
+| `anonymous_id` | No | The visitor's anonymous ID on this device. Send it with every event so the console can show the device, and so [identify](/integrate/identity) can link it at sign-in. |
 | `event_id` | Yes (except searches) | The integer event type ID. |
 | `item_id` | Yes (except searches) | The NSL item ID. |
 | `context_id` | No | The context where it happened. Lets analytics report per placement. |
@@ -69,6 +70,7 @@ $sdk->trackEvent(['userId' => 'user-123', 'eventId' => 42, 'itemId' => 3187, 'co
 | `placement` | No | A free-text name for where on the page it happened. |
 | `occurred_at` | No | Unix seconds. Defaults to the time NSL receives it. Use it when sending events late. |
 | `metadata` | No | Any extra detail, such as `amount` and `currency` for a purchase. |
+| `platform`, `client` | No | Where the event came from (`web`, `ios`, `android`, `server` or a commerce platform) and the sending library, such as `js-sdk/2.4.0`. The SDKs set both. |
 
 A request can carry one event or an array of up to 200. The JavaScript, PHP and Swift clients buffer events; use their documented flush and completion methods before a short-lived process exits. The Next.js wrapper sends immediately and its `flush()` is a compatibility no-op.
 
